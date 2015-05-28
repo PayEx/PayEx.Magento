@@ -1,0 +1,30 @@
+<?php
+/**
+ * PayEx Bank Debit Payment Form
+ * Created by AAIT Team.
+ */
+?>
+
+<fieldset class="form-list">
+    <?php $_code = $this->getMethodCode() ?>
+    <ul id="payment_form_<?php echo $_code ?>" style="display:none">
+        <li>
+            <div style="float:left">
+                <img src="<?php echo Mage::getDesign()->getSkinUrl('images/payex/payex.gif'); ?>" />
+            </div>
+            <div style="float:left">
+                <!-- Start PayEx Bank Debit block -->
+                <form action="<?php echo $this->getFormAction(); ?>" id="feedbackForm" method="post">
+                    <p><?php echo Mage::helper('bankdebit')->__('Select your bank:'); ?></p>
+                    <?php
+                        $banks = $this->getLayout()->createBlock('bankdebit/banks');
+                        $banks->setBlockId('bank_select');
+                        echo $banks->toHtml();
+                    ?>
+                </form>
+                <!-- End PayEx Bank Debit block -->
+            </div>
+            <div style="float:right"></div>
+        </li>
+    </ul>
+</fieldset>

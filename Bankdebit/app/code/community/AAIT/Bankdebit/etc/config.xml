@@ -1,0 +1,156 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <AAIT_Bankdebit>
+            <!-- declare module's version information for database updates -->
+            <version>1.0.25</version>
+        </AAIT_Bankdebit>
+    </modules>
+
+    <global>
+        <!-- declare model group for new module -->
+        <models>
+            <!-- model group alias to be used in Mage::getModel('newmodule/...') -->
+            <bankdebit>
+                <!-- base class name for the model group -->
+                <class>AAIT_Bankdebit_Model</class>
+            </bankdebit>
+        </models>
+
+        <!-- IMPORTANT: if you use your own namespace (i.e. CompanyName) you also have to declare blocks group for new module. See topic: http://www.magentocommerce.com/boards/viewthread/22416/#t102732 -->
+        <blocks>
+            <bankdebit>
+                <class>AAIT_Bankdebit_Block</class>
+            </bankdebit>
+        </blocks>
+
+        <helpers>
+            <bankdebit>
+                <class>AAIT_Bankdebit_Helper</class>
+            </bankdebit>
+        </helpers>
+
+        <!-- declare resource setup for new module -->
+        <resources>
+            <!-- resource identifier -->
+            <bankdebit_setup>
+                <!-- specify that this resource is a setup resource and used for upgrades -->
+                <setup>
+                    <!-- which module to look for install/upgrade files in -->
+                    <module>AAIT_Bankdebit</module>
+                </setup>
+                <!-- specify database connection for this resource -->
+                <connection>
+                    <!-- do not create new connection, use predefined core setup connection -->
+                    <use>core_setup</use>
+                </connection>
+            </bankdebit_setup>
+            <bankdebit_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </bankdebit_write>
+            <bankdebit_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </bankdebit_read>
+        </resources>
+
+        <events>
+            <sales_order_invoice_save_after>
+                <observers>
+                    <bankdebit>
+                        <type>singleton</type>
+                        <class>bankdebit/observer</class>
+                        <method>sales_order_invoice_save_after</method>
+                    </bankdebit>
+                </observers>
+            </sales_order_invoice_save_after>
+        </events>
+    </global>
+
+    <!-- declare default configuration values for this module -->
+    <default>
+        <!-- 'payment' configuration section (tab) -->
+        <payment>
+            <!-- 'newmodule' configuration group (fieldset) -->
+            <bankdebit>
+                <!-- by default this payment method is inactive -->
+                <active>1</active>
+                <!-- model to handle logic for this payment method -->
+                <model>bankdebit/payment</model>
+                <!-- default title for payment checkout page and order view page -->
+                <title>Payex Bank Debit</title>
+                <allowspecific>0</allowspecific>
+                <accountnumber>payex account number</accountnumber>
+                <encryptionkey>payex encryption key</encryptionkey>
+                <debug>1</debug>
+                <order_status>1</order_status>
+                <banks>NB,FSPA,SEB,SHB</banks>
+                <clientlanguage>en-US</clientlanguage>
+                <cleantime>20</cleantime>
+                <responsive>0</responsive>
+            </bankdebit>
+        </payment>
+    </default>
+
+    <frontend>
+        <!-- Routes... -->
+        <routers>
+            <bankdebit>
+                <use>standard</use>
+                <args>
+                    <module>AAIT_Bankdebit</module>
+                    <frontName>bankdebit</frontName>
+                </args>
+            </bankdebit>
+        </routers>
+
+        <!-- Translations... -->
+        <translate>
+            <modules>
+                <AAIT_Bankdebit>
+                    <files>
+                        <default>AAIT_Bankdebit.csv</default>
+                    </files>
+                </AAIT_Bankdebit>
+            </modules>
+        </translate>
+    </frontend>
+
+    <adminhtml>
+        <!-- Translations... -->
+        <translate>
+            <modules>
+                <AAIT_Bankdebit>
+                    <files>
+                        <default>AAIT_Bankdebit.csv</default>
+                    </files>
+                </AAIT_Bankdebit>
+            </modules>
+        </translate>
+
+        <!-- Updates layout... -->
+        <layout>
+            <updates>
+                <bankdebit>
+                    <file>bankdebit_admin.xml</file>
+                </bankdebit>
+            </updates>
+        </layout>
+    </adminhtml>
+
+    <crontab>
+        <jobs>
+            <bankdebit_clean_pending_orders>
+                <schedule>
+                    <cron_expr>*/5 * * * *</cron_expr>
+                </schedule>
+                <run>
+                    <model>bankdebit/observer::cleanPendingOrders</model>
+                </run>
+            </bankdebit_clean_pending_orders>
+        </jobs>
+    </crontab>
+</config>

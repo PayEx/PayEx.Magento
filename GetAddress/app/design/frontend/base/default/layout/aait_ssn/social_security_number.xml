@@ -1,0 +1,12 @@
+<layout version="0.1.0">
+    <checkout_onepage_index>
+        <reference name='checkout.onepage.billing'>
+            <action method='setTemplate'>
+                <template>checkout/onepage/billing_with_ssn.phtml</template>
+            </action>
+        </reference>
+        <reference name="head">
+            <action method="addJs"><script>aait_ssn/social_security_number.js</script></action>
+        </reference>
+    </checkout_onepage_index>
+</layout>

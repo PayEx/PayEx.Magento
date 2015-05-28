@@ -1,0 +1,47 @@
+<?php
+    // Show Payment Information in Admin
+
+    // Get Payment Info
+    $_info = $this->getInfo();
+
+    // Transaction Fields
+    $fields = array(
+        'paymentMethod'               => 'PayEx Payment Method',
+        'maskedNumber'                => 'Masked Number',
+        'BankHash'                    => 'Bank Hash',
+        'bankReference'               => 'Bank Reference',
+        'AuthenticatedStatus'         => 'Authenticated Status',
+        'transactionRef'              => 'Transaction Ref',
+        'transactionNumber'           => 'PayEx Transaction Number',
+        'transactionErrorCode'        => 'Transaction Error Code',
+        'transactionErrorDescription' => 'Transaction Error Description',
+        'transactionThirdPartyError'  => 'Transaction ThirdParty Error'
+    );
+    $result = array();
+
+    if ( $_info ) {
+        $order = $_info->getOrder();
+        $transactionId = Mage::helper('bankdebit/order')->getFirstTransactionId($order);
+
+        if ($transactionId) {
+            // Load transaction
+            $transaction = $_info->getTransaction($transactionId);
+            $transaction_data = $transaction->getAdditionalInformation(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS);
+            foreach ($fields as $key => $value) {
+                if ( !empty($transaction_data[$key]) ) {
+                    $result[] = Mage::helper('bankdebit')->__($value) . ': ' . $transaction_data[$key];
+                }
+            }
+        }
+    }
+?>
+
+<p><?php echo $this->htmlEscape($this->getMethod()->getTitle()) ?></p>
+<?php if (count($result) > 0): ?>
+    <?php foreach($result as $item): ?>
+        <?php echo $this->htmlEscape($item); ?><br />
+    <?php endforeach; ?>
+<?php else: ?>
+    <?php echo Mage::helper('paygate')->__('Payment has not been processed yet.'); ?>
+<?php endif; ?>
+<br />

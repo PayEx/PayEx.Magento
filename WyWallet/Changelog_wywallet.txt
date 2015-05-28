@@ -1,0 +1,32 @@
+Version 1.0.7
+* Added Reward points support
+
+Version 1.0.6
+* Improved transaction processing
+* Set correct order state
+* Sending mail when failed payments
+
+Version 1.0.5
+* Fixed problem with handling of canceled transactions
+
+Version 1.0.4
+* Fixed problem "The transaction "xxx" (capture) is already closed"
+* Removed unused functions
+* Minor changes
+
+Version 1.0.3
+* Fixed problems with order state
+* Small bugfixes
+
+Version 1.0.2
+* Fixed bug with empty invoice totals
+* Updated Px library to 2.0.1
+
+Version 1.0.1
+* Fixed bug with multiple currencies setup
+* Fixed problem with wrong price/empty tax for bundled product
+* Fixed problem with downloadable products
+* Added version hint
+
+Version 1.0.0
+* Init release of WyWallet module

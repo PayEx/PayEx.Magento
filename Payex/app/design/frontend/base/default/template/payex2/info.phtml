@@ -1,0 +1,12 @@
+<p><?php echo $this->htmlEscape($this->getMethod()->getTitle()) ?></p>
+<?php $trans_id = $this->getInfo()->getLastTransId(); ?>
+<?php if (!empty($trans_id)): ?>
+    <?php $specific = $this->getSpecificInformation(); ?>
+    <?php if (count($specific) > 0): ?>
+        <?php foreach($specific as $key => $value): ?>
+            <?php echo Mage::helper('payex2')->__($key) . ': ' . $this->htmlEscape($value); ?><br />
+        <?php endforeach; ?>
+    <?php endif; ?>
+<?php else: ?>
+    <?php echo Mage::helper('paygate')->__('Payment has not been processed yet.'); ?>
+<?php endif; ?>

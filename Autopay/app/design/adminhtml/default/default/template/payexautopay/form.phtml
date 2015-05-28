@@ -1,0 +1,50 @@
+<?php
+// Get Agreement Data
+$agreement_id = Mage::helper('payexautopay/agreement')->getCustomerAgreement();
+$agreement_url = Mage::getSingleton('payexautopay/payment')->getConfigData('agreementurl');
+$agreement_link = Mage::helper('payexautopay')->__('<a target="_blank" href="%s">agreement</a>', $agreement_url);
+$agreement_status = Mage::helper('payexautopay/agreement')->getPxAgreementStatus($agreement_id);
+?>
+<fieldset class="form-list">
+    <?php $_code = $this->getMethodCode() ?>
+    <ul id="payment_form_<?php echo $_code ?>" style="display:none">
+        <li>
+            <div style="float:left">
+                <img src="https://confined.payex.com/img/purchase/payex-small.png"/>
+            </div>
+            <div style="float:left">
+                <!-- Start PayEx Autopay block -->
+                <form action="<?php echo $this->getFormAction(); ?>" id="payexAutopayForm" method="post">
+                    <div class="input-box">
+                        <?php if ($agreement_status === AAIT_Payexautopay_Model_Payment::AGREEMENT_NOTEXISTS): ?>
+                            <?php echo Mage::helper('payexautopay')->__('You will be redirected to <a target="_blank" href="http://www.payex.com">PayEx</a> website when you place an order.'); ?>
+                            <?php echo Mage::helper('payexautopay')->__('Sign a %s to streamline further purchases with PayEx.', $agreement_link); ?>
+                            <br/>
+                            <label
+                                for="payex_agreement"><?php echo Mage::helper('payexautopay')->__('I accept the agreement'); ?>
+                                <span class="required">*</span>
+                                <input name="payex_agreement" id="payex_agreement" title="I accept the agreement" value="1"
+                                       class="required-entry checkbox" type="checkbox"/>
+                            </label>
+                        <?php else: ?>
+                            <?php echo Mage::helper('payexautopay')->__('You already %s the agreement.', $agreement_link); ?>
+                            <br/>
+                            <?php echo Mage::helper('payexautopay')->__('Payment will be made automatically by credit card.'); ?>
+                            <br/>
+                            <?php
+                            $cancel_agreement_url = Mage::getUrl('payexautopay/payexautopay/cancel_agreement', array('_secure' => true));
+                            $cancel_agreement_url = "javascript:if(window.confirm('" . Mage::helper('payexautopay')->__('Cancel agreement?') . "')) { self.location.href = '" . $cancel_agreement_url . "' };";
+                            echo Mage::helper('payexautopay')->__('<a href="%s">Cancel agreement</a>', $cancel_agreement_url);
+                            ?>
+                        <?php endif ?>
+                    </div>
+                </form>
+                <!-- End PayEx Autopay block -->
+            </div>
+            <div style="float:right">
+                <img src="https://confined.payex.com/img/purchase/visa.png">
+                <img src="https://confined.payex.com/img/purchase/mastercard.png">
+            </div>
+        </li>
+    </ul>
+</fieldset>

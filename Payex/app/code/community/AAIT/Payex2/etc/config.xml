@@ -1,0 +1,147 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <AAIT_Payex2>
+            <!-- declare module's version information for database updates -->
+            <version>2.0.27</version>
+        </AAIT_Payex2>
+    </modules>
+
+    <global>
+        <!-- declare model group for new module -->
+        <models>
+            <!-- model group alias to be used in Mage::getModel('newmodule/...') -->
+            <payex2>
+                <!-- base class name for the model group -->
+                <class>AAIT_Payex2_Model</class>
+            </payex2>
+        </models>
+
+        <!-- IMPORTANT: if you use your own namespace (i.e. CompanyName) you also have to declare blocks group for new module. See topic: http://www.magentocommerce.com/boards/viewthread/22416/#t102732 -->
+        <blocks>
+            <payex2>
+                <class>AAIT_Payex2_Block</class>
+            </payex2>
+        </blocks>
+
+        <helpers>
+            <payex2>
+                <class>AAIT_Payex2_Helper</class>
+            </payex2>
+        </helpers>
+
+        <!-- declare resource setup for new module -->
+        <resources>
+            <!-- resource identifier -->
+            <payex2_setup>
+                <!-- specify that this resource is a setup resource and used for upgrades -->
+                <setup>
+                    <!-- which module to look for install/upgrade files in -->
+                    <module>AAIT_Payex2</module>
+                </setup>
+                <!-- specify database connection for this resource -->
+                <connection>
+                    <!-- do not create new connection, use predefined core setup connection -->
+                    <use>core_setup</use>
+                </connection>
+            </payex2_setup>
+            <payex2_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </payex2_write>
+            <payex2_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </payex2_read>
+        </resources>
+
+        <events>
+            <sales_order_invoice_save_after>
+                <observers>
+                    <payex2>
+                        <type>singleton</type>
+                        <class>payex2/observer</class>
+                        <method>sales_order_invoice_save_after</method>
+                    </payex2>
+                </observers>
+            </sales_order_invoice_save_after>
+        </events>
+    </global>
+
+    <!-- declare default configuration values for this module -->
+    <default>
+        <!-- 'payment' configuration section (tab) -->
+        <payment>
+            <!-- 'newmodule' configuration group (fieldset) -->
+            <payex2>
+                <!-- by default this payment method is inactive -->
+                <active>1</active>
+                <!-- model to handle logic for this payment method -->
+                <model>payex2/payment</model>
+                <!-- default title for payment checkout page and order view page -->
+                <title>Payex Payments</title>
+                <paymentview>PX</paymentview>
+                <allowspecific>0</allowspecific>
+                <debug>1</debug>
+                <accountnumber>payex account number</accountnumber>
+                <encryptionkey>payex encryption key</encryptionkey>
+                <transactiontype>1</transactiontype>
+                <order_status_authorize>processing</order_status_authorize>
+                <order_status_capture>complete</order_status_capture>
+                <clientlanguage>en-US</clientlanguage>
+                <cleantime>20</cleantime>
+                <responsive>0</responsive>
+            </payex2>
+        </payment>
+    </default>
+
+    <adminhtml>
+        <!-- Updates layout... -->
+        <layout>
+            <updates>
+                <payex2>
+                    <file>payex2_admin.xml</file>
+                </payex2>
+            </updates>
+        </layout>
+    </adminhtml>
+
+    <frontend>
+        <!-- Routes... -->
+        <routers>
+            <payex2>
+                <use>standard</use>
+                <args>
+                    <module>AAIT_Payex2</module>
+                    <frontName>payex2</frontName>
+                </args>
+            </payex2>
+        </routers>
+
+        <!-- Translations... -->
+        <translate>
+            <modules>
+                <AAIT_Payex2>
+                    <files>
+                        <default>AAIT_Payex2.csv</default>
+                    </files>
+                </AAIT_Payex2>
+            </modules>
+        </translate>
+    </frontend>
+
+    <crontab>
+        <jobs>
+            <payex2_clean_pending_orders>
+                <schedule>
+                    <cron_expr>*/5 * * * *</cron_expr>
+                </schedule>
+                <run>
+                    <model>payex2/observer::cleanPendingOrders</model>
+                </run>
+            </payex2_clean_pending_orders>
+        </jobs>
+    </crontab>
+</config>
