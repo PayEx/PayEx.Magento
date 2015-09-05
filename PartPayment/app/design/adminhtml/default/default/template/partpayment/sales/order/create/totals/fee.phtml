@@ -1,0 +1,15 @@
+<?php
+/**
+ * @var $this AAIT_PartPayment_Block_Adminhtml_Sales_Order_Create_Totals_Fee
+ */
+?>
+<!-- Start Factoring Payment Fee -->
+<tr>
+    <td style="<?php echo $this->getStyle() ?>" class="a-right" colspan="<?php echo $this->getColspan(); ?>">
+        <?php $this->helper('partpayment')->__('Payment fee'); ?>
+    </td>
+    <td style="<?php echo $this->getStyle() ?>" class="a-right">
+        <?php echo $this->helper('partpayment')->formatPrice($this->getPaymentFee()) ?>
+    </td>
+</tr>
+<!-- End PartPayment Payment Fee -->
