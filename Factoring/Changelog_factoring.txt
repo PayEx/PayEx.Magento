@@ -1,3 +1,8 @@
+Version 1.0.16
+* Implemented "Financing Invoice" method
+* Updated SSN verification method
+* Updated Px library
+
 Version 1.0.15
 * Validate transactionStatus value
 

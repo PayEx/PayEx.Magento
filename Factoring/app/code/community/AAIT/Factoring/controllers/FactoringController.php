@@ -93,29 +93,73 @@ class AAIT_Factoring_FactoringController extends Mage_Core_Controller_Front_Acti
         }
         $order_ref = $result['orderRef'];
 
-        // Call PxOrder.PurchaseInvoiceSale / PxOrder.PurchasePartPaymentSale
-        $params = array(
-            'accountNumber' => '',
-            'orderRef' => $order_ref,
-            'socialSecurityNumber' => $ssn,
-            'legalFirstName' => $order->getBillingAddress()->getFirstname(),
-            'legalLastName' => $order->getBillingAddress()->getLastname(),
-            'legalStreetAddress' => $order->getBillingAddress()->getStreet(-1),
-            'legalCoAddress' => '',
-            'legalPostNumber' => $order->getBillingAddress()->getPostcode(),
-            'legalCity' => $order->getBillingAddress()->getCity(),
-            'legalCountryCode' => $order->getBillingAddress()->getCountry(),
-            'email' => $order->getBillingAddress()->getEmail(),
-            'msisdn' => (mb_substr($order->getBillingAddress()->getTelephone(), 0, 1) === '+') ? $order->getBillingAddress()->getTelephone() : '+' . $order->getBillingAddress()->getTelephone(),
-            'ipAddress' => Mage::helper('core/http')->getRemoteAddr(),
-        );
+        // Perform Payment
+        switch ($mode) {
+            case 'FINANCING':
+                // Call PxOrder.PurchaseFinancingInvoice
+                $params = array(
+                    'accountNumber' => '',
+                    'orderRef' => $order_ref,
+                    'socialSecurityNumber' => $ssn,
+                    'legalName' => $order->getBillingAddress()->getName(),
+                    'streetAddress' => $order->getBillingAddress()->getStreet(-1),
+                    'coAddress' => '',
+                    'zipCode' => $order->getBillingAddress()->getPostcode(),
+                    'city' => $order->getBillingAddress()->getCity(),
+                    'countryCode' => $order->getBillingAddress()->getCountry(),
+                    'paymentMethod' => $order->getBillingAddress()->getCountry() === 'SE' ? 'PXFINANCINGINVOICESE' : 'PXFINANCINGINVOICENO',
+                    'email' => $order->getBillingAddress()->getEmail(),
+                    'msisdn' => (mb_substr($order->getBillingAddress()->getTelephone(), 0, 1) === '+') ? $order->getBillingAddress()->getTelephone() : '+' . $order->getBillingAddress()->getTelephone(),
+                    'ipAddress' => Mage::helper('core/http')->getRemoteAddr()
+                );
+                $result = Mage::helper('factoring/api')->getPx()->PurchaseFinancingInvoice($params);
+                Mage::helper('factoring/tools')->addToDebug('PxOrder.PurchaseFinancingInvoice:' . $result['description']);
+                break;
+            case 'FACTORING':
+                // Call PxOrder.PurchaseInvoiceSale
+                $params = array(
+                    'accountNumber' => '',
+                    'orderRef' => $order_ref,
+                    'socialSecurityNumber' => $ssn,
+                    'legalFirstName' => $order->getBillingAddress()->getFirstname(),
+                    'legalLastName' => $order->getBillingAddress()->getLastname(),
+                    'legalStreetAddress' => $order->getBillingAddress()->getStreet(-1),
+                    'legalCoAddress' => '',
+                    'legalPostNumber' => $order->getBillingAddress()->getPostcode(),
+                    'legalCity' => $order->getBillingAddress()->getCity(),
+                    'legalCountryCode' => $order->getBillingAddress()->getCountry(),
+                    'email' => $order->getBillingAddress()->getEmail(),
+                    'msisdn' => (mb_substr($order->getBillingAddress()->getTelephone(), 0, 1) === '+') ? $order->getBillingAddress()->getTelephone() : '+' . $order->getBillingAddress()->getTelephone(),
+                    'ipAddress' => Mage::helper('core/http')->getRemoteAddr(),
+                );
 
-        if ($mode === 'FACTORING') {
-            $result = Mage::helper('factoring/api')->getPx()->PurchaseInvoiceSale($params);
-            Mage::helper('factoring/tools')->addToDebug('PxOrder.PurchaseInvoiceSale:' . $result['description']);
-        } else {
-            $result = Mage::helper('factoring/api')->getPx()->PurchasePartPaymentSale($params);
-            Mage::helper('factoring/tools')->addToDebug('PxOrder.PurchasePartPaymentSale:' . $result['description']);
+                $result = Mage::helper('factoring/api')->getPx()->PurchaseInvoiceSale($params);
+                Mage::helper('factoring/tools')->addToDebug('PxOrder.PurchaseInvoiceSale:' . $result['description']);
+                break;
+            case 'CREDITACCOUNT':
+                // Call PxOrder.PurchasePartPaymentSale
+                $params = array(
+                    'accountNumber' => '',
+                    'orderRef' => $order_ref,
+                    'socialSecurityNumber' => $ssn,
+                    'legalFirstName' => $order->getBillingAddress()->getFirstname(),
+                    'legalLastName' => $order->getBillingAddress()->getLastname(),
+                    'legalStreetAddress' => $order->getBillingAddress()->getStreet(-1),
+                    'legalCoAddress' => '',
+                    'legalPostNumber' => $order->getBillingAddress()->getPostcode(),
+                    'legalCity' => $order->getBillingAddress()->getCity(),
+                    'legalCountryCode' => $order->getBillingAddress()->getCountry(),
+                    'email' => $order->getBillingAddress()->getEmail(),
+                    'msisdn' => (mb_substr($order->getBillingAddress()->getTelephone(), 0, 1) === '+') ? $order->getBillingAddress()->getTelephone() : '+' . $order->getBillingAddress()->getTelephone(),
+                    'ipAddress' => Mage::helper('core/http')->getRemoteAddr(),
+                );
+
+                $result = Mage::helper('factoring/api')->getPx()->PurchasePartPaymentSale($params);
+                Mage::helper('factoring/tools')->addToDebug('PxOrder.PurchasePartPaymentSale:' . $result['description']);
+                break;
+            default:
+                Mage::throwException('Invalid payment mode');
+                break;
         }
 
         // Check Errors

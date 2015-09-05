@@ -126,14 +126,17 @@ class AAIT_Factoring_Model_Payment extends Mage_Payment_Model_Method_Abstract
 
         $params = array(
             'accountNumber' => '',
-            'countryCode' => $country_code, // Supported only "SE"
-            'socialSecurityNumber' => $ssn
+            'paymentMethod' => $country_code === 'SE' ? 'PXFINANCINGINVOICESE' : 'PXFINANCINGINVOICENO',
+            'ssn' => $ssn,
+            'zipcode' => '',
+            'countryCode' => $country_code,
+            'ipAddress' => Mage::helper('core/http')->getRemoteAddr()
         );
-        $result = Mage::helper('factoring/api')->getPx()->GetConsumerLegalAddress($params);
-        Mage::helper('factoring/tools')->addToDebug('PxVerification.GetConsumerLegalAddress:' . $result['description']);
+        $result = Mage::helper('factoring/api')->getPx()->GetAddressByPaymentMethod($params);
+        Mage::helper('factoring/tools')->addToDebug('PxOrder.GetAddressByPaymentMethod:' . $result['description']);
         if ($result['code'] !== 'OK' || $result['description'] !== 'OK' || $result['errorCode'] !== 'OK') {
             // Show Error Message
-            Mage::helper('factoring/tools')->throwPayExException($result, 'PxVerification.CreditCheck');
+            Mage::helper('factoring/tools')->throwPayExException($result, 'PxOrder.GetAddressByPaymentMethod');
         }
 
         // Save Social Security Number
@@ -208,7 +211,7 @@ class AAIT_Factoring_Model_Payment extends Mage_Payment_Model_Method_Abstract
             'amount' => round(100 * $amount),
             'orderId' => $order_id,
             'vatAmount' => 0,
-            'additionalValues' => 'INVOICESALE_ORDERLINES=' . urlencode($xml)
+            'additionalValues' => 'FINANCINGINVOICE_ORDERLINES=' . urlencode($xml)
         );
         $result = Mage::helper('factoring/api')->getPx()->Capture5($params);
         Mage::helper('factoring/tools')->addToDebug('PXOrder.Capture5:' . $result['description'], $order_id);
