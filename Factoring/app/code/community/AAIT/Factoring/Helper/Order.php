@@ -237,19 +237,22 @@ class AAIT_Factoring_Helper_Order extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Get Order Amount
-     * With Using Rounding Issue Fix
-     * @param Mage_Sales_Model_Order $order
-     * @return float
+     * Calculate Order amount
+     * With rounding issue detection
+     * @param $order
+     * @param int $order_amount
+     * @return stdClass
      */
-    public function getOrderAmount($order)
+    public function getCalculatedOrderAmount($order, $order_amount = 0)
     {
-        // At moment this function don't support discounts
-        if (abs($order->getDiscountAmount()) > 0) {
-            return $order->getGrandTotal();
+        // Order amount calculated by shop
+        if ($order_amount === 0) {
+            $order_amount = $order->getGrandTotal();
         }
 
+        // Order amount calculated manually
         $amount = 0;
+
         // add Order Items
         $items = $order->getAllVisibleItems();
         /** @var $item Mage_Sales_Model_Order_Item */
@@ -260,40 +263,45 @@ class AAIT_Factoring_Helper_Order extends Mage_Core_Helper_Abstract
 
             $itemQty = (int)$item->getQtyOrdered();
             $priceWithTax = $item->getPriceInclTax();
-            $amount += round(100 * Mage::app()->getStore()->roundPrice($itemQty * $priceWithTax));
+            $amount += (int)(100 * $itemQty * $priceWithTax);
         }
-
-        // add Fee
-        $fee = Mage::getSingleton('factoring/fee')->getPaymentFee();
-        if ($fee > 0) {
-            $amount += (int)(100 * $fee);
-        }
-
-        // add Discount
-        $discount = $order->getDiscountAmount();
-        $discount += $order->getShippingDiscountAmount();
-        $amount += round(100 * $discount);
-
-        // Add reward points
-        $amount += -1 * $order->getBaseRewardCurrencyAmount();
 
         // add Shipping
         if (!$order->getIsVirtual()) {
             $shippingIncTax = $order->getShippingInclTax();
-            $amount += round(100 * $shippingIncTax);
+            $amount += (int)(100 * $shippingIncTax);
         }
 
-        $grand_total = $order->getGrandTotal();
-        $amount = $amount / 100;
+        // add Discount
+        $discount = $order->getDiscountAmount() + $order->getShippingDiscountAmount();
+        $amount += (int)(100 * $discount);
 
-        $abs = abs(Mage::app()->getStore()->roundPrice($amount) - Mage::app()->getStore()->roundPrice($grand_total));
-        // Is ~0.010000000002037
-        if ($abs > 0 && $abs < 0.011) {
-            Mage::helper('factoring/tools')->addToDebug('Warning: Price rounding issue. ' . $grand_total . ' vs ' . $amount);
-            return $amount;
-        } else {
-            return $grand_total;
+        // Add reward points
+        $amount += -1 * (int)(100 * $order->getBaseRewardCurrencyAmount());
+
+        // add Fee
+        $fee = $order->getFactoringPaymentFee();
+        if ($fee > 0) {
+            $amount += (int)(100 * $fee);
         }
+
+        // Detect Rounding Issue
+        $rounded_total = sprintf("%.2f", $order_amount);
+        $rounded_control_amount = sprintf("%.2f", ($amount / 100));
+        $rounding = 0;
+        if ($rounded_total !== $rounded_control_amount) {
+            if ($rounded_total > $rounded_control_amount) {
+                $rounding = $rounded_total - $rounded_control_amount;
+            } else {
+                $rounding = -1 * ($rounded_control_amount - $rounded_total);
+            }
+            $rounding = sprintf("%.2f", $rounding);
+        }
+
+        $result = new stdClass();
+        $result->amount = $rounded_control_amount;
+        $result->rounding = $rounding;
+        return $result;
     }
 
     /**
@@ -318,15 +326,15 @@ class AAIT_Factoring_Helper_Order extends Mage_Core_Helper_Abstract
         foreach ($items as $item) {
             // @todo Calculate prices using Discount Rules
             // @todo Get children products from bundle
-            if (!$item->getNoDiscount()) {
-                Mage::helper('factoring/tools')->addToDebug('Warning: The product has a discount. There might be problems.', $order->getIncrementId());
-            }
+            //if (!$item->getNoDiscount()) {
+            //    Mage::helper('factoring/tools')->addToDebug('Warning: The product has a discount. There might be problems.', $order->getIncrementId());
+            //}
 
             $itemQty = (int)$item->getQtyOrdered();
             //$taxPrice = $item->getTaxAmount();
-            $taxPrice = Mage::app()->getStore()->roundPrice($itemQty * $item->getPriceInclTax() - $itemQty * $item->getPrice());
+            $taxPrice = $itemQty * $item->getPriceInclTax() - $itemQty * $item->getPrice();
             $taxPercent = $item->getTaxPercent();
-            $priceWithTax = Mage::app()->getStore()->roundPrice($itemQty * $item->getPriceInclTax());
+            $priceWithTax = $itemQty * $item->getPriceInclTax();
 
             // Calculate tax percent for Bundle products
             if ($item->getProductType() === Mage_Catalog_Model_Product_Type::TYPE_BUNDLE) {
@@ -336,30 +344,55 @@ class AAIT_Factoring_Helper_Order extends Mage_Core_Helper_Abstract
             $OrderLine = $dom->createElement('OrderLine');
             $OrderLine->appendChild($dom->createElement('Product', $item->getName()));
             $OrderLine->appendChild($dom->createElement('Qty', $itemQty));
-            $OrderLine->appendChild($dom->createElement('UnitPrice', $item->getPrice()));
-            $OrderLine->appendChild($dom->createElement('VatRate', $taxPercent));
-            $OrderLine->appendChild($dom->createElement('VatAmount', $taxPrice));
-            $OrderLine->appendChild($dom->createElement('Amount', $priceWithTax));
+            $OrderLine->appendChild($dom->createElement('UnitPrice', sprintf("%.2f", $item->getPrice())));
+            $OrderLine->appendChild($dom->createElement('VatRate', sprintf("%.2f", $taxPercent)));
+            $OrderLine->appendChild($dom->createElement('VatAmount', sprintf("%.2f", $taxPrice)));
+            $OrderLine->appendChild($dom->createElement('Amount', sprintf("%.2f", $priceWithTax)));
+            $OrderLines->appendChild($OrderLine);
+        }
+
+        // Add Shipping Line
+        if (!$order->getIsVirtual()) {
+            $shipping = $order->getShippingAmount();
+            //$shippingIncTax = $order->getShippingInclTax();
+            $shippingTax = $order->getShippingTaxAmount();
+            $shippingTaxPercent = $shipping != 0 ? (int)((100 * ($shippingTax) / $shipping)) : 0;
+
+            $OrderLine = $dom->createElement('OrderLine');
+            $OrderLine->appendChild($dom->createElement('Product', $order->getShippingDescription()));
+            $OrderLine->appendChild($dom->createElement('Qty', 1));
+            $OrderLine->appendChild($dom->createElement('UnitPrice', sprintf("%.2f", $shipping)));
+            $OrderLine->appendChild($dom->createElement('VatRate', sprintf("%.2f", $shippingTaxPercent)));
+            $OrderLine->appendChild($dom->createElement('VatAmount', sprintf("%.2f", $shippingTax)));
+            $OrderLine->appendChild($dom->createElement('Amount', sprintf("%.2f", $shipping + $shippingTax)));
+            $OrderLines->appendChild($OrderLine);
+        }
+
+        // add Payment Fee
+        $fee = $order->getFactoringPaymentFee();
+        if ($fee > 0) {
+            $OrderLine = $dom->createElement('OrderLine');
+            $OrderLine->appendChild($dom->createElement('Product', Mage::helper('factoring')->__('Payment fee')));
+            $OrderLine->appendChild($dom->createElement('Qty', 1));
+            $OrderLine->appendChild($dom->createElement('UnitPrice', sprintf("%.2f", $fee)));
+            $OrderLine->appendChild($dom->createElement('VatRate', 0));
+            $OrderLine->appendChild($dom->createElement('VatAmount', 0));
+            $OrderLine->appendChild($dom->createElement('Amount', sprintf("%.2f", $fee)));
             $OrderLines->appendChild($OrderLine);
         }
 
         // add Discount
-        $discount = $order->getDiscountAmount();
-
-        // exclude shipping discount
-        // discount is negative value
-        $discount += $order->getShippingDiscountAmount();
-
+        $discount = $order->getDiscountAmount() + $order->getShippingDiscountAmount();
         if (abs($discount) > 0) {
-            $discount_descriiption = ($order->getDiscountDescription() !== null) ? Mage::helper('sales')->__('Discount (%s)', $order->getDiscountDescription()) : Mage::helper('sales')->__('Discount');
+            $discount_description = ($order->getDiscountDescription() !== null) ? Mage::helper('sales')->__('Discount (%s)', $order->getDiscountDescription()) : Mage::helper('sales')->__('Discount');
 
             $OrderLine = $dom->createElement('OrderLine');
-            $OrderLine->appendChild($dom->createElement('Product', $discount_descriiption));
+            $OrderLine->appendChild($dom->createElement('Product', $discount_description));
             $OrderLine->appendChild($dom->createElement('Qty', 1));
-            $OrderLine->appendChild($dom->createElement('UnitPrice', $discount));
+            $OrderLine->appendChild($dom->createElement('UnitPrice', sprintf("%.2f", $discount)));
             $OrderLine->appendChild($dom->createElement('VatRate', 0));
             $OrderLine->appendChild($dom->createElement('VatAmount', 0));
-            $OrderLine->appendChild($dom->createElement('Amount', $discount));
+            $OrderLine->appendChild($dom->createElement('Amount', sprintf("%.2f", $discount)));
             $OrderLines->appendChild($OrderLine);
         }
 
@@ -372,36 +405,6 @@ class AAIT_Factoring_Helper_Order extends Mage_Core_Helper_Abstract
             $OrderLine->appendChild($dom->createElement('VatRate', 0));
             $OrderLine->appendChild($dom->createElement('VatAmount', 0));
             $OrderLine->appendChild($dom->createElement('Amount', -1 * $order->getBaseRewardCurrencyAmount()));
-            $OrderLines->appendChild($OrderLine);
-        }
-
-        // Add Shipping Line
-        if (!$order->getIsVirtual()) {
-            $shipping = $order->getShippingAmount();
-            $shippingIncTax = $order->getShippingInclTax();
-            $shippingTax = $order->getShippingTaxAmount();
-            $shippingTaxPercent = $shipping != 0 ? (int)((100 * ($shippingTax) / $shipping)) : 0;
-
-            $OrderLine = $dom->createElement('OrderLine');
-            $OrderLine->appendChild($dom->createElement('Product', $order->getShippingDescription()));
-            $OrderLine->appendChild($dom->createElement('Qty', 1));
-            $OrderLine->appendChild($dom->createElement('UnitPrice', $shipping));
-            $OrderLine->appendChild($dom->createElement('VatRate', $shippingTaxPercent));
-            $OrderLine->appendChild($dom->createElement('VatAmount', $shippingTax));
-            $OrderLine->appendChild($dom->createElement('Amount', $shipping + $shippingTax));
-            $OrderLines->appendChild($OrderLine);
-        }
-
-        // add Payment Fee
-        $fee = $order->getFactoringPaymentFee();
-        if ($fee > 0) {
-            $OrderLine = $dom->createElement('OrderLine');
-            $OrderLine->appendChild($dom->createElement('Product', Mage::helper('factoring')->__('Payment fee')));
-            $OrderLine->appendChild($dom->createElement('Qty', 1));
-            $OrderLine->appendChild($dom->createElement('UnitPrice', $fee));
-            $OrderLine->appendChild($dom->createElement('VatRate', 0));
-            $OrderLine->appendChild($dom->createElement('VatAmount', 0));
-            $OrderLine->appendChild($dom->createElement('Amount', $fee));
             $OrderLines->appendChild($OrderLine);
         }
 

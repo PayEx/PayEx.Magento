@@ -3,7 +3,7 @@
     <modules>
         <AAIT_PartPayment>
             <!-- declare module's version information for database updates -->
-            <version>1.0.0</version>
+            <version>1.0.1</version>
         </AAIT_PartPayment>
     </modules>
 

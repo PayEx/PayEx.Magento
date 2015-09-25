@@ -10,7 +10,7 @@
                 <Mage_Payment />
             </depends>
 <!-- declare module's version information for database updates -->
-            <version>1.0.25</version>
+            <version>1.0.26</version>
         </AAIT_Bankdebit>
     </modules>
 </config>

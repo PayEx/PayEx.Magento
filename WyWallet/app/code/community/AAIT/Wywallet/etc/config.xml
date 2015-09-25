@@ -3,7 +3,7 @@
     <modules>
         <AAIT_Wywallet>
             <!-- declare module's version information for database updates -->
-            <version>1.0.7</version>
+            <version>1.0.8</version>
         </AAIT_Wywallet>
     </modules>
 

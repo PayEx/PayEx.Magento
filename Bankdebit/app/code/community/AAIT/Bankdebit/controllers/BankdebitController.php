@@ -47,7 +47,7 @@ class AAIT_Bankdebit_BankdebitController extends Mage_Core_Controller_Front_Acti
 
         // Get Amount
         //$amount = $order->getGrandTotal();
-        $amount = Mage::helper('bankdebit/order')->getOrderAmount($order);
+        $amount = Mage::helper('bankdebit/order')->getCalculatedOrderAmount($order)->amount;
 
         // Get Bank Id
         $bank_id = Mage::getSingleton('checkout/session')->getBankId();

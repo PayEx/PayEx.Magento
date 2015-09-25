@@ -42,8 +42,8 @@ class AAIT_Factoring_FactoringController extends Mage_Core_Controller_Front_Acti
         $customer_id = (Mage::getSingleton('customer/session')->isLoggedIn() == true) ? Mage::getSingleton('customer/session')->getCustomer()->getId() : '0';
 
         // Get Amount
-        $amount = $order->getGrandTotal();
-        //$amount = Mage::helper('factoring/order')->getOrderAmount($order);
+        //$amount = $order->getGrandTotal();
+        $amount = Mage::helper('factoring/order')->getCalculatedOrderAmount($order)->amount;
 
         // Call PxOrder.Initialize8
         $params = array(

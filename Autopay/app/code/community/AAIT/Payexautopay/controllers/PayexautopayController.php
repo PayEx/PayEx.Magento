@@ -41,7 +41,7 @@ class AAIT_Payexautopay_PayexautopayController extends Mage_Core_Controller_Fron
 
         // Get Amount
         //$amount = $order->getGrandTotal();
-        $amount = Mage::helper('payexautopay/order')->getOrderAmount($order);
+        $amount = Mage::helper('payexautopay/order')->getCalculatedOrderAmount($order)->amount;
 
         // Get Current Customer Agreement
         $agreement = Mage::getModel('payexautopay/agreement')->load($customer_id, 'customer_id');
@@ -241,7 +241,7 @@ class AAIT_Payexautopay_PayexautopayController extends Mage_Core_Controller_Fron
 
         // Get Amount
         //$amount = $order->getGrandTotal();
-        $amount = Mage::helper('payexautopay/order')->getOrderAmount($order);
+        $amount = Mage::helper('payexautopay/order')->getCalculatedOrderAmount($order)->amount;
 
         // Get Current Customer Agreement
         $agreement = Mage::getModel('payexautopay/agreement')->load($customer_id, 'customer_id');

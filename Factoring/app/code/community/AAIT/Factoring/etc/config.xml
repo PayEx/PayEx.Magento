@@ -3,7 +3,7 @@
     <modules>
         <AAIT_Factoring>
             <!-- declare module's version information for database updates -->
-            <version>1.0.16</version>
+            <version>1.0.17</version>
         </AAIT_Factoring>
     </modules>
 

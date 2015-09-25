@@ -34,7 +34,7 @@ class AAIT_Wywallet_WywalletController extends Mage_Core_Controller_Front_Action
 
         // Get Amount
         //$amount = $order->getGrandTotal();
-        $amount = Mage::helper('wywallet/order')->getOrderAmount($order);
+        $amount = Mage::helper('wywallet/order')->getCalculatedOrderAmount($order)->amount;
 
         // Call PxOrder.Initialize8
         $params = array(

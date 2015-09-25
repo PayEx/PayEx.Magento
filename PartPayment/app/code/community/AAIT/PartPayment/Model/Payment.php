@@ -195,6 +195,14 @@ class AAIT_PartPayment_Model_Payment extends Mage_Payment_Model_Method_Abstract
         $transactionNumber = $details['transactionNumber'];
         $order_id = $payment->getOrder()->getIncrementId();
 
+        // Prevent Rounding Issue
+        // Difference can be ~0.0099999999999909
+        $order_amount = Mage::helper('partpayment/order')->getCalculatedOrderAmount($payment->getOrder())->amount;
+        $value = abs(sprintf("%.2f", $order_amount) - sprintf("%.2f", $amount));
+        if ($value > 0 && $value < 0.011) {
+            $amount = $order_amount;
+        }
+
         $xml = Mage::helper('partpayment/order')->getInvoiceExtraPrintBlocksXML($payment->getOrder());
 
         // Call PxOrder.Capture5

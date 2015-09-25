@@ -36,8 +36,8 @@ class AAIT_PartPayment_PaymentController extends Mage_Core_Controller_Front_Acti
         $customer_id = (Mage::getSingleton('customer/session')->isLoggedIn() == true) ? Mage::getSingleton('customer/session')->getCustomer()->getId() : '0';
 
         // Get Amount
-        $amount = $order->getGrandTotal();
-        //$amount = Mage::helper('partpayment/order')->getOrderAmount($order);
+        //$amount = $order->getGrandTotal();
+        $amount = Mage::helper('partpayment/order')->getCalculatedOrderAmount($order)->amount;
 
         // Call PxOrder.Initialize8
         $params = array(

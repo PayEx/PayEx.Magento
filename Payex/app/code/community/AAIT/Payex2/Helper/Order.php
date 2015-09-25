@@ -236,19 +236,22 @@ class AAIT_Payex2_Helper_Order extends Mage_Core_Helper_Abstract
     }
 
     /**
-     * Get Order Amount
-     * With Using Rounding Issue Fix
-     * @param Mage_Sales_Model_Order $order
-     * @return float
+     * Calculate Order amount
+     * With rounding issue detection
+     * @param $order
+     * @param int $order_amount
+     * @return stdClass
      */
-    public function getOrderAmount($order)
+    public function getCalculatedOrderAmount($order, $order_amount = 0)
     {
-        // At moment this function don't support discounts
-        if (abs($order->getDiscountAmount()) > 0) {
-            return $order->getGrandTotal();
+        // Order amount calculated by shop
+        if ($order_amount === 0) {
+            $order_amount = $order->getGrandTotal();
         }
 
+        // Order amount calculated manually
         $amount = 0;
+
         // add Order Items
         $items = $order->getAllVisibleItems();
         /** @var $item Mage_Sales_Model_Order_Item */
@@ -259,34 +262,39 @@ class AAIT_Payex2_Helper_Order extends Mage_Core_Helper_Abstract
 
             $itemQty = (int)$item->getQtyOrdered();
             $priceWithTax = $item->getPriceInclTax();
-            $amount += round(100 * Mage::app()->getStore()->roundPrice($itemQty * $priceWithTax));
+            $amount += (int)(100 * $itemQty * $priceWithTax);
         }
-
-        // add Discount
-        $discount = $order->getDiscountAmount();
-        $discount += $order->getShippingDiscountAmount();
-        $amount += round(100 * $discount);
-
-        // Add reward points
-        $amount += -1 * $order->getBaseRewardCurrencyAmount();
 
         // add Shipping
         if (!$order->getIsVirtual()) {
             $shippingIncTax = $order->getShippingInclTax();
-            $amount += round(100 * $shippingIncTax);
+            $amount += (int)(100 * $shippingIncTax);
         }
 
-        $grand_total = $order->getGrandTotal();
-        $amount = $amount / 100;
+        // add Discount
+        $discount = $order->getDiscountAmount() + $order->getShippingDiscountAmount();
+        $amount += (int)(100 * $discount);
 
-        $abs = abs(Mage::app()->getStore()->roundPrice($amount) - Mage::app()->getStore()->roundPrice($grand_total));
-        // Is ~0.010000000002037
-        if ($abs > 0 && $abs < 0.011) {
-            Mage::helper('payex2/tools')->addToDebug('Warning: Price rounding issue. ' . $grand_total . ' vs ' . $amount);
-            return $amount;
-        } else {
-            return $grand_total;
+        // Add reward points
+        $amount += -1 * (int)(100 * $order->getBaseRewardCurrencyAmount());
+
+        // Detect Rounding Issue
+        $rounded_total = sprintf("%.2f", $order_amount);
+        $rounded_control_amount = sprintf("%.2f", ($amount / 100));
+        $rounding = 0;
+        if ($rounded_total !== $rounded_control_amount) {
+            if ($rounded_total > $rounded_control_amount) {
+                $rounding = $rounded_total - $rounded_control_amount;
+            } else {
+                $rounding = -1 * ($rounded_control_amount - $rounded_total);
+            }
+            $rounding = sprintf("%.2f", $rounding);
         }
+
+        $result = new stdClass();
+        $result->amount = $rounded_control_amount;
+        $result->rounding = $rounding;
+        return $result;
     }
 
     /**
@@ -304,15 +312,15 @@ class AAIT_Payex2_Helper_Order extends Mage_Core_Helper_Abstract
         foreach ($items as $item) {
             // @todo Calculate prices using Discount Rules
             // @todo Get children products from bundle
-            if (!$item->getNoDiscount()) {
-                Mage::helper('payex2/tools')->addToDebug('Warning: The product has a discount. There might be problems.', $order->getIncrementId());
-            }
+            //if (!$item->getNoDiscount()) {
+            //    Mage::helper('payex2/tools')->addToDebug('Warning: The product has a discount. There might be problems.', $order->getIncrementId());
+            //}
 
             $itemQty = (int)$item->getQtyOrdered();
             //$taxPrice = $item->getTaxAmount();
-            $taxPrice = Mage::app()->getStore()->roundPrice($itemQty * $item->getPriceInclTax() - $itemQty * $item->getPrice());
+            $taxPrice = $itemQty * $item->getPriceInclTax() - $itemQty * $item->getPrice();
             $taxPercent = $item->getTaxPercent();
-            $priceWithTax = Mage::app()->getStore()->roundPrice($itemQty * $item->getPriceInclTax());
+            $priceWithTax = $itemQty * $item->getPriceInclTax();
 
             // Calculate tax percent for Bundle products
             if ($item->getProductType() === Mage_Catalog_Model_Product_Type::TYPE_BUNDLE) {
@@ -329,59 +337,9 @@ class AAIT_Payex2_Helper_Order extends Mage_Core_Helper_Abstract
                 'itemDescription4' => '',
                 'itemDescription5' => '',
                 'quantity' => $itemQty,
-                'amount' => round(100 * $priceWithTax), //must include tax
-                'vatPrice' => round(100 * $taxPrice),
-                'vatPercent' => round(100 * $taxPercent)
-            );
-
-            $result = Mage::helper('payex2/api')->getPx()->AddSingleOrderLine2($params);
-            Mage::helper('payex2/tools')->debugApi($result, 'PxOrder.AddSingleOrderLine2');
-            $i++;
-        }
-
-        // add Discount
-        $discount = $order->getDiscountAmount();
-
-        // exclude shipping discount
-        // discount is negative value
-        $discount += $order->getShippingDiscountAmount();
-
-        if (abs($discount) > 0) {
-            $params = array(
-                'accountNumber' => '',
-                'orderRef' => $orderRef,
-                'itemNumber' => $i,
-                'itemDescription1' => ($order->getDiscountDescription() !== null) ? Mage::helper('sales')->__('Discount (%s)', $order->getDiscountDescription()) : Mage::helper('sales')->__('Discount'),
-                'itemDescription2' => '',
-                'itemDescription3' => '',
-                'itemDescription4' => '',
-                'itemDescription5' => '',
-                'quantity' => 1,
-                'amount' => round(100 * $discount),
-                'vatPrice' => 0,
-                'vatPercent' => 0
-            );
-
-            $result = Mage::helper('payex2/api')->getPx()->AddSingleOrderLine2($params);
-            Mage::helper('payex2/tools')->debugApi($result, 'PxOrder.AddSingleOrderLine2');
-            $i++;
-        }
-
-        // Add reward points
-        if ((float)$order->getBaseRewardCurrencyAmount() > 0) {
-            $params = array(
-                'accountNumber' => '',
-                'orderRef' => $orderRef,
-                'itemNumber' => $i,
-                'itemDescription1' => Mage::helper('payex2')->__('Reward points'),
-                'itemDescription2' => '',
-                'itemDescription3' => '',
-                'itemDescription4' => '',
-                'itemDescription5' => '',
-                'quantity' => 1,
-                'amount' => round(-100 * $order->getBaseRewardCurrencyAmount()), //must include tax
-                'vatPrice' => 0,
-                'vatPercent' => 0
+                'amount' => (int)(100 * $priceWithTax), //must include tax
+                'vatPrice' => (int)(100 * $taxPrice),
+                'vatPercent' => (int)(100 * $taxPercent)
             );
 
             $result = Mage::helper('payex2/api')->getPx()->AddSingleOrderLine2($params);
@@ -405,8 +363,8 @@ class AAIT_Payex2_Helper_Order extends Mage_Core_Helper_Abstract
                 'itemDescription4' => '',
                 'itemDescription5' => '',
                 'quantity' => 1,
-                'amount' => round(100 * $shippingIncTax), //must include tax
-                'vatPrice' => round(100 * $shippingTax),
+                'amount' => (int)(100 * $shippingIncTax), //must include tax
+                'vatPrice' => (int)(100 * $shippingTax),
                 'vatPercent' => $shipping != 0 ? round((100 * 100 * ($shippingTax) / $shipping)) : 0
             );
 
@@ -414,6 +372,52 @@ class AAIT_Payex2_Helper_Order extends Mage_Core_Helper_Abstract
             Mage::helper('payex2/tools')->debugApi($result, 'PxOrder.AddSingleOrderLine2');
             $i++;
         }
+
+        // add Discount
+        $discount = $order->getDiscountAmount() + $order->getShippingDiscountAmount();
+        if (abs($discount) > 0) {
+            $params = array(
+                'accountNumber' => '',
+                'orderRef' => $orderRef,
+                'itemNumber' => $i,
+                'itemDescription1' => ($order->getDiscountDescription() !== null) ? Mage::helper('sales')->__('Discount (%s)', $order->getDiscountDescription()) : Mage::helper('sales')->__('Discount'),
+                'itemDescription2' => '',
+                'itemDescription3' => '',
+                'itemDescription4' => '',
+                'itemDescription5' => '',
+                'quantity' => 1,
+                'amount' => (int)(100 * $discount),
+                'vatPrice' => 0,
+                'vatPercent' => 0
+            );
+
+            $result = Mage::helper('payex2/api')->getPx()->AddSingleOrderLine2($params);
+            Mage::helper('payex2/tools')->debugApi($result, 'PxOrder.AddSingleOrderLine2');
+            $i++;
+        }
+
+        // Add reward points
+        if ((float)$order->getBaseRewardCurrencyAmount() > 0) {
+            $params = array(
+                'accountNumber' => '',
+                'orderRef' => $orderRef,
+                'itemNumber' => $i,
+                'itemDescription1' => Mage::helper('payex2')->__('Reward points'),
+                'itemDescription2' => '',
+                'itemDescription3' => '',
+                'itemDescription4' => '',
+                'itemDescription5' => '',
+                'quantity' => 1,
+                'amount' => -1 * (int)(100 * $order->getBaseRewardCurrencyAmount()), //must include tax
+                'vatPrice' => 0,
+                'vatPercent' => 0
+            );
+
+            $result = Mage::helper('payex2/api')->getPx()->AddSingleOrderLine2($params);
+            Mage::helper('payex2/tools')->debugApi($result, 'PxOrder.AddSingleOrderLine2');
+            $i++;
+        }
+
         return true;
     }
 
