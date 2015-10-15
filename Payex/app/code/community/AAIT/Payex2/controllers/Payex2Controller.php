@@ -53,7 +53,13 @@ class AAIT_Payex2_Payex2Controller extends Mage_Core_Controller_Front_Action
         // Responsive Skinning
         if (Mage::getSingleton('payex2/payment')->getConfigData('responsive') === '1') {
             $separator = (!empty($additional) && mb_substr($additional, -1) !== '&') ? '&' : '';
-            $additional .= $separator . 'USECSS=RESPONSIVEDESIGN';
+
+            // PayEx Payment Page 2.0  works only for View 'Credit Card' and 'Direct Debit' at the moment
+            if (in_array($paymentview, array('CREDITCARD', 'DIRECTDEBIT'))) {
+                $additional .= $separator . 'RESPONSIVE=1';
+            } else {
+                $additional .= $separator . 'USECSS=RESPONSIVEDESIGN';
+            }
         }
 
         // Get Amount

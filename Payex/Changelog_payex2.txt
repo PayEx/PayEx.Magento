@@ -1,3 +1,9 @@
+Version 2.0.29
+* PayEx Payment Page 2.0 for 'Credit Card' and 'Direct Debit' views
+
+Version 2.0.28
+* Improved rounding issue workaround
+
 Version 2.0.27
 * Added Reward points support
 

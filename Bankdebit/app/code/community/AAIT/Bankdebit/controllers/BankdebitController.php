@@ -42,7 +42,7 @@ class AAIT_Bankdebit_BankdebitController extends Mage_Core_Controller_Front_Acti
         // Responsive Skinning
         if (Mage::getSingleton('bankdebit/payment')->getConfigData('responsive') === '1') {
             $separator = (!empty($additional) && mb_substr($additional, -1) !== '&') ? '&' : '';
-            $additional .= $separator . 'USECSS=RESPONSIVEDESIGN';
+            $additional .= $separator . 'RESPONSIVE=1';
         }
 
         // Get Amount
