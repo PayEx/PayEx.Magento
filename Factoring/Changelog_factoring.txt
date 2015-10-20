@@ -1,3 +1,9 @@
+Version 1.0.18
+* Use postcode when SSN validation
+
+Version 1.0.17
+* Improved rounding issue workaround
+
 Version 1.0.16
 * Implemented "Financing Invoice" method
 * Updated SSN verification method

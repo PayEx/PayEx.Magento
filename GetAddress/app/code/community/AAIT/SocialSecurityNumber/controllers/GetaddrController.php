@@ -19,14 +19,25 @@ class AAIT_SocialSecurityNumber_GetaddrController extends Mage_Core_Controller_F
             return;
         }
 
-        $ssn = preg_replace('/[^0-9]/s', '', $ssn);
+        //$ssn = preg_replace('/[^0-9]/s', '', $ssn);
 
         // Get Country Code
-        $country_code = Mage::helper('aait_ssn')->getCountryCodeBySSN($ssn);
-        if (!$country_code) {
+        //$country_code = Mage::helper('aait_ssn')->getCountryCodeBySSN($ssn);
+        //if (!$country_code) {
+        //    $data = array(
+        //        'success' => false,
+        //        'message' => Mage::helper('aait_ssn')->__('Invalid Social Security Number')
+        //    );
+        //    $this->getResponse()->setHeader('Content-type', 'application/json');
+        //    $this->getResponse()->setBody(Zend_Json::encode($data));
+        //    return;
+        //}
+
+        $country_code = $this->getRequest()->getParam('country_code');
+        if (empty($country_code)) {
             $data = array(
                 'success' => false,
-                'message' => Mage::helper('aait_ssn')->__('Invalid Social Security Number')
+                'message' => Mage::helper('aait_ssn')->__('Country is empty')
             );
             $this->getResponse()->setHeader('Content-type', 'application/json');
             $this->getResponse()->setBody(Zend_Json::encode($data));
@@ -43,6 +54,17 @@ class AAIT_SocialSecurityNumber_GetaddrController extends Mage_Core_Controller_F
             return;
         }
 
+        $postcode = $this->getRequest()->getParam('postcode');
+        if (empty($postcode)) {
+            $data = array(
+                'success' => false,
+                'message' => Mage::helper('aait_ssn')->__('Postcode is empty')
+            );
+            $this->getResponse()->setHeader('Content-type', 'application/json');
+            $this->getResponse()->setBody(Zend_Json::encode($data));
+            return;
+        }
+
         // Init PayEx
         $px = Mage::helper('aait_ssn')->getPx();
         $px->setEnvironment(Mage::getStoreConfig(self::XML_PATH_MODULE_ACCOUNTNUMBER), Mage::getStoreConfig(self::XML_PATH_MODULE_ENCRYPTIONKEY), (bool)Mage::getStoreConfig(self::XML_PATH_MODULE_DEBUG));
@@ -52,7 +74,7 @@ class AAIT_SocialSecurityNumber_GetaddrController extends Mage_Core_Controller_F
             'accountNumber' => '',
             'paymentMethod' => 'PXFINANCINGINVOICE' . $country_code,
             'ssn' => $ssn,
-            'zipcode' => '',
+            'zipcode' => $postcode,
             'countryCode' => $country_code,
             'ipAddress' => Mage::helper('core/http')->getRemoteAddr()
         );

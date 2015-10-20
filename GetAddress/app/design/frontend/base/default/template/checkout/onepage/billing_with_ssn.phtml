@@ -24,9 +24,46 @@
  * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
  */
 ?>
-<script type="text/javascript">
+<!-- Start Social Security Number Block -->
+<form id="social_security_number_form">
+    <div class="form-list">
+        <div class="field">
+            <label for="socialSecurityNumber" class="required"><em>*</em><?php echo Mage::helper('aait_ssn')->__('Social Security Number'); ?></label>
+            <div class="input-box">
+                <input type="text" title="<?php echo Mage::helper('aait_ssn')->__('Social Security Number'); ?>" name="socialSecurityNumber" id="socialSecurityNumber" class="input-text required-entry" />
+            </div>
+        </div>
+        <div class="field">
+            <button style="margin-top: 17px;" type="button" title="<?php echo Mage::helper('aait_ssn')->__('Get Address'); ?>" class="button" id="ssn_click"><span><span><?php echo Mage::helper('aait_ssn')->__('Get Address'); ?></span></span></button>
+        </div>
+        <div class="clearer">&nbsp;</div>
+        <div class="field">
+            <label for="check_country" class="required"><em>*</em><?php echo Mage::helper('aait_ssn')->__('Country'); ?></label>
+            <div class="input-box">
+                <select name="check_country" id="check_country" class="validate-select required-entry" title="Country">
+                    <option value="SE" selected="selected"><?php echo Mage::helper('aait_ssn')->__('Sweden'); ?></option>
+                    <option value="NO"><?php echo Mage::helper('aait_ssn')->__('Norway'); ?></option>
+                </select>
+            </div>
+        </div>
+        <div class="clearer">&nbsp;</div>
+        <div class="field">
+            <label for="check_postcode" class="required"><em>*</em><?php echo Mage::helper('aait_ssn')->__('Postal Code'); ?></label>
+            <div class="input-box">
+                <input type="text" title="<?php echo Mage::helper('aait_ssn')->__('Postal Code'); ?>" name="check_postcode" id="check_postcode" class="input-text validate-zip required-entry" />
+            </div>
+        </div>
+    </div>
+</form>
+<div class="clearer">&nbsp;</div>
+
+<script type="application/javascript">
+    //<![CDATA[
     var MAGENTO_BASE_URL = '<?php echo  Mage::getBaseUrl(); ?>';
+    window.PAYEX_SSN_FORM = new VarienForm('social_security_number_form', false);
+    //]]>
 </script>
+<!-- End Social Security Number Block -->
 
 <form id="co-billing-form" action="">
     <fieldset>
@@ -39,19 +76,6 @@
                     </div>
                 </li>
             <?php endif; ?>
-            <!-- Start Social Security Number Block -->
-            <li class="fields">
-                <div class="field">
-                    <label for="socialSecurityNumber"><em>*</em><?php echo Mage::helper('aait_ssn')->__('Social Security Number'); ?></label>
-                    <div class="input-box">
-                        <input type="text" title="<?php echo Mage::helper('aait_ssn')->__('Social Security Number'); ?>" name="socialSecurityNumber" id="socialSecurityNumber" class="input-text" />
-                    </div>
-                </div>
-                <div class="field">
-                    <button style="margin-top: 17px;" type="button" title="<?php echo Mage::helper('aait_ssn')->__('Get Address'); ?>" class="button" id="ssn_click"><span><span><?php echo Mage::helper('aait_ssn')->__('Get Address'); ?></span></span></button>
-                </div>
-            </li>
-            <!-- End Social Security Number Block -->
             <li id="billing-new-address-form"<?php if ($this->customerHasAddresses()): ?> style="display:none;"<?php endif; ?>>
                 <fieldset>
                     <input type="hidden" name="billing[address_id]" value="<?php echo $this->getAddress()->getId() ?>" id="billing:address_id" />

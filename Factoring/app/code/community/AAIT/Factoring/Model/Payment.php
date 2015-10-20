@@ -105,6 +105,8 @@ class AAIT_Factoring_Model_Payment extends Mage_Payment_Model_Method_Abstract
         // Get the iso2 Country Code from the billing section
         $country_code = $this->getQuote()->getBillingAddress()->getCountry();
 
+        $postcode = $this->getQuote()->getBillingAddress()->getPostcode();
+
         // Get current currency
         $paymentInfo = $this->getInfoInstance();
 
@@ -120,6 +122,14 @@ class AAIT_Factoring_Model_Payment extends Mage_Payment_Model_Method_Abstract
             Mage::throwException(Mage::helper('factoring')->__('Selected currency code (%s) is not compatible with PayEx', $currency_code));
         }
 
+        if (empty($country_code)) {
+            Mage::throwException(Mage::helper('factoring')->__('Please select country.'));
+        }
+
+        if (empty($postcode)) {
+            Mage::throwException(Mage::helper('factoring')->__('Please enter postcode.'));
+        }
+
         // Get Social Security Number
         // You can use 8111032382 in Test Environment
         $ssn = Mage::app()->getRequest()->getParam('social-security-number');
@@ -128,7 +138,7 @@ class AAIT_Factoring_Model_Payment extends Mage_Payment_Model_Method_Abstract
             'accountNumber' => '',
             'paymentMethod' => $country_code === 'SE' ? 'PXFINANCINGINVOICESE' : 'PXFINANCINGINVOICENO',
             'ssn' => $ssn,
-            'zipcode' => '',
+            'zipcode' => $postcode,
             'countryCode' => $country_code,
             'ipAddress' => Mage::helper('core/http')->getRemoteAddr()
         );
