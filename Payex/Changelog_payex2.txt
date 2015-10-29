@@ -1,3 +1,6 @@
+Version 2.0.30
+* Improved update checker
+
 Version 2.0.29
 * PayEx Payment Page 2.0 for 'Credit Card' and 'Direct Debit' views
 

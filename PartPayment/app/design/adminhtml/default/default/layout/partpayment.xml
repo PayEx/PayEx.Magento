@@ -1,12 +1,6 @@
 <?xml version="1.0"?>
 
 <layout>
-    <adminhtml_system_config_edit>
-        <reference name="head">
-            <action method="addCss"><name>partpayment/partpayment_admin.css</name></action>
-        </reference>
-    </adminhtml_system_config_edit>
-
     <adminhtml_sales_order_view>
         <reference name="order_totals">
             <block name="partpayment_payment_fee" type="partpayment/order_totals_fee" before="tax"/>

@@ -1,3 +1,9 @@
+Version 2.0.29
+* Code cleanup
+
+Version 2.0.28
+* Improved rounding issue workaround
+
 Version 2.0.27
 * Validate transactionStatus value for AutoPay transactions
 

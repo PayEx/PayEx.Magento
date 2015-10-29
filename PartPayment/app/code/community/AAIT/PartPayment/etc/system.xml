@@ -138,15 +138,6 @@
                         </cleantime>
                     </fields>
                 </partpayment>
-
-                <!-- Hint -->
-                <partpayment_hint translate="label" module="partpayment">
-                    <frontend_model>partpayment/adminhtml_config_hint</frontend_model>
-                    <sort_order>-60</sort_order>
-                    <show_in_default>1</show_in_default>
-                    <show_in_website>1</show_in_website>
-                    <show_in_store>1</show_in_store>
-                </partpayment_hint>
             </groups>
         </payment>
     </sections>

@@ -1,12 +1,6 @@
 <?xml version="1.0"?>
 
 <layout>
-    <adminhtml_system_config_edit>
-        <reference name="head">
-            <action method="addCss"><name>factoring/factoring_admin.css</name></action>
-        </reference>
-    </adminhtml_system_config_edit>
-
     <adminhtml_sales_order_view>
         <reference name="order_totals">
             <block name="factoring_payment_fee" type="factoring/order_totals_fee" before="tax"/>

@@ -1,5 +1,5 @@
 #payex-settings-hint {
-    background: url("http://shop.aait.se/logo.gif") no-repeat scroll 5px center #61D7A4;
+    background: url("payex-logo.gif") no-repeat scroll 5px center #61D7A4;
     border: 1px solid #00AF64;
     margin-bottom: 10px;
     padding: 10px 10px 10px 180px;
@@ -12,4 +12,9 @@
 #payex-settings-hint ul.modules li {
     list-style-type: disc;
     margin-left: 25px;
+}
+
+#payex-settings-hint .last-version {
+    color: red;
+    font-weight: bold;
 }

@@ -143,15 +143,6 @@
                         </responsive>
                     </fields>
                 </bankdebit>
-
-                <!-- Hint -->
-                <bankdebit_hint translate="label" module="bankdebit">
-                    <frontend_model>bankdebit/adminhtml_config_hint</frontend_model>
-                    <sort_order>-60</sort_order>
-                    <show_in_default>1</show_in_default>
-                    <show_in_website>1</show_in_website>
-                    <show_in_store>1</show_in_store>
-                </bankdebit_hint>
             </groups>
         </payment>
     </sections>

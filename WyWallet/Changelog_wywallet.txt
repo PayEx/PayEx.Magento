@@ -1,3 +1,9 @@
+Version 1.0.9
+* Code cleanup
+
+Version 1.0.8
+* Improved rounding issue workaround
+
 Version 1.0.7
 * Added Reward points support
 

@@ -3,7 +3,7 @@
     <modules>
         <AAIT_Wywallet>
             <!-- declare module's version information for database updates -->
-            <version>1.0.8</version>
+            <version>1.0.9</version>
         </AAIT_Wywallet>
     </modules>
 
@@ -95,17 +95,6 @@
             </wywallet>
         </payment>
     </default>
-
-    <adminhtml>
-        <!-- Updates layout... -->
-        <layout>
-            <updates>
-                <wywallet>
-                    <file>wywallet_admin.xml</file>
-                </wywallet>
-            </updates>
-        </layout>
-    </adminhtml>
 
     <frontend>
         <!-- Routes... -->

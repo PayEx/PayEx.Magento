@@ -154,15 +154,6 @@
                         </responsive>
                     </fields>
                 </wywallet>
-
-                <!-- Hint -->
-                <wywallet_hint translate="label" module="wywallet">
-                    <frontend_model>wywallet/adminhtml_config_hint</frontend_model>
-                    <sort_order>-60</sort_order>
-                    <show_in_default>1</show_in_default>
-                    <show_in_website>1</show_in_website>
-                    <show_in_store>1</show_in_store>
-                </wywallet_hint>
             </groups>
         </payment>
     </sections>

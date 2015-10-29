@@ -3,7 +3,7 @@
     <modules>
         <AAIT_Bankdebit>
             <!-- declare module's version information for database updates -->
-            <version>1.0.27</version>
+            <version>1.0.28</version>
         </AAIT_Bankdebit>
     </modules>
 
@@ -130,15 +130,6 @@
                 </AAIT_Bankdebit>
             </modules>
         </translate>
-
-        <!-- Updates layout... -->
-        <layout>
-            <updates>
-                <bankdebit>
-                    <file>bankdebit_admin.xml</file>
-                </bankdebit>
-            </updates>
-        </layout>
     </adminhtml>
 
     <crontab>

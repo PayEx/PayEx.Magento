@@ -12,15 +12,23 @@ class AAIT_Payex2_Block_Adminhtml_Config_Hint extends Mage_Adminhtml_Block_Abstr
      */
     public function render(Varien_Data_Form_Element_Abstract $element)
     {
-        // Prevent duplicate show
-        if (!Mage::getSingleton('adminhtml/session')->getIsPayexHintShowed()) {
-            // Show hint message
-            $modules = Mage::helper('payex2/update')->getAvailableVersions();
-            $this->assign('modules', $modules);
-            Mage::getSingleton('adminhtml/session')->setIsPayexHintShowed(true);
-            return $this->toHtml();
+        // Load cached available versions info
+        $availableVersions = Mage::app()->loadCache('payex_available_versions');
+        $availableVersions = $availableVersions ? @unserialize($availableVersions) : array();
+
+        // Prepare modules info
+        $result = array();
+        $modules = Mage::getModel('payex2/feed')->getInstalledPayExModules();
+        foreach ($modules as $module => $current_version) {
+            $name = ucfirst(str_replace('AAIT_', '', $module));
+            $result[$name] = array(
+                'current_version' => $current_version,
+                'last_version' => isset($availableVersions[$module]) ? $availableVersions[$module]['version'] : $current_version
+            );
         }
 
-        return '';
+        $this->assign('modules',  $result);
+        Mage::getSingleton('adminhtml/session')->setIsPayexHintShowed(true);
+        return $this->toHtml();
     }
 }
