@@ -105,6 +105,9 @@ class AAIT_PartPayment_Model_Payment extends Mage_Payment_Model_Method_Abstract
         // Get the iso2 Country Code from the billing section
         $country_code = $this->getQuote()->getBillingAddress()->getCountry();
 
+        // Get Postcode
+        $postcode = $this->getQuote()->getBillingAddress()->getPostcode();
+
         // Get current currency
         $paymentInfo = $this->getInfoInstance();
 
@@ -128,7 +131,7 @@ class AAIT_PartPayment_Model_Payment extends Mage_Payment_Model_Method_Abstract
             'accountNumber' => '',
             'paymentMethod' => $country_code === 'SE' ? 'PXFINANCINGINVOICESE' : 'PXFINANCINGINVOICENO',
             'ssn' => $ssn,
-            'zipcode' => '',
+            'zipcode' => $postcode,
             'countryCode' => $country_code,
             'ipAddress' => Mage::helper('core/http')->getRemoteAddr()
         );
