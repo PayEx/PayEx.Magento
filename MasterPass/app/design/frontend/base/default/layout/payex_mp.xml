@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+    <default>
+    <!--CSS and JS Files-->
+        <reference name="head">
+            <action method="addItem"><type>skin_css</type><name>css/payex/masterpass.css</name></action>
+        </reference>
+    </default>
+
+    <checkout_cart_index>
+        <reference name="checkout.cart.top_methods">
+            <block type="payex_mp/button" name="checkout.cart.methods.masterpass.top" template="payex_mp/button.phtml" />
+        </reference>
+
+        <reference name="checkout.cart.methods">
+            <block type="payex_mp/button" name="checkout.cart.methods.masterpass.bottom" template="payex_mp/button.phtml" />
+        </reference>
+    </checkout_cart_index>
+
+    <checkout_onepage_index>
+        <reference name="checkout.onepage.login.before">
+            <block type="payex_mp/button" name="checkout.cart.methods.masterpass.bottom" template="payex_mp/button.phtml" />
+        </reference>
+    </checkout_onepage_index>
+</layout>
