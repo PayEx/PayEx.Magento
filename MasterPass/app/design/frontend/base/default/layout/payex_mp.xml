@@ -8,18 +8,22 @@
     </default>
 
     <checkout_cart_index>
+        <block type="payex_mp/button" name="payex_mp_button" template="payex_mp/button.phtml" />
+
         <reference name="checkout.cart.top_methods">
-            <block type="payex_mp/button" name="checkout.cart.methods.masterpass.top" template="payex_mp/button.phtml" />
+            <action method="append" ifconfig="payment/payex_mp/active"><block>payex_mp_button</block></action>
         </reference>
 
         <reference name="checkout.cart.methods">
-            <block type="payex_mp/button" name="checkout.cart.methods.masterpass.bottom" template="payex_mp/button.phtml" />
+            <action method="append" ifconfig="payment/payex_mp/active"><block>payex_mp_button</block></action>
         </reference>
     </checkout_cart_index>
 
     <checkout_onepage_index>
+        <block type="payex_mp/button" name="payex_mp_button" template="payex_mp/button.phtml" />
+
         <reference name="checkout.onepage.login.before">
-            <block type="payex_mp/button" name="checkout.cart.methods.masterpass.bottom" template="payex_mp/button.phtml" />
+            <action method="append" ifconfig="payment/payex_mp/active"><block>payex_mp_button</block></action>
         </reference>
     </checkout_onepage_index>
 </layout>
