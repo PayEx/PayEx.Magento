@@ -122,6 +122,23 @@ class AAIT_Factoring_Model_Payment extends Mage_Payment_Model_Method_Abstract
             Mage::throwException(Mage::helper('factoring')->__('Selected currency code (%s) is not compatible with PayEx', $currency_code));
         }
 
+        // Validate Product names
+        if ($paymentInfo->getQuote()) {
+            $items = $paymentInfo->getQuote()->getAllVisibleItems();
+            /** @var $item Mage_Sales_Model_Quote_Item */
+            foreach ($items as $item) {
+                $re = "/[a-zA-Z0-9_:!#=?\\[\\]@{}´ %-À-ÖØ-öø-ú]*/u";
+                $product_name = $item->getName();
+
+                $matches = array();
+                preg_match($re, $product_name, $matches);
+                $test = implode('', $matches);
+                if (md5($product_name) !== md5($test)) {
+                    Mage::throwException(Mage::helper('factoring')->__('Product name "%s" contains invalid characters.', $product_name));
+                }
+            }
+        }
+
         if (empty($country_code)) {
             Mage::throwException(Mage::helper('factoring')->__('Please select country.'));
         }
