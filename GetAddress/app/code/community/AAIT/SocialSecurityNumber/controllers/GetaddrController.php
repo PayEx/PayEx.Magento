@@ -103,6 +103,10 @@ class AAIT_SocialSecurityNumber_GetaddrController extends Mage_Core_Controller_F
             'country' => $result['countryCode']
         );
 
+        // Save data in Session
+        Mage::getSingleton('checkout/session')->setPayexSSN($ssn);
+        Mage::getSingleton('checkout/session')->setPayexSSNData($data);
+
         $this->getResponse()->setHeader('Content-type', 'application/json');
         $this->getResponse()->setBody(Zend_Json::encode($data));
     }

@@ -1,3 +1,12 @@
+<?php
+/**
+ * @see AAIT_PartPayment_Block_Form
+ */
+
+// Get saved SSN from SSN extension
+$socal_security_number = $this->getPayexSSN();
+?>
+
 <fieldset class="form-list">
     <?php $_code = $this->getMethodCode() ?>
     <ul id="payment_form_<?php echo $_code ?>" style="display:none">
@@ -8,12 +17,21 @@
             <div style="float:left">
                 <!-- Start PayEx PartPayment block -->
                 <form action="<?php echo $this->getFormAction(); ?>" method="post">
-                    <label
-                        for="social-security-number"><?php echo Mage::helper('partpayment')->__('Social Security Number'); ?>
-                        <span class="required">*</span></label><br/>
-                    <input name="social-security-number" id="social-security-number"
-                           title="<?php echo Mage::helper('partpayment')->__('Social Security Number'); ?>" value="<?php echo Mage::helper('partpayment')->__('Social Security Number'); ?>"
-                           class="required-entry input-text" type="text"/><br/>
+                    <?php if (empty($socal_security_number)): ?>
+                        <label
+                            for="social-security-number"><?php echo Mage::helper('partpayment')->__('Social Security Number'); ?>
+                            <span class="required">*</span></label><br/>
+                        <input name="social-security-number" id="social-security-number"
+                               title="<?php echo Mage::helper('partpayment')->__('Social Security Number'); ?>" value="<?php echo Mage::helper('partpayment')->__('Social Security Number'); ?>"
+                               class="required-entry input-text" type="text"/><br/>
+                    <?php else: ?>
+                        <label
+                            for="social-security-number"><?php echo Mage::helper('partpayment')->__('Social Security Number'); ?>
+                            <span class="required">*</span></label><br/>
+                        <input name="social-security-number" id="social-security-number"
+                               title="<?php echo Mage::helper('partpayment')->__('Social Security Number'); ?>" value="<?php echo $socal_security_number; ?>"
+                               class="required-entry input-text" type="text" readonly/><br/>
+                    <?php endif; ?>
                 </form>
                 <div><strong><?php echo Mage::helper('partpayment')->__('Payment fee'); ?>:</strong>
                     <?php echo Mage::helper('core')->currency(Mage::getSingleton('partpayment/fee')->getPaymentFee()); ?>
