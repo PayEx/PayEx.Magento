@@ -1,0 +1,11 @@
+# this is global (all payex modules use this file)
+# only "Shared" does incude it though to avoid conflicts
+# lib/Px/Px.php
+
+app/code/community/AAIT/PartPayment
+app/design/adminhtml/default/default/layout/partpayment.xml
+app/design/adminhtml/default/default/template/partpayment
+app/design/frontend/base/default/layout/partpayment.xml
+app/design/frontend/base/default/template/partpayment
+app/etc/modules/AAIT_PartPayment.xml
+skin/frontend/base/default/images/partpayment

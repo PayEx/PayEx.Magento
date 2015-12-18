@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <AAIT_Shared>
+            <version>1.0.0</version>
+        </AAIT_Shared>
+    </modules>
+</config>

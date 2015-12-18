@@ -1,0 +1,13 @@
+# this is global (all payex modules use this file)
+# only "Shared" does incude it though to avoid conflicts
+# lib/Px/Px.php
+
+app/code/community/AAIT/Factoring
+app/design/adminhtml/default/default/layout/factoring.xml
+app/design/adminhtml/default/default/template/factoring
+app/design/frontend/base/default/layout/factoring.xml
+app/design/frontend/base/default/template/factoring
+app/etc/modules/AAIT_Factoring.xml
+app/locale/en_US/AAIT_Factoring.csv
+app/locale/sv_SE/AAIT_Factoring.csv
+skin/frontend/base/default/images/factoring

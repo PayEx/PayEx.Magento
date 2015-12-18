@@ -1,0 +1,6 @@
+# this is global (all payex modules use this file)
+# only "Shared" does incude it though to avoid conflicts
+lib/Px/Px.php
+
+app/code/community/AAIT/Shared
+app/etc/modules/AAIT_Shared.xml

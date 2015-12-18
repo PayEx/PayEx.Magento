@@ -1,0 +1,15 @@
+# Note: Shared includes a file in lib, that all modules use
+@import Shared
+
+# Comment out any modules you do not wish to install
+# by adding a # before the lines below
+# Note, do this before you run "modman deploy"
+
+@import Autopay
+@import Bankdebit
+@import Factoring
+@import GetAddress
+@import PartPayment
+@import Payex
+@import Payexapi
+@import WyWallet

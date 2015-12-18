@@ -1,0 +1,9 @@
+# this is global (all payex modules use this file)
+# only "Shared" does incude it though to avoid conflicts
+# lib/Px/Px.php
+
+app/code/community/AAIT/SocialSecurityNumber
+app/design/frontend/base/default/layout/aait_ssn
+app/design/frontend/base/default/template/checkout/onepage/billing_with_ssn.phtml
+app/etc/modules/AAIT_SocialSecurityNumber.xml
+js/aait_ssn
