@@ -5,4 +5,11 @@
             <version>1.0.0</version>
         </AAIT_Shared>
     </modules>
+    <global>
+        <helpers>
+            <payexshared>
+                <class>AAIT_Shared_Helper</class>
+            </payexshared>
+        </helpers>
+    </global>
 </config>
