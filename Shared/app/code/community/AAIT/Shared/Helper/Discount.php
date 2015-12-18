@@ -126,7 +126,10 @@ class AAIT_Shared_Helper_Discount extends AAIT_Shared_Helper_Data {
 		}
 
         // find out tax-rate for the shipping
-		$shippingTaxRate = ($order->getShippingInclTax()) / $order->getShippingAmount();
+		if((float) $order->getShippingInclTax() && (float) $order->getShippingAmount())
+            $shippingTaxRate = $order->getShippingInclTax() / $order->getShippingAmount();
+        else
+            $shippingTaxRate = 1;
 		
 		// get discount amount for shipping
 		$shippingDiscount = $order->getShippingDiscountAmount();

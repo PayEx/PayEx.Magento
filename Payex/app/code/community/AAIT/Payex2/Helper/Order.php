@@ -317,15 +317,10 @@ class AAIT_Payex2_Helper_Order extends Mage_Core_Helper_Abstract
             //}
 
             $itemQty = (int)$item->getQtyOrdered();
-            //$taxPrice = $item->getTaxAmount();
-            $taxPrice = $itemQty * $item->getPriceInclTax() - $itemQty * $item->getPrice();
-            $taxPercent = $item->getTaxPercent();
-            $priceWithTax = $itemQty * $item->getPriceInclTax();
-
-            // Calculate tax percent for Bundle products
-            if ($item->getProductType() === Mage_Catalog_Model_Product_Type::TYPE_BUNDLE) {
-                $taxPercent = ($taxPrice > 0) ? round(100 / (($priceWithTax - $taxPrice) / $taxPrice)) : 0;
-            }
+            $priceWithTax = $item->getRowTotalInclTax();
+            $priceWithoutTax = $item->getRowTotal();
+            $taxPercent = (($priceWithTax / $priceWithoutTax) - 1) * 100; // works for all types
+            $taxPrice = $priceWithTax - $priceWithoutTax;
 
             $params = array(
                 'accountNumber' => '',
@@ -349,9 +344,15 @@ class AAIT_Payex2_Helper_Order extends Mage_Core_Helper_Abstract
 
         // add Shipping
         if (!$order->getIsVirtual()) {
-            $shipping = $order->getShippingAmount();
+            $shippingExclTax = $order->getShippingAmount();
             $shippingIncTax = $order->getShippingInclTax();
             $shippingTax = $order->getShippingTaxAmount();
+
+            // find out tax-rate for the shipping
+            if((float) $shippingIncTax && (float) $shippingExclTax)
+                $shippingTaxRate = (($shippingIncTax / $shippingExclTax) - 1) * 100;
+            else
+                $shippingTaxRate = 0;
 
             $params = array(
                 'accountNumber' => '',
@@ -365,7 +366,7 @@ class AAIT_Payex2_Helper_Order extends Mage_Core_Helper_Abstract
                 'quantity' => 1,
                 'amount' => (int)(100 * $shippingIncTax), //must include tax
                 'vatPrice' => (int)(100 * $shippingTax),
-                'vatPercent' => $shipping != 0 ? round((100 * 100 * ($shippingTax) / $shipping)) : 0
+                'vatPercent' => (int)(100 * $shippingTaxRate)
             );
 
             $result = Mage::helper('payex2/api')->getPx()->AddSingleOrderLine2($params);
@@ -374,8 +375,15 @@ class AAIT_Payex2_Helper_Order extends Mage_Core_Helper_Abstract
         }
 
         // add Discount
-        $discount = $order->getDiscountAmount() + $order->getShippingDiscountAmount();
-        if (abs($discount) > 0) {
+        /** @var AAIT_Shared_Helper_Discount $discountHelper */
+        $discountHelper = Mage::helper("payexshared/discount");
+        $discountData = $discountHelper->getOrderDiscountData($order);
+
+        $discountInclTax = $discountData->getDiscountInclTax();
+        $discountExclTax = $discountData->getDiscountExclTax();
+        $discountVatAmount = $discountInclTax - $discountExclTax;
+        $discountVatPercent = (($discountInclTax / $discountExclTax) - 1) * 100;
+        if (abs($discountInclTax) > 0) {
             $params = array(
                 'accountNumber' => '',
                 'orderRef' => $orderRef,
@@ -386,9 +394,9 @@ class AAIT_Payex2_Helper_Order extends Mage_Core_Helper_Abstract
                 'itemDescription4' => '',
                 'itemDescription5' => '',
                 'quantity' => 1,
-                'amount' => (int)(100 * $discount),
-                'vatPrice' => 0,
-                'vatPercent' => 0
+                'amount' => (int)(100 * $discountInclTax),
+                'vatPrice' => (int) (100 * $discountVatAmount),
+                'vatPercent' => (int) (100 * $discountVatPercent)
             );
 
             $result = Mage::helper('payex2/api')->getPx()->AddSingleOrderLine2($params);
