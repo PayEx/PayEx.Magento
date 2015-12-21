@@ -564,8 +564,10 @@ class AAIT_Shared_Helper_Order extends Mage_Core_Helper_Abstract
             $taxPercent = (($priceWithTax / $priceWithoutTax) - 1) * 100; // works for all types
             $taxPrice = $priceWithTax - $priceWithoutTax;
 
+            mb_regex_encoding("utf-8");
+
             $OrderLine = $dom->createElement('OrderLine');
-            $OrderLine->appendChild($dom->createElement('Product', $item->getName()));
+            $OrderLine->appendChild($dom->createElement('Product', trim(mb_ereg_replace('[^a-zA-Z0-9_:!#=?\[\]@{}´ %-\/À-ÖØ-öø-ú]',"-",$item->getName()))));
             $OrderLine->appendChild($dom->createElement('Qty', $itemQty));
             $OrderLine->appendChild($dom->createElement('UnitPrice', sprintf("%.2f", $priceWithoutTax/$itemQty)));
             $OrderLine->appendChild($dom->createElement('VatRate', sprintf("%.2f", $taxPercent)));
