@@ -310,12 +310,6 @@ class AAIT_Payex2_Helper_Order extends Mage_Core_Helper_Abstract
         $i = 1;
         /** @var $item Mage_Sales_Model_Order_Item */
         foreach ($items as $item) {
-            // @todo Calculate prices using Discount Rules
-            // @todo Get children products from bundle
-            //if (!$item->getNoDiscount()) {
-            //    Mage::helper('payex2/tools')->addToDebug('Warning: The product has a discount. There might be problems.', $order->getIncrementId());
-            //}
-
             $itemQty = (int)$item->getQtyOrdered();
             $priceWithTax = $item->getRowTotalInclTax();
             $priceWithoutTax = $item->getRowTotal();
@@ -344,8 +338,8 @@ class AAIT_Payex2_Helper_Order extends Mage_Core_Helper_Abstract
 
         // add Shipping
         if (!$order->getIsVirtual()) {
-            $shippingExclTax = $order->getShippingAmount();
-            $shippingIncTax = $order->getShippingInclTax();
+            $shippingExclTax = round((int) 100 * $order->getShippingAmount(),0);
+            $shippingIncTax = round((int) 100 * $order->getShippingInclTax(),0);
             $shippingTax = $shippingIncTax - $shippingExclTax;
 
             // find out tax-rate for the shipping
@@ -364,8 +358,8 @@ class AAIT_Payex2_Helper_Order extends Mage_Core_Helper_Abstract
                 'itemDescription4' => '',
                 'itemDescription5' => '',
                 'quantity' => 1,
-                'amount' => (int)(100 * $shippingIncTax), //must include tax
-                'vatPrice' => (int)(100 * $shippingTax),
+                'amount' => (int)($shippingIncTax),
+                'vatPrice' => (int)($shippingTax),
                 'vatPercent' => (int)(100 * $shippingTaxRate)
             );
 
@@ -406,6 +400,7 @@ class AAIT_Payex2_Helper_Order extends Mage_Core_Helper_Abstract
         }
 
         // Add reward points
+        // TODO: Test tax
         if ((float)$order->getBaseRewardCurrencyAmount() > 0) {
             $params = array(
                 'accountNumber' => '',
