@@ -132,7 +132,7 @@ class AAIT_Shared_Helper_Discount extends AAIT_Shared_Helper_Data {
             $shippingTaxRate = 1;
 		
 		// get discount amount for shipping
-		$shippingDiscount = $order->getShippingDiscountAmount();
+		$shippingDiscount = (float) $order->getShippingDiscountAmount();
 
         // apply/remove tax to shipping-discount
 		if(!$CatPriceIncl){
@@ -142,7 +142,6 @@ class AAIT_Shared_Helper_Discount extends AAIT_Shared_Helper_Data {
 			$discountIncl += $shippingDiscount;
 			$discountExcl += $shippingDiscount / $shippingTaxRate;
 		}
-		
 
 		$return = new Varien_Object();
 		return $return->setDiscountInclTax($discountIncl)->setDiscountExclTax($discountExcl);

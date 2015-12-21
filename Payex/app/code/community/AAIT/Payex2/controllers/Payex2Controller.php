@@ -63,8 +63,8 @@ class AAIT_Payex2_Payex2Controller extends Mage_Core_Controller_Front_Action
         }
 
         // Get Amount
-        //$amount = $order->getGrandTotal();
-        $amount = Mage::helper('payex2/order')->getCalculatedOrderAmount($order)->amount;
+        $amount = $order->getGrandTotal();
+        //$amount = Mage::helper('payex2/order')->getCalculatedOrderAmount($order)->amount; // why oh why?
 
         // Call PxOrder.Initialize8
         $params = array(
