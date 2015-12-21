@@ -558,27 +558,16 @@ class AAIT_Shared_Helper_Order extends Mage_Core_Helper_Abstract
         $items = $order->getAllVisibleItems();
         /** @var $item Mage_Sales_Model_Order_Item */
         foreach ($items as $item) {
-            // @todo Calculate prices using Discount Rules
-            // @todo Get children products from bundle
-            //if (!$item->getNoDiscount()) {
-            //    $this->getTools()->addToDebug('Warning: The product has a discount. There might be problems.', $order->getIncrementId());
-            //}
-
             $itemQty = (int)$item->getQtyOrdered();
-            //$taxPrice = $item->getTaxAmount();
-            $taxPrice = $itemQty * $item->getPriceInclTax() - $itemQty * $item->getPrice();
-            $taxPercent = $item->getTaxPercent();
-            $priceWithTax = $itemQty * $item->getPriceInclTax();
-
-            // Calculate tax percent for Bundle products
-            if ($item->getProductType() === Mage_Catalog_Model_Product_Type::TYPE_BUNDLE) {
-                $taxPercent = ($taxPrice > 0) ? round(100 / (($priceWithTax - $taxPrice) / $taxPrice)) : 0;
-            }
+            $priceWithTax = $item->getRowTotalInclTax();
+            $priceWithoutTax = $item->getRowTotal();
+            $taxPercent = (($priceWithTax / $priceWithoutTax) - 1) * 100; // works for all types
+            $taxPrice = $priceWithTax - $priceWithoutTax;
 
             $OrderLine = $dom->createElement('OrderLine');
             $OrderLine->appendChild($dom->createElement('Product', $item->getName()));
             $OrderLine->appendChild($dom->createElement('Qty', $itemQty));
-            $OrderLine->appendChild($dom->createElement('UnitPrice', sprintf("%.2f", $item->getPrice())));
+            $OrderLine->appendChild($dom->createElement('UnitPrice', sprintf("%.2f", $priceWithoutTax/$itemQty)));
             $OrderLine->appendChild($dom->createElement('VatRate', sprintf("%.2f", $taxPercent)));
             $OrderLine->appendChild($dom->createElement('VatAmount', sprintf("%.2f", $taxPrice)));
             $OrderLine->appendChild($dom->createElement('Amount', sprintf("%.2f", $priceWithTax)));
@@ -587,18 +576,23 @@ class AAIT_Shared_Helper_Order extends Mage_Core_Helper_Abstract
 
         // Add Shipping Line
         if (!$order->getIsVirtual()) {
-            $shipping = $order->getShippingAmount();
-            //$shippingIncTax = $order->getShippingInclTax();
-            $shippingTax = $order->getShippingTaxAmount();
-            $shippingTaxPercent = $shipping != 0 ? (int)((100 * ($shippingTax) / $shipping)) : 0;
+            $shippingExclTax = $order->getShippingAmount();
+            $shippingIncTax = $order->getShippingInclTax();
+            $shippingTax = $shippingIncTax - $shippingExclTax;
+
+            // find out tax-rate for the shipping
+            if((float) $shippingIncTax && (float) $shippingExclTax)
+                $shippingTaxRate = (($shippingIncTax / $shippingExclTax) - 1) * 100;
+            else
+                $shippingTaxRate = 0;
 
             $OrderLine = $dom->createElement('OrderLine');
             $OrderLine->appendChild($dom->createElement('Product', $order->getShippingDescription()));
             $OrderLine->appendChild($dom->createElement('Qty', 1));
-            $OrderLine->appendChild($dom->createElement('UnitPrice', sprintf("%.2f", $shipping)));
-            $OrderLine->appendChild($dom->createElement('VatRate', sprintf("%.2f", $shippingTaxPercent)));
+            $OrderLine->appendChild($dom->createElement('UnitPrice', sprintf("%.2f", $shippingExclTax)));
+            $OrderLine->appendChild($dom->createElement('VatRate', sprintf("%.2f", $shippingTaxRate)));
             $OrderLine->appendChild($dom->createElement('VatAmount', sprintf("%.2f", $shippingTax)));
-            $OrderLine->appendChild($dom->createElement('Amount', sprintf("%.2f", $shipping + $shippingTax)));
+            $OrderLine->appendChild($dom->createElement('Amount', sprintf("%.2f", $shippingIncTax)));
             $OrderLines->appendChild($OrderLine);
         }
 
@@ -616,17 +610,25 @@ class AAIT_Shared_Helper_Order extends Mage_Core_Helper_Abstract
         }
 
         // add Discount
-        $discount = $order->getDiscountAmount() + $order->getShippingDiscountAmount();
-        if (abs($discount) > 0) {
+        /** @var AAIT_Shared_Helper_Discount $discountHelper */
+        $discountHelper = Mage::helper("payexshared/discount");
+        $discountData = $discountHelper->getOrderDiscountData($order);
+
+        $discountInclTax = $discountData->getDiscountInclTax();
+        $discountExclTax = $discountData->getDiscountExclTax();
+        $discountVatAmount = $discountInclTax - $discountExclTax;
+        $discountVatPercent = (($discountInclTax / $discountExclTax) - 1) * 100;
+
+        if (abs($discountInclTax) > 0) {
             $discount_description = ($order->getDiscountDescription() !== null) ? Mage::helper('sales')->__('Discount (%s)', $order->getDiscountDescription()) : Mage::helper('sales')->__('Discount');
 
             $OrderLine = $dom->createElement('OrderLine');
             $OrderLine->appendChild($dom->createElement('Product', $discount_description));
             $OrderLine->appendChild($dom->createElement('Qty', 1));
-            $OrderLine->appendChild($dom->createElement('UnitPrice', sprintf("%.2f", $discount)));
-            $OrderLine->appendChild($dom->createElement('VatRate', 0));
-            $OrderLine->appendChild($dom->createElement('VatAmount', 0));
-            $OrderLine->appendChild($dom->createElement('Amount', sprintf("%.2f", $discount)));
+            $OrderLine->appendChild($dom->createElement('UnitPrice', sprintf("%.2f", -1 * $discountExclTax)));
+            $OrderLine->appendChild($dom->createElement('VatRate', sprintf("%.2f", $discountVatPercent)));
+            $OrderLine->appendChild($dom->createElement('VatAmount', sprintf("%.2f", -1 * $discountVatAmount)));
+            $OrderLine->appendChild($dom->createElement('Amount', sprintf("%.2f", -1 * $discountInclTax)));
             $OrderLines->appendChild($OrderLine);
         }
 
