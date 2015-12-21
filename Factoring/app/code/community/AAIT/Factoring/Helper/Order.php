@@ -4,7 +4,7 @@
  * PayEx Helper: Order
  * Created by AAIT Team.
  */
-class AAIT_Factoring_Helper_Order extends Mage_Core_Helper_Abstract
+class AAIT_Factoring_Helper_Order extends AAIT_Shared_Helper_Order
 {
     /**
      * @return AAIT_Factoring_Helper_Data
