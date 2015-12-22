@@ -95,6 +95,20 @@
         </payment>
     </default>
 
+    <adminhtml>
+        <events>
+            <controller_action_predispatch>
+                <observers>
+                    <payex_mp_check_updates>
+                        <type>singleton</type>
+                        <class>payex_mp/feed</class>
+                        <method>check</method>
+                    </payex_mp_check_updates>
+                </observers>
+            </controller_action_predispatch>
+        </events>
+    </adminhtml>
+
     <frontend>
         <!-- Routes... -->
         <routers>
