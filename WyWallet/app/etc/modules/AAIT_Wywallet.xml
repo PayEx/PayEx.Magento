@@ -10,7 +10,7 @@
                 <Mage_Payment/>
             </depends>
             <!-- declare module's version information for database updates -->
-            <version>1.0.9</version>
+            <version>1.0.10</version>
         </AAIT_Wywallet>
     </modules>
 </config>

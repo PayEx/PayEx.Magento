@@ -1,3 +1,6 @@
+Version 2.0.31
+* Fixed bug with wrong order state when capture via backend
+
 Version 2.0.30
 * Improved update checker
 

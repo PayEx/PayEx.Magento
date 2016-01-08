@@ -1,3 +1,6 @@
+Version 1.0.20
+* Fixed bug with wrong order state when capture via backend
+
 Version 1.0.19
 * Code cleanup
 
