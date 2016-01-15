@@ -9,6 +9,7 @@
 @import Bankdebit
 @import Factoring
 @import GetAddress
+@import MasterPass
 @import PartPayment
 @import Payex
 @import Payexapi
