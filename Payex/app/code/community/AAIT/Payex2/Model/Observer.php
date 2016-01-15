@@ -68,9 +68,16 @@ class AAIT_Payex2_Model_Observer extends Mage_Core_Model_Abstract
                 $new_status = $order->getStatus();
             }
 
+            // Get Order State
+            $status = Mage::getModel('sales/order_status')
+                ->getCollection()
+                ->joinStates()
+                ->addFieldToFilter('main_table.status', $new_status)
+                ->getFirstItem();
+
             // Change order status
-            $order->setData('state', $new_status);
-            $order->setStatus($new_status);
+            $order->setData('state', $status->getState());
+            $order->setStatus($status->getStatus());
             $order->addStatusHistoryComment(Mage::helper('payex2')->__('Order has been paid'), $new_status);
             $order->save();
         }

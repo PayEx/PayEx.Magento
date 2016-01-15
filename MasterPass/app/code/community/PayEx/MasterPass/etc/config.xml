@@ -1,0 +1,157 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <PayEx_MasterPass>
+            <!-- declare module's version information for database updates -->
+            <version>1.0.1</version>
+        </PayEx_MasterPass>
+    </modules>
+
+    <global>
+        <!-- declare model group for new module -->
+        <models>
+            <!-- model group alias to be used in Mage::getModel('newmodule/...') -->
+            <payex_mp>
+                <!-- base class name for the model group -->
+                <class>PayEx_MasterPass_Model</class>
+            </payex_mp>
+        </models>
+
+        <!-- IMPORTANT: if you use your own namespace (i.e. CompanyName) you also have to declare blocks group for new module. See topic: http://www.magentocommerce.com/boards/viewthread/22416/#t102732 -->
+        <blocks>
+            <payex_mp>
+                <class>PayEx_MasterPass_Block</class>
+            </payex_mp>
+        </blocks>
+
+        <helpers>
+            <payex_mp>
+                <class>PayEx_MasterPass_Helper</class>
+            </payex_mp>
+        </helpers>
+
+        <!-- declare resource setup for new module -->
+        <resources>
+            <!-- resource identifier -->
+            <payex_mp_setup>
+                <!-- specify that this resource is a setup resource and used for upgrades -->
+                <setup>
+                    <!-- which module to look for install/upgrade files in -->
+                    <module>PayEx_MasterPass</module>
+                </setup>
+                <!-- specify database connection for this resource -->
+                <connection>
+                    <!-- do not create new connection, use predefined core setup connection -->
+                    <use>core_setup</use>
+                </connection>
+            </payex_mp_setup>
+            <payex_mp_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </payex_mp_write>
+            <payex_mp_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </payex_mp_read>
+        </resources>
+
+        <events>
+            <sales_order_invoice_save_after>
+                <observers>
+                    <payex_mp>
+                        <type>singleton</type>
+                        <class>payex_mp/observer</class>
+                        <method>sales_order_invoice_save_after</method>
+                    </payex_mp>
+                </observers>
+            </sales_order_invoice_save_after>
+        </events>
+    </global>
+
+    <!-- declare default configuration values for this module -->
+    <default>
+        <!-- 'payment' configuration section (tab) -->
+        <payment>
+            <!-- 'newmodule' configuration group (fieldset) -->
+            <payex_mp>
+                <!-- by default this payment method is inactive -->
+                <active>1</active>
+                <!-- model to handle logic for this payment method -->
+                <model>payex_mp/payment</model>
+                <!-- default title for payment checkout page and order view page -->
+                <title>MasterPass</title>
+                <allowspecific>0</allowspecific>
+                <debug>1</debug>
+                <accountnumber>payex account number</accountnumber>
+                <encryptionkey>payex encryption key</encryptionkey>
+                <transactiontype>1</transactiontype>
+                <order_status_authorize>processing</order_status_authorize>
+                <order_status_capture>complete</order_status_capture>
+                <clientlanguage>en-US</clientlanguage>
+                <cleantime>20</cleantime>
+            </payex_mp>
+        </payment>
+    </default>
+
+    <adminhtml>
+        <events>
+            <controller_action_predispatch>
+                <observers>
+                    <payex_mp_check_updates>
+                        <type>singleton</type>
+                        <class>payex_mp/feed</class>
+                        <method>check</method>
+                    </payex_mp_check_updates>
+                </observers>
+            </controller_action_predispatch>
+        </events>
+    </adminhtml>
+
+    <frontend>
+        <!-- Routes... -->
+        <routers>
+            <payex_mp>
+                <use>standard</use>
+                <args>
+                    <module>PayEx_MasterPass</module>
+                    <frontName>payex_mp</frontName>
+                </args>
+            </payex_mp>
+        </routers>
+
+        <!-- Translations... -->
+        <translate>
+            <modules>
+                <payex_mp>
+                    <files>
+                        <default>payex_mp.csv</default>
+                    </files>
+                </payex_mp>
+            </modules>
+        </translate>
+
+        <!-- Updates layout... -->
+        <layout>
+            <updates>
+                <payex_mp>
+                    <file>payex_mp.xml</file>
+                </payex_mp>
+            </updates>
+        </layout>
+    </frontend>
+
+    <crontab>
+        <jobs>
+            <payex_mp_clean_pending_orders>
+                <schedule>
+                    <cron_expr>*/5 * * * *</cron_expr>
+                </schedule>
+                <run>
+                    <model>payex_mp/observer::cleanPendingOrders</model>
+                </run>
+            </payex_mp_clean_pending_orders>
+        </jobs>
+    </crontab>
+</config>
