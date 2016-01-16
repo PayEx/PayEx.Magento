@@ -1,9 +1,10 @@
 <?php
-class AAIT_SocialSecurityNumber_GetaddrController extends Mage_Core_Controller_Front_Action
+
+class PayEx_Payments_GetaddrController extends Mage_Core_Controller_Front_Action
 {
-    const XML_PATH_MODULE_DEBUG = 'aait_ssn/aait_ssn/debug';
-    const XML_PATH_MODULE_ACCOUNTNUMBER = 'aait_ssn/aait_ssn/accountnumber';
-    const XML_PATH_MODULE_ENCRYPTIONKEY = 'aait_ssn/aait_ssn/encryptionkey';
+    const XML_PATH_MODULE_DEBUG = 'payex_ssn/payex_ssn/debug';
+    const XML_PATH_MODULE_ACCOUNTNUMBER = 'payex_ssn/payex_ssn/accountnumber';
+    const XML_PATH_MODULE_ENCRYPTIONKEY = 'payex_ssn/payex_ssn/encryptionkey';
 
     public function indexAction()
     {
@@ -12,7 +13,7 @@ class AAIT_SocialSecurityNumber_GetaddrController extends Mage_Core_Controller_F
         if (empty($ssn)) {
             $data = array(
                 'success' => false,
-                'message' => Mage::helper('aait_ssn')->__('Social security number is empty')
+                'message' => Mage::helper('payex')->__('Social security number is empty')
             );
             $this->getResponse()->setHeader('Content-type', 'application/json');
             $this->getResponse()->setBody(Zend_Json::encode($data));
@@ -22,11 +23,11 @@ class AAIT_SocialSecurityNumber_GetaddrController extends Mage_Core_Controller_F
         //$ssn = preg_replace('/[^0-9]/s', '', $ssn);
 
         // Get Country Code
-        //$country_code = Mage::helper('aait_ssn')->getCountryCodeBySSN($ssn);
+        //$country_code = Mage::helper('payex/tools')->getCountryCodeBySSN($ssn);
         //if (!$country_code) {
         //    $data = array(
         //        'success' => false,
-        //        'message' => Mage::helper('aait_ssn')->__('Invalid Social Security Number')
+        //        'message' => Mage::helper('payex')->__('Invalid Social Security Number')
         //    );
         //    $this->getResponse()->setHeader('Content-type', 'application/json');
         //    $this->getResponse()->setBody(Zend_Json::encode($data));
@@ -37,7 +38,7 @@ class AAIT_SocialSecurityNumber_GetaddrController extends Mage_Core_Controller_F
         if (empty($country_code)) {
             $data = array(
                 'success' => false,
-                'message' => Mage::helper('aait_ssn')->__('Country is empty')
+                'message' => Mage::helper('payex')->__('Country is empty')
             );
             $this->getResponse()->setHeader('Content-type', 'application/json');
             $this->getResponse()->setBody(Zend_Json::encode($data));
@@ -47,7 +48,7 @@ class AAIT_SocialSecurityNumber_GetaddrController extends Mage_Core_Controller_F
         if (!in_array($country_code, array('SE', 'NO'))) {
             $data = array(
                 'success' => false,
-                'message' => Mage::helper('aait_ssn')->__('Your country don\'t supported')
+                'message' => Mage::helper('payex')->__('Your country don\'t supported')
             );
             $this->getResponse()->setHeader('Content-type', 'application/json');
             $this->getResponse()->setBody(Zend_Json::encode($data));
@@ -58,7 +59,7 @@ class AAIT_SocialSecurityNumber_GetaddrController extends Mage_Core_Controller_F
         if (empty($postcode)) {
             $data = array(
                 'success' => false,
-                'message' => Mage::helper('aait_ssn')->__('Postcode is empty')
+                'message' => Mage::helper('payex')->__('Postcode is empty')
             );
             $this->getResponse()->setHeader('Content-type', 'application/json');
             $this->getResponse()->setBody(Zend_Json::encode($data));
@@ -66,7 +67,7 @@ class AAIT_SocialSecurityNumber_GetaddrController extends Mage_Core_Controller_F
         }
 
         // Init PayEx
-        $px = Mage::helper('aait_ssn')->getPx();
+        $px = Mage::helper('payex/api')->getPx();
         $px->setEnvironment(Mage::getStoreConfig(self::XML_PATH_MODULE_ACCOUNTNUMBER), Mage::getStoreConfig(self::XML_PATH_MODULE_ENCRYPTIONKEY), (bool)Mage::getStoreConfig(self::XML_PATH_MODULE_DEBUG));
 
         // Call PxOrder.GetAddressByPaymentMethod
@@ -80,17 +81,19 @@ class AAIT_SocialSecurityNumber_GetaddrController extends Mage_Core_Controller_F
         );
         $result = $px->GetAddressByPaymentMethod($params);
         if ($result['code'] !== 'OK' || $result['description'] !== 'OK' || $result['errorCode'] !== 'OK') {
+            $message = Mage::helper('payex/tools')->getVerboseErrorMessage($result);
             $data = array(
                 'success' => false,
-                'message' => $result['errorCode'] . '(' . $result['description'] . ')'
+                'message' => $message
             );
+
             $this->getResponse()->setHeader('Content-type', 'application/json');
             $this->getResponse()->setBody(Zend_Json::encode($data));
             return;
         }
 
         // Parse name field
-        $name = Mage::helper('aait_ssn')->getNameParser()->parse_name($result['name']);
+        $name = Mage::helper('payex/tools')->getNameParser()->parse_name($result['name']);
 
         $data = array(
             'success' => true,

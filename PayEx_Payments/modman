@@ -6,6 +6,7 @@ app/design/frontend/base/default/template/payex
 app/etc/modules/PayEx_Payments.xml
 app/locale/en_US/PayEx_Payments.csv
 app/locale/sv_SE/PayEx_Payments.csv
+js/payex
 skin/adminhtml/base/default/payex
 skin/frontend/base/default/css/payex
 skin/frontend/base/default/images/payex

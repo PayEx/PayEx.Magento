@@ -28,29 +28,29 @@
 <form id="social_security_number_form">
     <div class="form-list">
         <div class="field">
-            <label for="socialSecurityNumber" class="required"><em>*</em><?php echo Mage::helper('aait_ssn')->__('Social Security Number'); ?></label>
+            <label for="socialSecurityNumber" class="required"><em>*</em><?php echo Mage::helper('payex')->__('Social Security Number'); ?></label>
             <div class="input-box">
-                <input type="text" title="<?php echo Mage::helper('aait_ssn')->__('Social Security Number'); ?>" name="socialSecurityNumber" id="socialSecurityNumber" class="input-text required-entry" />
+                <input type="text" title="<?php echo Mage::helper('payex')->__('Social Security Number'); ?>" name="socialSecurityNumber" id="socialSecurityNumber" class="input-text required-entry" />
             </div>
         </div>
         <div class="field">
-            <button style="margin-top: 17px;" type="button" title="<?php echo Mage::helper('aait_ssn')->__('Get Address'); ?>" class="button" id="ssn_click"><span><span><?php echo Mage::helper('aait_ssn')->__('Get Address'); ?></span></span></button>
+            <button style="margin-top: 17px;" type="button" title="<?php echo Mage::helper('payex')->__('Get Address'); ?>" class="button" id="ssn_click"><span><span><?php echo Mage::helper('payex')->__('Get Address'); ?></span></span></button>
         </div>
         <div class="clearer">&nbsp;</div>
         <div class="field">
-            <label for="check_country" class="required"><em>*</em><?php echo Mage::helper('aait_ssn')->__('Country'); ?></label>
+            <label for="check_country" class="required"><em>*</em><?php echo Mage::helper('payex')->__('Country'); ?></label>
             <div class="input-box">
                 <select name="check_country" id="check_country" class="validate-select required-entry" title="Country">
-                    <option value="SE" selected="selected"><?php echo Mage::helper('aait_ssn')->__('Sweden'); ?></option>
-                    <option value="NO"><?php echo Mage::helper('aait_ssn')->__('Norway'); ?></option>
+                    <option value="SE" selected="selected"><?php echo Mage::helper('payex')->__('Sweden'); ?></option>
+                    <option value="NO"><?php echo Mage::helper('payex')->__('Norway'); ?></option>
                 </select>
             </div>
         </div>
         <div class="clearer">&nbsp;</div>
         <div class="field">
-            <label for="check_postcode" class="required"><em>*</em><?php echo Mage::helper('aait_ssn')->__('Postal Code'); ?></label>
+            <label for="check_postcode" class="required"><em>*</em><?php echo Mage::helper('payex')->__('Postal Code'); ?></label>
             <div class="input-box">
-                <input type="text" title="<?php echo Mage::helper('aait_ssn')->__('Postal Code'); ?>" name="check_postcode" id="check_postcode" class="input-text validate-zip required-entry" />
+                <input type="text" title="<?php echo Mage::helper('payex')->__('Postal Code'); ?>" name="check_postcode" id="check_postcode" class="input-text validate-zip required-entry" />
             </div>
         </div>
     </div>

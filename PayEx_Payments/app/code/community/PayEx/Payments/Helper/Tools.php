@@ -131,4 +131,42 @@ class PayEx_Payments_Helper_Tools extends Mage_Core_Helper_Abstract
 
         return Mage::helper('payex')->__('PayEx error: %s', $errorCode . ' (' . $errorDescription . ')');
     }
+
+    /**
+     * Get Country Code by SSN
+     * @param $ssn
+     *
+     * @return string|bool
+     */
+    public function getCountryCodeBySSN($ssn) {
+        $rules = array(
+            'NO' => '/^[0-9]{6,6}((-[0-9]{5,5})|([0-9]{2,2}((-[0-9]{5,5})|([0-9]{1,1})|([0-9]{3,3})|([0-9]{5,5))))$/',
+            'SE' => '/^[0-9]{6,6}(([0-9]{2,2}[-\+]{1,1}[0-9]{4,4})|([-\+]{1,1}[0-9]{4,4})|([0-9]{4,6}))$/',
+            //'FI' => '/^[0-9]{6,6}(([A\+-]{1,1}[0-9]{3,3}[0-9A-FHJK-NPR-Y]{1,1})|([0-9]{3,3}[0-9A-FHJK-NPR-Y]{1,1})|([0-9]{1,1}-{0,1}[0-9A-FHJK-NPR-Y]{1,1}))$/i',
+            //'DK' => '/^[0-9]{8,8}([0-9]{2,2})?$/',
+            //'NL' => '/^[0-9]{7,9}$/'
+        );
+
+        foreach ($rules as $country_code => $pattern) {
+            if ((bool)preg_match($pattern, $ssn)) {
+                return $country_code;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Get Name Parser Instance
+     * @see https://github.com/joshfraser/PHP-Name-Parser
+     * @return FullNameParser
+     */
+    public function getNameParser()
+    {
+        if (!class_exists('FullNameParser')) {
+            require_once Mage::getBaseDir('lib') . '/Px/parser.php';
+        }
+
+        return new FullNameParser();
+    }
 }

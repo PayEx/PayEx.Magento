@@ -173,3 +173,8 @@
 "Invoice text","Invoice text"
 "Invoice due days","Invoice due days"
 "Allow unapproved by CreditCheck","Allow unapproved by CreditCheck"
+"Social security number is empty","Social security number is empty"
+"Invalid Social Security Number","Invalid Social Security Number"
+"Country is empty","Country is empty"
+"Your country don't supported","Your country don't supported"
+"Postcode is empty","Postcode is empty"

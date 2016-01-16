@@ -1,5 +1,12 @@
 <?xml version="1.0"?>
 <config>
+    <tabs>
+        <payex translate="label" module="payex">
+            <label>PayEx</label>
+            <sort_order>110</sort_order>
+        </payex>
+    </tabs>
+
     <sections>
         <!-- payment tab -->
         <payment>
@@ -1228,5 +1235,64 @@
                 </payex_invoice>
             </groups>
         </payment>
+
+        <!-- Social Security Number -->
+        <payex_ssn translate="label" module="payex">
+            <label>Social Security Number</label>
+            <tab>payex</tab>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>1</show_in_store>
+            <sort_order>10</sort_order>
+            <groups>
+                <payex_ssn translate="label">
+                    <label>PayEx Settings</label>
+                    <sort_order>1</sort_order>
+                    <frontend_type>text</frontend_type>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <expanded>1</expanded>
+                    <fields>
+                        <active translate="label">
+                            <label>Enabled</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </active>
+                        <debug translate="label">
+                            <label>Enable test mode</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </debug>
+
+                        <accountnumber>
+                            <label>Account Number</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>3</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </accountnumber>
+
+                        <encryptionkey>
+                            <label>Encryption Key</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>4</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </encryptionkey>
+                    </fields>
+                </payex_ssn>
+            </groups>
+        </payex_ssn>
     </sections>
 </config>

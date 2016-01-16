@@ -24,7 +24,7 @@ Event.observe(document, 'dom:loaded', function () {
             return;
         }
 
-        var url = MAGENTO_BASE_URL + 'social_security_number/getaddr';
+        var url = MAGENTO_BASE_URL + 'payex/getaddr';
         var ssn = $$('[name="socialSecurityNumber"]')[0].value;
         var country_code = $$('[name="check_country"]')[0].value;
         var postcode = $$('[name="check_postcode"]')[0].value;

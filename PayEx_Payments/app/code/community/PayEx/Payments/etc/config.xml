@@ -313,6 +313,26 @@
                 </observers>
             </controller_action_predispatch>
         </events>
+
+        <acl>
+            <resources>
+                <admin>
+                    <children>
+                        <system>
+                            <children>
+                                <config>
+                                    <children>
+                                        <payex_ssn>
+                                            <title>Social Security Number</title>
+                                        </payex_ssn>
+                                    </children>
+                                </config>
+                            </children>
+                        </system>
+                    </children>
+                </admin>
+            </resources>
+        </acl>
     </adminhtml>
 
     <frontend>
@@ -347,6 +367,9 @@
                 <payment_fee>
                     <file>payex/payment_fee.xml</file>
                 </payment_fee>
+                <social_security_number>
+                    <file>payex/social_security_number.xml</file>
+                </social_security_number>
             </updates>
         </layout>
     </frontend>
