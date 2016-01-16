@@ -1,5 +1,0 @@
-Version 1.0.1
-* Fixed bug with wrong order state when capture via backend
-
-Version 1.0.0
-* Init release of PayEx MasterPass module

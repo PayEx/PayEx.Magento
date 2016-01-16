@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<widgets>
-    <payexautopaywidget type="payexautopay/widget">
-        <name>PayEx Autopay widget</name>
-        <description>Add PayEx Autopay widget</description>
-    </payexautopaywidget>
-</widgets>

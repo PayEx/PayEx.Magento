@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<layout>
-    <adminhtml_system_config_edit>
-        <reference name="head">
-            <action method="addCss"><name>payex2/payex2_admin.css</name></action>
-        </reference>
-    </adminhtml_system_config_edit>
-</layout>

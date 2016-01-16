@@ -1,0 +1,15 @@
+<?php
+/**
+ * @var $this PayEx_Payments_Block_Checkout_Fee
+ */
+?>
+<!-- Start PayEx Payment Fee -->
+<tr>
+    <td style="<?php echo $this->getStyle() ?>" class="a-right" colspan="<?php echo $this->getColspan(); ?>">
+        <?php echo $this->helper('payex')->__('Payment fee'); ?>
+    </td>
+    <td style="<?php echo $this->getStyle() ?>" class="a-right">
+        <?php echo $this->helper('checkout')->formatPrice($this->getPaymentFee()) ?>
+    </td>
+</tr>
+<!-- End PayEx Payment Fee -->
