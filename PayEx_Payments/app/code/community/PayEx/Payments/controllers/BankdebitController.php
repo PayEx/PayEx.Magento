@@ -47,7 +47,7 @@ class PayEx_Payments_BankdebitController extends Mage_Core_Controller_Front_Acti
 
         // Get Amount
         //$amount = $order->getGrandTotal();
-        $amount = Mage::helper('payex/order')->getCalculatedOrderAmount($order)->amount;
+        $amount = Mage::helper('payex/order')->getCalculatedOrderAmount($order)->getAmount();
 
         // Get Bank Id
         $bank_id = Mage::getSingleton('checkout/session')->getBankId();

@@ -235,9 +235,9 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
     /**
      * Calculate Order amount
      * With rounding issue detection
-     * @param $order
+     * @param Mage_Sales_Model_Order $order
      * @param int $order_amount
-     * @return stdClass
+     * @return Varien_Object
      */
     public function getCalculatedOrderAmount($order, $order_amount = 0)
     {
@@ -257,9 +257,7 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
                 continue;
             }
 
-            $itemQty = (int)$item->getQtyOrdered();
-            $priceWithTax = $item->getPriceInclTax();
-            $amount += (int)(100 * $itemQty * $priceWithTax);
+            $amount += (int)(100 * $item->getRowTotalInclTax());
         }
 
         // add Shipping
@@ -295,10 +293,8 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
             $rounding = sprintf("%.2f", $rounding);
         }
 
-        $result = new stdClass();
-        $result->amount = $rounded_control_amount;
-        $result->rounding = $rounding;
-        return $result;
+        $result = new Varien_Object();
+        return $result->setAmount($rounded_control_amount)->setRounding($rounding);
     }
 
     /**

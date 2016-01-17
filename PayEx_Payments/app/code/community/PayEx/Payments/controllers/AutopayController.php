@@ -41,7 +41,7 @@ class PayEx_Payments_AutopayController extends Mage_Core_Controller_Front_Action
 
         // Get Amount
         //$amount = $order->getGrandTotal();
-        $amount = Mage::helper('payex/order')->getCalculatedOrderAmount($order)->amount;
+        $amount = Mage::helper('payex/order')->getCalculatedOrderAmount($order)->getAmount();
 
         // Get Current Customer Agreement
         $agreement = Mage::getModel('payex/agreement')->load($customer_id, 'customer_id');
@@ -244,7 +244,7 @@ class PayEx_Payments_AutopayController extends Mage_Core_Controller_Front_Action
 
         // Get Amount
         //$amount = $order->getGrandTotal();
-        $amount = Mage::helper('payex/order')->getCalculatedOrderAmount($order)->amount;
+        $amount = Mage::helper('payex/order')->getCalculatedOrderAmount($order)->getAmount();
 
         // Get Current Customer Agreement
         $agreement = Mage::getModel('payex/agreement')->load($customer_id, 'customer_id');

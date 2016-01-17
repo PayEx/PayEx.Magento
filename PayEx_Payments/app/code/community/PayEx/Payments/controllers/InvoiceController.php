@@ -50,7 +50,7 @@ class PayEx_Payments_InvoiceController extends Mage_Core_Controller_Front_Action
 
         // Get Amount
         //$amount = $order->getGrandTotal();
-        $amount = Mage::helper('payex/order')->getCalculatedOrderAmount($order)->amount;
+        $amount = Mage::helper('payex/order')->getCalculatedOrderAmount($order)->getAmount();
 
         $ssn = Mage::getSingleton('checkout/session')->getSocialSecurtyNumber();
         $credit_data = Mage::getSingleton('checkout/session')->getCreditData();

@@ -41,7 +41,7 @@ class PayEx_Payments_MasterpassController extends Mage_Core_Controller_Front_Act
 
         // Get Amount
         //$amount = $order->getGrandTotal();
-        $amount = Mage::helper('payex/order')->getCalculatedOrderAmount($order)->amount;
+        $amount = Mage::helper('payex/order')->getCalculatedOrderAmount($order)->getAmount();
 
         $additional = 'USEMASTERPASS=1&RESPONSIVE=1&SHOPPINGCARTXML=' . urlencode( Mage::helper('payex/order')->getShoppingCartXML( $order ) );
 
@@ -126,7 +126,7 @@ class PayEx_Payments_MasterpassController extends Mage_Core_Controller_Front_Act
         /** @var PayEx_Payments_Model_Payment_Abstract $method */
         $method = $order->getPayment()->getMethodInstance();
 
-        $amount = Mage::helper('payex/order')->getCalculatedOrderAmount($order)->amount;
+        $amount = Mage::helper('payex/order')->getCalculatedOrderAmount($order)->getAmount();
 
         // Call PxOrder.FinalizeTransaction
         $params = array(

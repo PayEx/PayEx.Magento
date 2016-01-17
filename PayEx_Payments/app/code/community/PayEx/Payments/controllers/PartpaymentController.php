@@ -41,7 +41,7 @@ class PayEx_Payments_PartpaymentController extends Mage_Core_Controller_Front_Ac
 
         // Get Amount
         //$amount = $order->getGrandTotal();
-        $amount = Mage::helper('payex/order')->getCalculatedOrderAmount($order)->amount;
+        $amount = Mage::helper('payex/order')->getCalculatedOrderAmount($order)->getAmount();
 
         // Call PxOrder.Initialize8
         $params = array(

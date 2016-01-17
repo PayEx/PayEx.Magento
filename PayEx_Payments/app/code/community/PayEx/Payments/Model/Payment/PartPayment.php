@@ -188,7 +188,7 @@ class PayEx_Payments_Model_Payment_PartPayment extends PayEx_Payments_Model_Paym
 
         // Prevent Rounding Issue
         // Difference can be ~0.0099999999999909
-        $order_amount = Mage::helper('payex/order')->getCalculatedOrderAmount($payment->getOrder())->amount;
+        $order_amount = Mage::helper('payex/order')->getCalculatedOrderAmount($payment->getOrder())->getAmount();
         $value = abs(sprintf("%.2f", $order_amount) - sprintf("%.2f", $amount));
         if ($value > 0 && $value < 0.011) {
             $amount = $order_amount;
