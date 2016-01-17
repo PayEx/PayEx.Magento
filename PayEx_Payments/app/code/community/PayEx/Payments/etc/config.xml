@@ -143,6 +143,7 @@
                 <clientlanguage>en-US</clientlanguage>
                 <cleantime>20</cleantime>
                 <responsive>0</responsive>
+                <checkoutinfo>1</checkoutinfo>
             </payex_cc>
 
             <!-- 'newmodule' configuration group (fieldset) -->
@@ -162,6 +163,7 @@
                 <clientlanguage>en-US</clientlanguage>
                 <cleantime>20</cleantime>
                 <responsive>0</responsive>
+                <checkoutinfo>1</checkoutinfo>
             </payex_bankdebit>
 
             <!-- 'newmodule' configuration group (fieldset) -->
@@ -182,6 +184,7 @@
                 <clientlanguage>en-US</clientlanguage>
                 <cleantime>20</cleantime>
                 <responsive>0</responsive>
+                <checkoutinfo>1</checkoutinfo>
             </payex_wywallet>
 
             <!-- 'newmodule' configuration group (fieldset) -->
@@ -205,6 +208,7 @@
                 <maxamount>1000</maxamount>
                 <cleantime>20</cleantime>
                 <responsive>0</responsive>
+                <checkoutinfo>1</checkoutinfo>
             </payex_autopay>
 
             <!-- 'newmodule' configuration group (fieldset) -->

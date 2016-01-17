@@ -90,8 +90,10 @@ class PayEx_Payments_WywalletController extends Mage_Core_Controller_Front_Actio
         $redirectUrl = $result['redirectUrl'];
 
         // Add Order Lines and Orders Address
-        Mage::helper('payex/order')->addOrderLine($order_ref, $order);
-        Mage::helper('payex/order')->addOrderAddress($order_ref, $order);
+        if ($method->getConfigData('checkoutinfo')) {
+            Mage::helper('payex/order')->addOrderLine($order_ref, $order);
+            Mage::helper('payex/order')->addOrderAddress($order_ref, $order);
+        }
 
         // Set Pending Payment status
         $order->setState(Mage_Sales_Model_Order::STATE_PENDING_PAYMENT, Mage_Sales_Model_Order::STATE_PENDING_PAYMENT, Mage::helper('payex')->__('The customer was redirected to PayEx.'));

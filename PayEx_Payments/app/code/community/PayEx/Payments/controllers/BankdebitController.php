@@ -105,8 +105,10 @@ class PayEx_Payments_BankdebitController extends Mage_Core_Controller_Front_Acti
         $order_ref = $result['orderRef'];
 
         // Add Order Lines and Orders Address
-        Mage::helper('payex/order')->addOrderLine($order_ref, $order);
-        Mage::helper('payex/order')->addOrderAddress($order_ref, $order);
+        if ($method->getConfigData('checkoutinfo')) {
+            Mage::helper('payex/order')->addOrderLine($order_ref, $order);
+            Mage::helper('payex/order')->addOrderAddress($order_ref, $order);
+        }
 
         // Call PxOrder.PrepareSaleDD2
         $params = array(
