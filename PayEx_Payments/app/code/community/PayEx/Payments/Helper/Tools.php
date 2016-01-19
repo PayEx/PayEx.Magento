@@ -97,7 +97,8 @@ class PayEx_Payments_Helper_Tools extends Mage_Core_Helper_Abstract
             'REJECTED_BY_ACQUIRER_INSUFFICIENT_FUNDS' => Mage::helper('payex')->__('Insufficient funds'),
             'REJECTED_BY_ACQUIRER_INVALID_AMOUNT' => Mage::helper('payex')->__('Incorrect amount'),
             'USER_CANCELED' => Mage::helper('payex')->__('Payment cancelled'),
-            'CardNotAcceptedForThisPurchase' => Mage::helper('payex')->__('Your Credit Card not accepted for this purchase')
+            'CardNotAcceptedForThisPurchase' => Mage::helper('payex')->__('Your Credit Card not accepted for this purchase'),
+            'CreditCheckNotApproved' => Mage::helper('payex')->__('CreditCheck failed')
         );
         $errorMessages = array_change_key_case($errorMessages, CASE_UPPER);
 
