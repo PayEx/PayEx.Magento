@@ -9,7 +9,7 @@ class PayEx_Payments_GetaddrController extends Mage_Core_Controller_Front_Action
     public function indexAction()
     {
         // Get initial data from request
-        $ssn = $this->getRequest()->getParam('ssn');
+        $ssn = trim($this->getRequest()->getParam('ssn'));
         if (empty($ssn)) {
             $data = array(
                 'success' => false,
@@ -34,7 +34,7 @@ class PayEx_Payments_GetaddrController extends Mage_Core_Controller_Front_Action
         //    return;
         //}
 
-        $country_code = $this->getRequest()->getParam('country_code');
+        $country_code = trim($this->getRequest()->getParam('country_code'));
         if (empty($country_code)) {
             $data = array(
                 'success' => false,
@@ -55,7 +55,7 @@ class PayEx_Payments_GetaddrController extends Mage_Core_Controller_Front_Action
             return;
         }
 
-        $postcode = $this->getRequest()->getParam('postcode');
+        $postcode = trim($this->getRequest()->getParam('postcode'));
         if (empty($postcode)) {
             $data = array(
                 'success' => false,
