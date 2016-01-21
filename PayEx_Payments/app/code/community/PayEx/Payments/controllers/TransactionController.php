@@ -19,10 +19,11 @@ class PayEx_Payments_TransactionController extends Mage_Core_Controller_Front_Ac
          * Test it using:
          * curl --verbose http://www.xxxxx.xxx/index.php/payex/transaction -d "transactionRef=81596cd7410546c68c1f6046c&transactionNumber=40805420&orderRef=503e6fba843447bb892c70912bbffbde&zzzz=must be here to get http post to work" --location
          */
-        Mage::helper('payex/tools')->addToDebug('TC: Requested from: ' . $_SERVER['REMOTE_ADDR']);
+        $remote_addr = Mage::helper('core/http')->getRemoteAddr();
+        Mage::helper('payex/tools')->addToDebug('TC: Requested from: ' . $remote_addr);
 
         // Check is PayEx Request
-        if (!in_array(Mage::helper('core/http')->getRemoteAddr(), self::$_allowed_ips)) {
+        if (!in_array($remote_addr, self::$_allowed_ips)) {
             Mage::helper('payex/tools')->addToDebug('TC: Access denied for this request. It\'s not PayEx Spider.');
             header(sprintf('%s %s %s', 'HTTP/1.1', '403', 'Access denied. Accept PayEx Transaction Callback only.'), true, '403');
             header(sprintf('Status: %s %s', '403', 'Access denied. Accept PayEx Transaction Callback only.'), true, '403');
