@@ -22,7 +22,7 @@ class PayEx_Payments_TransactionController extends Mage_Core_Controller_Front_Ac
         Mage::helper('payex/tools')->addToDebug('TC: Requested from: ' . $_SERVER['REMOTE_ADDR']);
 
         // Check is PayEx Request
-        if (!in_array($_SERVER['REMOTE_ADDR'], self::$_allowed_ips)) {
+        if (!in_array(Mage::helper('core/http')->getRemoteAddr(), self::$_allowed_ips)) {
             Mage::helper('payex/tools')->addToDebug('TC: Access denied for this request. It\'s not PayEx Spider.');
             header(sprintf('%s %s %s', 'HTTP/1.1', '403', 'Access denied. Accept PayEx Transaction Callback only.'), true, '403');
             header(sprintf('Status: %s %s', '403', 'Access denied. Accept PayEx Transaction Callback only.'), true, '403');
