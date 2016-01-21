@@ -42,7 +42,7 @@ class PayEx_Payments_TransactionController extends Mage_Core_Controller_Front_Ac
         $order_id = $_POST['orderId'];
 
         /**
-         * @var @order Mage_Sales_Model_Order
+         * @var Mage_Sales_Model_Order @order
          */
         $order = Mage::getModel('sales/order');
         $order->loadByIncrementId($order_id);
@@ -82,6 +82,16 @@ class PayEx_Payments_TransactionController extends Mage_Core_Controller_Front_Ac
         // Get Transaction Details
         $transactionId = $_POST['transactionNumber'];
 
+        // Lookup Transaction
+        $collection = Mage::getModel('sales/order_payment_transaction')->getCollection()
+            ->addAttributeToFilter('txn_id', $transactionId);
+        if (count($collection) > 0) {
+            Mage::helper('payex/tools')->addToDebug(sprintf('TC: Transaction %s already processed.', $transactionId));
+            header(sprintf('%s %s %s', 'HTTP/1.1', '500', 'FAILURE'), true, '500');
+            header(sprintf('Status: %s %s', '500', 'FAILURE'), true, '500');
+            exit('FAILURE');
+        }
+
         // Call PxOrder.GetTransactionDetails2
         $params = array(
             'accountNumber' => '',
@@ -90,17 +100,16 @@ class PayEx_Payments_TransactionController extends Mage_Core_Controller_Front_Ac
 
         $details = Mage::helper('payex/api')->getPx()->GetTransactionDetails2($params);
         Mage::helper('payex/tools')->debugApi($details, 'PxOrder.GetTransactionDetails2');
-
-        if ($details['code'] != 'OK' || $details['errorCode'] != 'OK') {
+        if ($details['code'] !== 'OK' || $details['errorCode'] !== 'OK') {
             Mage::helper('payex/tools')->addToDebug('TC: Failed to Get Transaction Details.');
             return;
         }
 
         $order_id = $details['orderId'];
-        $transactionStatus = (int)$details['transactionStatus'];
+        $transaction_status = (int)$details['transactionStatus'];
 
         Mage::helper('payex/tools')->addToDebug('TC: Incoming transaction: ' . $transactionId);
-        Mage::helper('payex/tools')->addToDebug('TC: Transaction Status: ' . $transactionStatus);
+        Mage::helper('payex/tools')->addToDebug('TC: Transaction Status: ' . $transaction_status);
         Mage::helper('payex/tools')->addToDebug('TC: OrderId: ' . $order_id);
 
         // Get Order Status from External Payment Module
@@ -115,84 +124,101 @@ class PayEx_Payments_TransactionController extends Mage_Core_Controller_Front_Ac
                 break;
         }
 
-        /**
-         * @var $payment Mage_Sales_Model_Order_Payment
-         */
-        $payment = $order->getPayment();
+        // Save Transaction
+        /** @var Mage_Sales_Model_Order_Payment_Transaction $transaction */
+        $transaction = Mage::helper('payex/order')->processPaymentTransaction($order, $details);
 
-        /* 0=Sale, 1=Initialize, 2=Credit, 3=Authorize, 4=Cancel, 5=Failure, 6=Capture */
-        switch ($transactionStatus) {
+        // Check Order and Transaction Result
+        /* Transaction statuses: 0=Sale, 1=Initialize, 2=Credit, 3=Authorize, 4=Cancel, 5=Failure, 6=Capture */
+        switch ($transaction_status) {
             case 0;
-            case 3:
+            case 1;
+            case 3;
+            case 6:
                 // Complete order
                 Mage::helper('payex/tools')->addToDebug('TC: Action: Complete order');
-                if (Mage::helper('payex/order')->getFirstTransactionId($order) == null) {
-                    // Call PxOrder.Complete
-                    $params = array(
-                        'accountNumber' => '',
-                        'orderRef' => $_POST['orderRef'],
-                    );
-                    $result = Mage::helper('payex/api')->getPx()->Complete($params);
-                    Mage::helper('payex/tools')->debugApi($result, 'PxOrder.Complete');
 
-                    // Check Transaction
-                    if (in_array($result['transactionStatus'], array('0', '3', '6'))) {
-                        // Detect Transaction type
-                        if ($result['transactionStatus'] == '0') {
-                            $transaction_type = Mage_Sales_Model_Order_Payment_Transaction::TYPE_CAPTURE;
-                            $transaction_closed = 0; // 1. Review this
-                        }
-                        if ($result['transactionStatus'] == '3') {
-                            $transaction_type = Mage_Sales_Model_Order_Payment_Transaction::TYPE_AUTH;
-                            $transaction_closed = 0;
-                        }
-                        if ($result['transactionStatus'] == '6') {
-                            $transaction_type = Mage_Sales_Model_Order_Payment_Transaction::TYPE_CAPTURE;
-                            $transaction_closed = 1;
-                        }
-
-                        // Save Transaction
-                        Mage::helper('payex/order')->createTransaction($payment, null, $transactionId, $transaction_type, $transaction_closed, $result);
-                        $payment->save();
-
-                        // Set Order State
-                        //$order->addStatusHistoryComment(Mage::helper('payex')->__('Payment is accepted by Transaction Callback'));
-                        $order->save();
-
-                        // Create Invoice for Sale Transaction
-                        if ($result['transactionStatus'] == '0' && isset($result['transactionNumber'])) {
-                            $invoice = Mage::helper('payex/order')->makeInvoice($order, false);
-
-                            // Add transaction Id
-                            $invoice->setTransactionId($result['transactionNumber']);
-                            $invoice->save();
-                        }
-
-                        // Set Order Status
-                        $order_status = (in_array($result['transactionStatus'], array('0', '3'))) ? $order_status_capture : $order_status_authorize;
-                        $message = Mage::helper('payex')->__('Payment is accepted by Transaction Callback');
-
-                        /** @var Mage_Sales_Model_Order_Status $status */
-                        $status = Mage::helper('payex/order')->getAssignedStatus($order_status);
-
-                        // Change order status
-                        $order->setData('state', $status->getState());
-                        $order->setStatus($status->getStatus());
-                        $order->addStatusHistoryComment($message, $order_status);
-                        $order->save();
-
-                        Mage::helper('payex/tools')->addToDebug('TC: OrderId ' . $order_id . ' Complete', $order_id);
-                        break;
-                    }
-
-                    // Cancel Order for Other Statuses
-                    $order->cancel();
-                    $order->addStatusHistoryComment(Mage::helper('payex')->__('Order automatically canceled by Transaction Callback.'));
-                    $order->save();
-                    Mage::helper('payex/tools')->addToDebug('TC: OrderId ' . $order_id . ' Complete (canceled)', $order_id);
+                // Call PxOrder.Complete
+                $params = array(
+                    'accountNumber' => '',
+                    'orderRef' => $_POST['orderRef'],
+                );
+                $result = Mage::helper('payex/api')->getPx()->Complete($params);
+                Mage::helper('payex/tools')->debugApi($result, 'PxOrder.Complete');
+                if ($result['errorCodeSimple'] !== 'OK') {
+                    Mage::helper('payex/tools')->addToDebug('TC: Failed to complete payment.');
+                    header(sprintf('%s %s %s', 'HTTP/1.1', '500', 'FAILURE'), true, '500');
+                    header(sprintf('Status: %s %s', '500', 'FAILURE'), true, '500');
+                    exit('FAILURE');
                 }
+
+                // Verify transaction status
+                if ((int)$result['transactionStatus'] !== $transaction_status) {
+                    Mage::helper('payex/tools')->addToDebug('TC: Failed to complete payment. Transaction status is different!');
+                    header(sprintf('%s %s %s', 'HTTP/1.1', '500', 'FAILURE'), true, '500');
+                    header(sprintf('Status: %s %s', '500', 'FAILURE'), true, '500');
+                    exit('FAILURE');
+                }
+
+                // Select Order Status
+                if (in_array($transaction_status, array(0, 6))) {
+                    $new_status = $order_status_capture;
+                } elseif ($transaction_status === 3 || (isset($result['pending']) && $result['pending'] === 'true')) {
+                    $new_status = $order_status_authorize;
+                } else {
+                    $new_status = $order->getStatus();
+                }
+
+                // Get Order Status
+                /** @var Mage_Sales_Model_Order_Status $status */
+                $status = Mage::helper('payex/order')->getAssignedStatus($new_status);
+
+                // Change order status
+                $order->setData('state', $status->getState());
+                $order->setStatus($status->getStatus());
+                $order->addStatusHistoryComment(Mage::helper('payex')->__('Order has been paid'), $new_status);
+
+                // Create Invoice for Sale Transaction
+                if (in_array($transaction_status, array(0, 6))) {
+                    $invoice = Mage::helper('payex/order')->makeInvoice($order, false);
+                    $invoice->setTransactionId($transactionId);
+                    $invoice->save();
+
+                    // Update Order Totals: "Total Due" on Sale Transactions bugfix
+                    if ($transaction_status === 0) {
+                        $order->setTotalPaid($order->getTotalDue());
+                        $order->setBaseTotalPaid($order->getBaseTotalDue());
+                        $order->setTotalDue($order->getTotalDue() - $order->getTotalPaid());
+                        $order->getBaseTotalDue($order->getBaseTotalDue() - $order->getBaseTotalPaid());
+
+                        // Update Order Totals because API V2 don't update order totals
+                        /** @var $invoice Mage_Sales_Model_Order_Invoice */
+                        $invoice = Mage::getResourceModel('sales/order_invoice_collection')
+                            ->setOrderFilter($order->getId())->getFirstItem();
+
+                        $order->setTotalInvoiced($order->getTotalInvoiced() + $invoice->getGrandTotal());
+                        $order->setBaseTotalInvoiced($order->getBaseTotalInvoiced() + $invoice->getBaseGrandTotal());
+                        $order->setSubtotalInvoiced($order->getSubtotalInvoiced() + $invoice->getSubtotal());
+                        $order->setBaseSubtotalInvoiced($order->getBaseSubtotalInvoiced() + $invoice->getBaseSubtotal());
+                        $order->setTaxInvoiced($order->getTaxInvoiced() + $invoice->getTaxAmount());
+                        $order->setBaseTaxInvoiced($order->getBaseTaxInvoiced() + $invoice->getBaseTaxAmount());
+                        $order->setHiddenTaxInvoiced($order->getHiddenTaxInvoiced() + $invoice->getHiddenTaxAmount());
+                        $order->setBaseHiddenTaxInvoiced($order->getBaseHiddenTaxInvoiced() + $invoice->getBaseHiddenTaxAmount());
+                        $order->setShippingTaxInvoiced($order->getShippingTaxInvoiced() + $invoice->getShippingTaxAmount());
+                        $order->setBaseShippingTaxInvoiced($order->getBaseShippingTaxInvoiced() + $invoice->getBaseShippingTaxAmount());
+                        $order->setShippingInvoiced($order->getShippingInvoiced() + $invoice->getShippingAmount());
+                        $order->setBaseShippingInvoiced($order->getBaseShippingInvoiced() + $invoice->getBaseShippingAmount());
+                        $order->setDiscountInvoiced($order->getDiscountInvoiced() + $invoice->getDiscountAmount());
+                        $order->setBaseDiscountInvoiced($order->getBaseDiscountInvoiced() + $invoice->getBaseDiscountAmount());
+                        $order->setBaseTotalInvoicedCost($order->getBaseTotalInvoicedCost() + $invoice->getBaseCost());
+                    }
+                }
+
+                $order->save();
+                $order->sendNewOrderEmail();
                 break;
             case 2:
+                // @todo Improve this method
                 // Create CreditMemo
                 Mage::helper('payex/tools')->addToDebug('TC: Action: Create CreditMemo');
                 if ($order->hasInvoices() && $order->canCreditmemo() && !$order->hasCreditmemos()) {
@@ -205,7 +231,7 @@ class PayEx_Payments_TransactionController extends Mage_Core_Controller_Front_Ac
                     foreach ($invoices as $invoice) {
                         $invoice->setOrder($order);
                         $invoice_id = $invoice->getIncrementId();
-                        Mage::helper('payex/order')->createTransaction($payment, $payment->getLastTransId(), $transactionId, Mage_Sales_Model_Order_Payment_Transaction::TYPE_REFUND, 0, $details);
+                        // @todo Mage_Sales_Model_Order_Payment_Transaction::TYPE_REFUND
                         Mage::helper('payex/order')->makeCreditMemo($order, $invoice, $credit_amount, false, $transactionId);
                         Mage::helper('payex/tools')->addToDebug('TC: InvoiceId ' . $invoice_id . ' refunded', $order_id);
                         // @note: Create CreditMemo for first Invoice only
@@ -218,41 +244,14 @@ class PayEx_Payments_TransactionController extends Mage_Core_Controller_Front_Ac
                 // Change Order Status to Canceled
                 Mage::helper('payex/tools')->addToDebug('TC: Action: Cancel order');
                 if (!$order->isCanceled() && !$order->hasInvoices()) {
-                    Mage::helper('payex/order')->createTransaction($payment, $payment->getLastTransId(), $transactionId, Mage_Sales_Model_Order_Payment_Transaction::TYPE_VOID, 1, $details);
+                    $message = Mage::helper('payex')->__('Order canceled by Transaction Callback');
 
                     $order->cancel();
-                    $order->addStatusHistoryComment(Mage::helper('payex')->__('Order canceled by Transaction Callback'), Mage_Sales_Model_Order::STATE_CANCELED);
+                    $order->addStatusHistoryComment($message);
                     $order->save();
+                    $order->sendOrderUpdateEmail(true, $message);
 
                     Mage::helper('payex/tools')->addToDebug('TC: OrderId ' . $order_id . ' canceled', $order_id);
-                }
-                break;
-            case 6:
-                // Set Order Status to captured
-                Mage::helper('payex/tools')->addToDebug('TC: Action: Capture');
-                if ($payment->canCapture()) {
-                    Mage::helper('payex/order')->createTransaction($payment, $payment->getLastTransId(), $transactionId, Mage_Sales_Model_Order_Payment_Transaction::TYPE_CAPTURE, 0, $details);
-                    $invoice = Mage::helper('payex/order')->makeInvoice($order, false);
-
-                    // Update Order Totals: "Total Due" on Sale Transactions bugfix
-                    $order->setTotalPaid($order->getTotalDue());
-                    $order->setBaseTotalPaid($order->getBaseTotalDue());
-                    $order->setTotalDue($order->getTotalDue() - $order->getTotalPaid());
-                    $order->getBaseTotalDue($order->getBaseTotalDue() - $order->getBaseTotalPaid());
-
-                    // Set Order Status
-                    $message = Mage::helper('payex')->__('Order captured by Transaction Callback');
-
-                    /** @var Mage_Sales_Model_Order_Status $status */
-                    $status = Mage::helper('payex/order')->getAssignedStatus($order_status_capture);
-
-                    // Change order status
-                    $order->setData('state', $status->getState());
-                    $order->setStatus($status->getStatus());
-                    $order->addStatusHistoryComment($message, $order_status_capture);
-                    $order->save();
-
-                    Mage::helper('payex/tools')->addToDebug('TC: OrderId ' . $order_id . ' captured', $order_id);
                 }
                 break;
             default:
