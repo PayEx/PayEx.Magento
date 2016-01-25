@@ -24,7 +24,7 @@ class PayEx_Payments_Model_Observer extends Mage_Core_Model_Abstract
                 try {
                     $clean_time = -1 * (int)$order->getPayment()->getMethodInstance()->getConfigData('cleantime');
                     if ($clean_time !== 0) {
-                        $clean_time = date('Y-m-d H:i:s', strtotime($clean_time . ' minutes'));
+                        $clean_time = strtotime($clean_time . ' minutes');
                         $order_created_time = strtotime($order->getCreatedAt());
                         if ($clean_time > $order_created_time) {
                             // Cancel order
