@@ -1,0 +1,14 @@
+# this is global (all payex modules use this file)
+# only "Shared" does incude it though to avoid conflicts
+# lib/Px/Px.php
+
+app/code/community/AAIT/Payex2
+app/design/adminhtml/default/default/layout/payex2_admin.xml
+app/design/adminhtml/default/default/template/payex2
+app/design/frontend/base/default/template/payex2
+app/design/frontend/rwd/default/template/payex2
+app/etc/modules/AAIT_Payex2.xml
+app/locale/en_US/AAIT_Payex2.csv
+app/locale/sv_SE/AAIT_Payex2.csv
+skin/adminhtml/base/default/payex2
+skin/frontend/base/default/images/payex2

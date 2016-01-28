@@ -1,0 +1,12 @@
+# this is global (all payex modules use this file)
+# only "Shared" does incude it though to avoid conflicts
+# lib/Px/Px.php
+
+app/code/community/PayEx/MasterPass
+app/design/adminhtml/default/default/template/payex_mp
+app/design/frontend/base/default/layout/payex_mp.xml
+app/design/frontend/base/default/template/payex_mp
+app/etc/modules/PayEx_MasterPass.xml
+skin/frontend/base/default/css/payex/masterpass.css
+skin/frontend/base/default/images/payex/masterpass.png
+skin/frontend/base/default/images/payex/masterpass-140.png

@@ -1,0 +1,10 @@
+# this is global (all payex modules use this file)
+# only "Shared" does incude it though to avoid conflicts
+# lib/Px/Px.php
+
+app/code/community/AAIT/Payexautopay
+app/design/adminhtml/default/default/template/payexautopay
+app/design/frontend/base/default/template/payexautopay
+app/etc/modules/AAIT_Payexautopay.xml
+app/locale/en_US/AAIT_Payexautopay.csv
+app/locale/sv_SE/AAIT_Payexautopay.csv

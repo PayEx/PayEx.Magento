@@ -1,0 +1,13 @@
+# this is global (all payex modules use this file)
+# only "Shared" does incude it though to avoid conflicts
+# lib/Px/Px.php
+
+app/code/community/AAIT/Bankdebit
+app/design/adminhtml/default/default/template/bankdebit
+app/design/frontend/base/default/template/bankdebit
+app/etc/modules/AAIT_Bankdebit.xml
+app/locale/en_US/AAIT_Bankdebit.csv
+app/locale/sv_SE/AAIT_Bankdebit.csv
+skin/adminhtml/default/default/images/payex/payex-invoice.png
+skin/frontend/base/default/images/payex/payex.gif
+skin/frontend/base/default/images/payex/payex-invoice.png

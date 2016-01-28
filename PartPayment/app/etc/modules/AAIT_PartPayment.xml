@@ -3,7 +3,7 @@
     <modules>
         <AAIT_PartPayment>
             <active>true</active>
-            <!-- this module will be located in app/code/local code pool -->
+            <!-- this module will be located in app/code/community code pool -->
             <codePool>community</codePool>
             <!-- specify dependencies for correct module loading order -->
             <depends>
