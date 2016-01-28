@@ -598,7 +598,20 @@ class AAIT_Shared_Helper_Order extends Mage_Core_Helper_Abstract
             $OrderLines->appendChild($OrderLine);
         }
 
-        // add Payment Fee
+        // add Payment Fee (Factoring)
+        $fee = $order->getFactoringPaymentFee();
+        if ($fee > 0) {
+            $OrderLine = $dom->createElement('OrderLine');
+            $OrderLine->appendChild($dom->createElement('Product', Mage::helper('factoring')->__('Payment fee')));
+            $OrderLine->appendChild($dom->createElement('Qty', 1));
+            $OrderLine->appendChild($dom->createElement('UnitPrice', sprintf("%.2f", $fee)));
+            $OrderLine->appendChild($dom->createElement('VatRate', 0));
+            $OrderLine->appendChild($dom->createElement('VatAmount', 0));
+            $OrderLine->appendChild($dom->createElement('Amount', sprintf("%.2f", $fee)));
+            $OrderLines->appendChild($OrderLine);
+        }
+
+        // add Payment Fee (Partpayment)
         $fee = $order->getPartpaymentPaymentFee();
         if ($fee > 0) {
             $OrderLine = $dom->createElement('OrderLine');
