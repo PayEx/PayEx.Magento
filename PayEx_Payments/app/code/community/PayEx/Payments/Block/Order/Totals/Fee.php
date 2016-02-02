@@ -17,13 +17,22 @@ class PayEx_Payments_Block_Order_Totals_Fee extends Mage_Core_Block_Abstract
             return $this;
         }
 
+        if ($parent->getOrder()->getBasePayexPaymentFeeTax()) {
+            $total = new Varien_Object();
+            $total->setLabel(Mage::helper('payex')->__('Payment fee (Incl.Tax)'));
+            $total->setValue($parent->getOrder()->getPayexPaymentFee() + $parent->getOrder()->getPayexPaymentFeeTax());
+            $total->setBaseValue($parent->getOrder()->getPayexBasePaymentFee() + $parent->getOrder()->getPayexBasePaymentFeeTax());
+            $total->setCode('payex_payment_fee_with_tax');
+            $parent->addTotalBefore($total, 'tax');
+        }
+
         if ($parent->getOrder()->getBasePayexPaymentFee()) {
             $total = new Varien_Object();
-            $total->setLabel(Mage::helper('payex')->__('Payment fee'));
+            $total->setLabel(Mage::helper('payex')->__('Payment fee (Excl.Tax)'));
             $total->setValue($parent->getOrder()->getPayexPaymentFee());
             $total->setBaseValue($parent->getOrder()->getPayexBasePaymentFee());
             $total->setCode('payex_payment_fee');
-            $parent->addTotalBefore($total, 'tax');
+            $parent->addTotalBefore($total, 'payex_payment_fee_with_tax');
         }
 
         return $this;

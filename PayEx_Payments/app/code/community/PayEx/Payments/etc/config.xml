@@ -246,6 +246,7 @@
                 <order_status_capture>complete</order_status_capture>
                 <clientlanguage>en-US</clientlanguage>
                 <paymentfee>0</paymentfee>
+                <paymentfee_tax_class>0</paymentfee_tax_class>
                 <cleantime>20</cleantime>
             </payex_financing>
 
@@ -265,6 +266,7 @@
                 <order_status_capture>complete</order_status_capture>
                 <clientlanguage>en-US</clientlanguage>
                 <paymentfee>0</paymentfee>
+                <paymentfee_tax_class>0</paymentfee_tax_class>
                 <cleantime>20</cleantime>
             </payex_partpayment>
 
@@ -286,6 +288,7 @@
                 <clientlanguage>en-US</clientlanguage>
                 <distribution>11</distribution>
                 <paymentfee>0</paymentfee>
+                <paymentfee_tax_class>0</paymentfee_tax_class>
                 <invoicetext>Invoice text</invoicetext>
                 <invoiceduedays>15</invoiceduedays>
                 <unapproved>0</unapproved>

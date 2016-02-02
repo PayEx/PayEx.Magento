@@ -26,5 +26,16 @@ class PayEx_Payments_Model_Invoice_Total extends Mage_Sales_Model_Order_Invoice_
             $invoice->setBaseGrandTotal($baseInvoiceTotal);
             $invoice->setGrandTotal($invoiceTotal);
         }
+
+        if ($order->getBasePayexPaymentFeeTax()) {
+            $baseInvoiceTotal = $invoice->getBaseGrandTotal();
+            $invoiceTotal = $invoice->getGrandTotal();
+
+            $baseInvoiceTotal = $baseInvoiceTotal + $order->getBasePayexPaymentFeeTax();
+            $invoiceTotal = $invoiceTotal + $order->getPayexPaymentFeeTax();
+
+            $invoice->setBaseGrandTotal($baseInvoiceTotal);
+            $invoice->setGrandTotal($invoiceTotal);
+        }
     }
 }

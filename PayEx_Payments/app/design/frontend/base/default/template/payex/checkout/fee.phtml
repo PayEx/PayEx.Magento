@@ -2,14 +2,48 @@
 /**
  * @var $this PayEx_Payments_Block_Checkout_Fee
  */
+
+$fee = $this->getPaymentFee();
 ?>
 <!-- Start PayEx Payment Fee -->
-<tr>
-    <td style="<?php echo $this->getStyle() ?>" class="a-right" colspan="<?php echo $this->getColspan(); ?>">
-        <?php echo $this->helper('payex')->__('Payment fee'); ?>
-    </td>
-    <td style="<?php echo $this->getStyle() ?>" class="a-right">
-        <?php echo $this->helper('checkout')->formatPrice($this->getPaymentFee()) ?>
-    </td>
-</tr>
+<?php if ($this->helper('tax')->displayBothPrices()): ?>
+    <tr>
+        <td style="<?php echo $this->getStyle() ?>" class="a-right" colspan="<?php echo $this->getColspan(); ?>">
+            <?php echo $this->helper('payex')->__('Payment fee'); ?>
+            <?php echo $this->helper('checkout')->__('(Excl. Tax)'); ?>
+        </td>
+        <td style="<?php echo $this->getStyle() ?>" class="a-right">
+            <?php echo $this->helper('checkout')->formatPrice($fee->getPaymentFeePrice()); ?>
+        </td>
+    </tr>
+    <tr>
+        <td style="<?php echo $this->getStyle() ?>" class="a-right" colspan="<?php echo $this->getColspan(); ?>">
+            <?php echo $this->helper('payex')->__('Payment fee'); ?>
+            <?php echo $this->helper('checkout')->__('(Incl. Tax)'); ?>
+        </td>
+        <td style="<?php echo $this->getStyle() ?>" class="a-right">
+            <?php echo $this->helper('checkout')->formatPrice($fee->getPaymentFeePrice() + $fee->getPaymentFeeTax()); ?>
+        </td>
+    </tr>
+<?php else: ?>
+    <?php if ($this->helper('tax')->displayPriceIncludingTax()): ?>
+        <tr>
+            <td style="<?php echo $this->getStyle() ?>" class="a-right" colspan="<?php echo $this->getColspan(); ?>">
+                <?php echo $this->helper('payex')->__('Payment fee'); ?>
+            </td>
+            <td style="<?php echo $this->getStyle() ?>" class="a-right">
+                <?php echo $this->helper('checkout')->formatPrice($fee->getPaymentFeePrice() + $fee->getPaymentFeeTax()); ?>
+            </td>
+        </tr>
+    <?php else: ?>
+        <tr>
+            <td style="<?php echo $this->getStyle() ?>" class="a-right" colspan="<?php echo $this->getColspan(); ?>">
+                <?php echo $this->helper('payex')->__('Payment fee'); ?>
+            </td>
+            <td style="<?php echo $this->getStyle() ?>" class="a-right">
+                <?php echo $this->helper('checkout')->formatPrice($fee->getPaymentFeePrice()); ?>
+            </td>
+        </tr>
+    <?php endif; ?>
+<?php endif; ?>
 <!-- End PayEx Payment Fee -->

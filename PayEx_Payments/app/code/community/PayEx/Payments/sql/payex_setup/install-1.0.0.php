@@ -4,15 +4,23 @@ $this->startSetup();
 
 // Install fee
 $this->_conn->addColumn($this->getTable('sales_flat_quote'), 'payex_payment_fee', 'decimal(12,4)');
+$this->_conn->addColumn($this->getTable('sales_flat_quote'), 'payex_payment_fee_tax', 'decimal(12,4)');
 $this->_conn->addColumn($this->getTable('sales_flat_quote'), 'base_payex_payment_fee', 'decimal(12,4)');
+$this->_conn->addColumn($this->getTable('sales_flat_order'), 'base_payex_payment_fee_tax', 'decimal(12,4)');
 $this->_conn->addColumn($this->getTable('sales_flat_order'), 'payex_payment_fee', 'decimal(12,4)');
+$this->_conn->addColumn($this->getTable('sales_flat_order'), 'payex_payment_fee_tax', 'decimal(12,4)');
 $this->_conn->addColumn($this->getTable('sales_flat_order'), 'base_payex_payment_fee', 'decimal(12,4)');
+$this->_conn->addColumn($this->getTable('sales_flat_order'), 'base_payex_payment_fee_tax', 'decimal(12,4)');
 
 $eav = new Mage_Sales_Model_Resource_Setup('sales_setup');
 $eav->addAttribute('quote', 'payex_payment_fee', array('type' => 'decimal'));
+$eav->addAttribute('quote', 'payex_payment_fee_tax', array('type' => 'decimal'));
 $eav->addAttribute('quote', 'base_payex_payment_fee', array('type' => 'decimal'));
+$eav->addAttribute('quote', 'base_payex_payment_fee_tax', array('type' => 'decimal'));
 $eav->addAttribute('order', 'payex_payment_fee', array('type' => 'decimal'));
+$eav->addAttribute('order', 'payex_payment_fee_tax', array('type' => 'decimal'));
 $eav->addAttribute('order', 'base_payex_payment_fee', array('type' => 'decimal'));
+$eav->addAttribute('order', 'base_payex_payment_fee_tax', array('type' => 'decimal'));
 
 // Install Agreement table
 $installer->run("

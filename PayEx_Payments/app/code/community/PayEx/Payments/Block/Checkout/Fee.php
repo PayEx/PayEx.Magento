@@ -27,7 +27,9 @@ class PayEx_Payments_Block_Checkout_Fee extends Mage_Checkout_Block_Total_Defaul
             return $this;
         }
 
-        $fee = (float) $paymentMethod->getConfigData('paymentfee');
+        $price = (float) $paymentMethod->getConfigData('paymentfee');
+        $tax_class = $paymentMethod->getConfigData('paymentfee_tax_class');
+        $fee = Mage::helper('payex/fee')->getPaymentFeePrice($price, $tax_class);
         return $fee;
     }
 

@@ -109,13 +109,16 @@ class PayEx_Payments_Model_Observer extends Mage_Core_Model_Abstract
     public function sales_quote_collect_totals_after(Varien_Event_Observer $observer)
     {
         $quote = $observer->getEvent()->getQuote();
-
         $quote->setBasePayexPaymentFee(0);
+        $quote->setBasePayexPaymentFeeTax(0);
         $quote->setPayexPaymentFee(0);
+        $quote->setPayexPaymentFeeTax(0);
 
         foreach ($quote->getAllAddresses() as $address) {
             $quote->setBasePayexPaymentFee((float)($quote->getBasePayexPaymentFee() + $address->getBasePayexPaymentFee()));
+            $quote->setBasePayexPaymentFeeTax((float)($quote->getBasePayexPaymentFeeTax() + $address->getBasePayexPaymentFeeTax()));
             $quote->setPayexPaymentFee((float)($quote->getPayexPaymentFee() + $address->getPayexPaymentFee()));
+            $quote->setPayexPaymentFeeTax((float)($quote->getPayexPaymentFeeTax() + $address->getPayexPaymentFeeTax()));
         }
         return $this;
     }
@@ -138,11 +141,10 @@ class PayEx_Payments_Model_Observer extends Mage_Core_Model_Abstract
         }
 
         $order = $payment->getOrder();
-        $base_fee = $order->getQuote()->getBasePayexPaymentFee();
-        $fee = $order->getQuote()->getPayexPaymentFee();
-
-        $order->setBasePayexPaymentFee($base_fee);
-        $order->setPayexPaymentFee($fee);
+        $order->setBasePayexPaymentFee($order->getQuote()->getBasePayexPaymentFee());
+        $order->setBasePayexPaymentFeeTax($order->getQuote()->getBasePayexPaymentFeeTax());
+        $order->setPayexPaymentFee($order->getQuote()->getPayexPaymentFee());
+        $order->setPayexPaymentFeeTax($order->getQuote()->getPayexPaymentFeeTax());
         $order->save();
     }
 }

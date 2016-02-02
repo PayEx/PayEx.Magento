@@ -32,7 +32,9 @@ class PayEx_Payments_Model_Quote_Total extends Mage_Sales_Model_Quote_Address_To
         }
 
         $address->setBasePayexPaymentFee(0);
+        $address->setBasePayexPaymentFeeTax(0);
         $address->setPayexPaymentFee(0);
+        $address->setPayexPaymentFeeTax(0);
 
         // Get totals
         $address1 = clone $address;
@@ -44,16 +46,22 @@ class PayEx_Payments_Model_Quote_Total extends Mage_Sales_Model_Quote_Address_To
 
         // Address is the reference for grand total
         // Calculated total is $address1->getGrandTotal()
-        $fee = (float)$paymentMethod->getConfigData('paymentfee');
-        if (!$fee) {
+        $price = (float)$paymentMethod->getConfigData('paymentfee');
+        $tax_class = $paymentMethod->getConfigData('paymentfee_tax_class');
+        if (!$price) {
             return $this;
         }
 
-        $baseTotal = $address->getBaseGrandTotal();
-        $baseTotal += $fee;
+        // Get Payment Fee
+        $fee = Mage::helper('payex/fee')->getPaymentFeePrice($price, $tax_class);
 
-        $address->setBasePayexPaymentFee($fee);
-        $address->setPayexPaymentFee($address->getQuote()->getStore()->convertPrice($fee, false));
+        $baseTotal = $address->getBaseGrandTotal();
+        $baseTotal += $fee->getPaymentFeePrice() + $fee->getPaymentFeeTax();
+
+        $address->setBasePayexPaymentFee($fee->getPaymentFeePrice());
+        $address->setBasePayexPaymentFeeTax($fee->getPaymentFeeTax());
+        $address->setPayexPaymentFee($address->getQuote()->getStore()->convertPrice($fee->getPaymentFeePrice(), false));
+        $address->setPayexPaymentFeeTax($address->getQuote()->getStore()->convertPrice($fee->getPaymentFeeTax(), false));
 
         // update totals
         $address->setBaseGrandTotal($baseTotal);
@@ -83,6 +91,16 @@ class PayEx_Payments_Model_Quote_Total extends Mage_Sales_Model_Quote_Address_To
                 'value' => $fee,
             ));
         }
+
+        $fee_tax = $address->getPayexPaymentFeeTax();
+        if ($fee_tax > 0) {
+            $address->addTotal(array(
+                'code' => $this->getCode() . '_tax',
+                'title' => Mage::helper('payex')->__('Payment fee (tax)'),
+                'value' => $fee_tax,
+            ));
+        }
+
         return $this;
     }
 }

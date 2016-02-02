@@ -19,10 +19,14 @@ class PayEx_Payments_Block_Form_Financing extends Mage_Payment_Block_Form
 
     /**
      * Get Payment Fee
-     * @return float
+     * @return Varien_Object
      */
     public function getPayexPaymentFee()
     {
-        return (float) Mage::getModel('payex/payment_financing')->getConfigData('paymentfee');
+        $paymentMethod = Mage::getModel('payex/payment_financing');
+        $price = (float) $paymentMethod->getConfigData('paymentfee');
+        $tax_class = $paymentMethod->getConfigData('paymentfee_tax_class');
+        $fee = Mage::helper('payex/fee')->getPaymentFeePrice($price, $tax_class);
+        return $fee;
     }
 }

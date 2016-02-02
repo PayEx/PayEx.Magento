@@ -275,7 +275,7 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
         $amount += -1 * (int)(100 * $order->getBaseRewardCurrencyAmount());
 
         // add Fee
-        $fee = $order->getPayexPaymentFee();
+        $fee = $order->getPayexPaymentFee() + $order->getPayexPaymentFeeTax();
         if ($fee > 0) {
             $amount += (int)(100 * $fee);
         }
@@ -390,6 +390,39 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
                 'amount' => -1 * (int)($discountInclTax),
                 'vatPrice' => -1 * (int) ($discountVatAmount),
                 'vatPercent' => (int) (100 * $discountVatPercent)
+            );
+
+            $result = Mage::helper('payex/api')->getPx()->AddSingleOrderLine2($params);
+            Mage::helper('payex/tools')->debugApi($result, 'PxOrder.AddSingleOrderLine2');
+            $i++;
+        }
+
+        // add Payment Fee
+        if ((float)$order->getPayexPaymentFee() > 0) {
+            $feeExclTax = $order->getPayexPaymentFee();
+            $feeTax = $order->getPayexPaymentFeeTax();
+            $feeIncTax = $feeExclTax + $feeTax;
+
+            // find out tax-rate for the fee
+            if ((float) $feeIncTax && (float) $feeExclTax) {
+                $feeTaxRate = Mage::app()->getStore()->roundPrice((($feeIncTax / $feeExclTax) - 1) * 100);
+            } else {
+                $feeTaxRate = 0;
+            }
+
+            $params = array(
+                'accountNumber' => '',
+                'orderRef' => $orderRef,
+                'itemNumber' => $i,
+                'itemDescription1' => Mage::helper('payex')->__('Payment fee'),
+                'itemDescription2' => '',
+                'itemDescription3' => '',
+                'itemDescription4' => '',
+                'itemDescription5' => '',
+                'quantity' => 1,
+                'amount' => (int)(100 * $feeIncTax), //must include tax
+                'vatPrice' => (int) (100 * $feeTax),
+                'vatPercent' =>  (int) (100 * $feeTaxRate)
             );
 
             $result = Mage::helper('payex/api')->getPx()->AddSingleOrderLine2($params);
@@ -586,7 +619,7 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
 
             // find out tax-rate for the shipping
             if ((float) $shippingIncTax && (float) $shippingExclTax) {
-                $shippingTaxRate = (($shippingIncTax / $shippingExclTax) - 1) * 100;
+                $shippingTaxRate = Mage::app()->getStore()->roundPrice((($shippingIncTax / $shippingExclTax) - 1) * 100);
             } else {
                 $shippingTaxRate = 0;
             }
@@ -604,13 +637,24 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
         // add Payment Fee
         $fee = $order->getPayexPaymentFee();
         if ($fee > 0) {
+            $feeExclTax = $order->getPayexPaymentFee();
+            $feeTax = $order->getPayexPaymentFeeTax();
+            $feeIncTax = $feeExclTax + $feeTax;
+
+            // find out tax-rate for the fee
+            if ((float) $feeIncTax && (float) $feeExclTax) {
+                $feeTaxRate = Mage::app()->getStore()->roundPrice((($feeIncTax / $feeExclTax) - 1) * 100);
+            } else {
+                $feeTaxRate = 0;
+            }
+
             $OrderLine = $dom->createElement('OrderLine');
             $OrderLine->appendChild($dom->createElement('Product', Mage::helper('payex')->__('Payment fee')));
             $OrderLine->appendChild($dom->createElement('Qty', 1));
-            $OrderLine->appendChild($dom->createElement('UnitPrice', sprintf("%.2f", $fee)));
-            $OrderLine->appendChild($dom->createElement('VatRate', 0));
-            $OrderLine->appendChild($dom->createElement('VatAmount', 0));
-            $OrderLine->appendChild($dom->createElement('Amount', sprintf("%.2f", $fee)));
+            $OrderLine->appendChild($dom->createElement('UnitPrice', sprintf("%.2f", $feeExclTax)));
+            $OrderLine->appendChild($dom->createElement('VatRate', $feeTaxRate));
+            $OrderLine->appendChild($dom->createElement('VatAmount', $feeTax));
+            $OrderLine->appendChild($dom->createElement('Amount', sprintf("%.2f", $feeIncTax)));
             $OrderLines->appendChild($OrderLine);
         }
 
