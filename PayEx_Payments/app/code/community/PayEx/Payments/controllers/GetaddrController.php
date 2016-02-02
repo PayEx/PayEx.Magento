@@ -55,7 +55,8 @@ class PayEx_Payments_GetaddrController extends Mage_Core_Controller_Front_Action
             return;
         }
 
-        $postcode = trim($this->getRequest()->getParam('postcode'));
+        // strip whitespaces from postcode to pass validation
+        $postcode = preg_replace('/\s+/', '', $this->getRequest()->getParam('postcode'));
         if (empty($postcode)) {
             $data = array(
                 'success' => false,
