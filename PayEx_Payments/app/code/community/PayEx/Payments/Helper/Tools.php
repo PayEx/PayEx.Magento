@@ -164,7 +164,7 @@ class PayEx_Payments_Helper_Tools extends Mage_Core_Helper_Abstract
      */
     public function getNameParser()
     {
-        if (!class_exists('FullNameParser')) {
+        if (!class_exists('FullNameParser', false)) {
             require_once Mage::getBaseDir('lib') . '/Px/parser.php';
         }
 
