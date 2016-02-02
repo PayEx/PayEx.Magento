@@ -49,15 +49,19 @@ Event.observe(document, 'dom:loaded', function () {
                             return;
                         }
                         // Set Form Fields
-                        $('billing:firstname').setValue(json.first_name);
-                        $('billing:lastname').setValue(json.last_name);
-                        $('billing:company').setValue('');
-                        $('billing:street1').setValue(json.address_1);
-                        $('billing:street2').setValue(json.address_2);
-                        $('billing:city').setValue(json.city);
-                        $('billing:region').setValue('');
-                        $('billing:postcode').setValue(json.postcode);
-                        $('billing:country_id').setValue(json.country);
+                        if ($('billing:firstname')) $('billing:firstname').setValue(json.first_name);
+                        if ($('billing:lastname')) $('billing:lastname').setValue(json.last_name);
+                        if ($('billing:company')) $('billing:company').setValue('');
+                        if ($('billing:street1')) $('billing:street1').setValue(json.address_1);
+                        if ($('billing:street2')) {
+                            //WHEN payex gives us a space -> validation will crash. So sanitize json input
+                            // replace(/^\s+/,"") === ltrim()
+                            $('billing:street2').setValue(json.address_2.replace(/^\s+/,""));
+                        }
+                        if ($('billing:city')) $('billing:city').setValue(json.city);
+                        if ($('billing:region')) $('billing:region').setValue('');
+                        if ($('billing:postcode')) $('billing:postcode').setValue(json.postcode);
+                        if ($('billing:country_id')) $('billing:country_id').setValue(json.country);
                     }
                 }
             );
