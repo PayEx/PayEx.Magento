@@ -580,6 +580,13 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
      */
     public function getInvoiceExtraPrintBlocksXML($order)
     {
+        mb_regex_encoding('utf-8');
+        $replace_illegal = $order->getPayment()->getMethodInstance()->getConfigData('replace_illegal');
+        $replacement_char = $order->getPayment()->getMethodInstance()->getConfigData('replacement_char');
+        if (empty($replacement_char)) {
+            $replacement_char = '-';
+        }
+
         $dom = new DOMDocument('1.0', 'utf-8');
         $OnlineInvoice = $dom->createElement('OnlineInvoice');
         $dom->appendChild($OnlineInvoice);
@@ -599,10 +606,8 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
             $taxPercent = (($priceWithTax / $priceWithoutTax) - 1) * 100; // works for all types
             $taxPrice = $priceWithTax - $priceWithoutTax;
 
-            mb_regex_encoding('utf-8');
-
             $OrderLine = $dom->createElement('OrderLine');
-            $OrderLine->appendChild($dom->createElement('Product', trim(mb_ereg_replace('[^a-zA-Z0-9_:!#=?\[\]@{}´ %-\/À-ÖØ-öø-ú]',"-",$item->getName()))));
+            $OrderLine->appendChild($dom->createElement('Product', trim(!$replace_illegal ? $item->getName() : mb_ereg_replace('[^a-zA-Z0-9_:!#=?\[\]@{}´ %-\/À-ÖØ-öø-ú]', $replacement_char, $item->getName()))));
             $OrderLine->appendChild($dom->createElement('Qty', $itemQty));
             $OrderLine->appendChild($dom->createElement('UnitPrice', sprintf("%.2f", $priceWithoutTax / $itemQty)));
             $OrderLine->appendChild($dom->createElement('VatRate', sprintf("%.2f", $taxPercent)));
@@ -625,7 +630,7 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
             }
 
             $OrderLine = $dom->createElement('OrderLine');
-            $OrderLine->appendChild($dom->createElement('Product', $order->getShippingDescription()));
+            $OrderLine->appendChild($dom->createElement('Product', trim(!$replace_illegal ? $order->getShippingDescription() : mb_ereg_replace('[^a-zA-Z0-9_:!#=?\[\]@{}´ %-\/À-ÖØ-öø-ú]', $replacement_char, $order->getShippingDescription()))));
             $OrderLine->appendChild($dom->createElement('Qty', 1));
             $OrderLine->appendChild($dom->createElement('UnitPrice', sprintf("%.2f", $shippingExclTax)));
             $OrderLine->appendChild($dom->createElement('VatRate', sprintf("%.2f", $shippingTaxRate)));
@@ -669,7 +674,7 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
             $discount_description = ($order->getDiscountDescription() !== null) ? Mage::helper('sales')->__('Discount (%s)', $order->getDiscountDescription()) : Mage::helper('sales')->__('Discount');
 
             $OrderLine = $dom->createElement('OrderLine');
-            $OrderLine->appendChild($dom->createElement('Product', $discount_description));
+            $OrderLine->appendChild($dom->createElement('Product', trim(!$replace_illegal ? $discount_description : mb_ereg_replace('[^a-zA-Z0-9_:!#=?\[\]@{}´ %-\/À-ÖØ-öø-ú]', $replacement_char, $discount_description))));
             $OrderLine->appendChild($dom->createElement('Qty', 1));
             $OrderLine->appendChild($dom->createElement('UnitPrice', sprintf("%.2f", -1 * $discountExclTax)));
             $OrderLine->appendChild($dom->createElement('VatRate', sprintf("%.2f", $discountVatPercent)));

@@ -111,6 +111,25 @@ class PayEx_Payments_Model_Payment_PartPayment extends PayEx_Payments_Model_Paym
             Mage::throwException(Mage::helper('payex')->__('Selected currency code (%s) is not compatible with PayEx', $currency_code));
         }
 
+        // Validate Product names
+        if (!$this->getConfigData('replace_illegal')) {
+            if ($paymentInfo->getQuote()) {
+                $items = $paymentInfo->getQuote()->getAllVisibleItems();
+                /** @var $item Mage_Sales_Model_Quote_Item */
+                foreach ($items as $item) {
+                    $re = "/[a-zA-Z0-9_:!#=?\\[\\]@{}´ %-À-ÖØ-öø-ú]*/u";
+                    $product_name = $item->getName();
+
+                    $matches = array();
+                    preg_match($re, $product_name, $matches);
+                    $test = implode('', $matches);
+                    if (md5($product_name) !== md5($test)) {
+                        Mage::throwException(Mage::helper('payex')->__('Product name "%s" contains invalid characters.', $product_name));
+                    }
+                }
+            }
+        }
+
         // Get Social Security Number
         // You can use 8111032382 in Test Environment
         $ssn = Mage::app()->getRequest()->getParam('social-security-number');

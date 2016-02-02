@@ -111,18 +111,20 @@ class PayEx_Payments_Model_Payment_Financing extends PayEx_Payments_Model_Paymen
         }
 
         // Validate Product names
-        if ($paymentInfo->getQuote()) {
-            $items = $paymentInfo->getQuote()->getAllVisibleItems();
-            /** @var $item Mage_Sales_Model_Quote_Item */
-            foreach ($items as $item) {
-                $re = "/[a-zA-Z0-9_:!#=?\\[\\]@{}´ %-À-ÖØ-öø-ú]*/u";
-                $product_name = $item->getName();
+        if (!$this->getConfigData('replace_illegal')) {
+            if ($paymentInfo->getQuote()) {
+                $items = $paymentInfo->getQuote()->getAllVisibleItems();
+                /** @var $item Mage_Sales_Model_Quote_Item */
+                foreach ($items as $item) {
+                    $re = "/[a-zA-Z0-9_:!#=?\\[\\]@{}´ %-À-ÖØ-öø-ú]*/u";
+                    $product_name = $item->getName();
 
-                $matches = array();
-                preg_match($re, $product_name, $matches);
-                $test = implode('', $matches);
-                if (md5($product_name) !== md5($test)) {
-                    Mage::throwException(Mage::helper('payex')->__('Product name "%s" contains invalid characters.', $product_name));
+                    $matches = array();
+                    preg_match($re, $product_name, $matches);
+                    $test = implode('', $matches);
+                    if (md5($product_name) !== md5($test)) {
+                        Mage::throwException(Mage::helper('payex')->__('Product name "%s" contains invalid characters.', $product_name));
+                    }
                 }
             }
         }
