@@ -603,7 +603,7 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
             $itemQty = (int)$item->getQtyOrdered();
             $priceWithTax = $item->getRowTotalInclTax();
             $priceWithoutTax = $item->getRowTotal();
-            $taxPercent = (($priceWithTax / $priceWithoutTax) - 1) * 100; // works for all types
+            $taxPercent = round((($priceWithTax / $priceWithoutTax) - 1) * 100); // works for all types
             $taxPrice = $priceWithTax - $priceWithoutTax;
 
             $OrderLine = $dom->createElement('OrderLine');
@@ -624,7 +624,7 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
 
             // find out tax-rate for the shipping
             if ((float) $shippingIncTax && (float) $shippingExclTax) {
-                $shippingTaxRate = Mage::app()->getStore()->roundPrice((($shippingIncTax / $shippingExclTax) - 1) * 100);
+                $shippingTaxRate = round((($shippingIncTax / $shippingExclTax) - 1) * 100);
             } else {
                 $shippingTaxRate = 0;
             }
@@ -648,7 +648,7 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
 
             // find out tax-rate for the fee
             if ((float) $feeIncTax && (float) $feeExclTax) {
-                $feeTaxRate = Mage::app()->getStore()->roundPrice((($feeIncTax / $feeExclTax) - 1) * 100);
+                $feeTaxRate = round((($feeIncTax / $feeExclTax) - 1) * 100);
             } else {
                 $feeTaxRate = 0;
             }
@@ -668,7 +668,7 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
         $discountInclTax = $discountData->getDiscountInclTax();
         $discountExclTax = $discountData->getDiscountExclTax();
         $discountVatAmount = $discountInclTax - $discountExclTax;
-        $discountVatPercent = (($discountInclTax / $discountExclTax) - 1) * 100;
+        $discountVatPercent = round((($discountInclTax / $discountExclTax) - 1) * 100);
 
         if (abs($discountInclTax) > 0) {
             $discount_description = ($order->getDiscountDescription() !== null) ? Mage::helper('sales')->__('Discount (%s)', $order->getDiscountDescription()) : Mage::helper('sales')->__('Discount');
