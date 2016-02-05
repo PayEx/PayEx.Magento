@@ -11,4 +11,18 @@
             </action>
         </reference>
     </checkout_onepage_index>
+
+    <opc_index_index>
+        <reference name="head">
+            <action method="addJs" ifconfig="payex_ssn/payex_ssn/active">
+                <script>payex/iwd_opc/social_security_number.js</script>
+            </action>
+        </reference>
+
+        <reference name='checkout.onepage.billing'>
+            <action method="setTemplate" ifconfig="payex_ssn/payex_ssn/active">
+                <template>payex/iwd_opc/billing_with_ssn.phtml</template>
+            </action>
+        </reference>
+    </opc_index_index>
 </layout>
