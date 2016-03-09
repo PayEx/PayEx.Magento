@@ -36,9 +36,6 @@ class PayEx_Payments_MasterpassController extends Mage_Core_Controller_Front_Act
         // Get Operation Type (AUTHORIZATION / SALE)
         $operation = ($method->getConfigData('transactiontype') == 0) ? 'AUTHORIZATION' : 'SALE';
 
-        // Get CustomerId
-        $customer_id = (Mage::getSingleton('customer/session')->isLoggedIn() == true) ? Mage::getSingleton('customer/session')->getCustomer()->getId() : '0';
-
         // Get Amount
         //$amount = $order->getGrandTotal();
         $amount = Mage::helper('payex/order')->getCalculatedOrderAmount($order)->getAmount();
@@ -54,7 +51,7 @@ class PayEx_Payments_MasterpassController extends Mage_Core_Controller_Front_Act
             'currency' => $currency_code,
             'vat' => 0,
             'orderID' => $order_id,
-            'productNumber' => $customer_id,
+            'productNumber' => $order_id,
             'description' => Mage::app()->getStore()->getName(),
             'clientIPAddress' => Mage::helper('core/http')->getRemoteAddr(),
             'clientIdentifier' => 'USERAGENT=' . Mage::helper('core/http')->getHttpUserAgent(),
@@ -357,9 +354,6 @@ class PayEx_Payments_MasterpassController extends Mage_Core_Controller_Front_Act
         // Get Operation Type (AUTHORIZATION / SALE)
         $operation = (Mage::getSingleton('payex/payment_MasterPass')->getConfigData('transactiontype') == 0) ? 'AUTHORIZATION' : 'SALE';
 
-        // Get CustomerId
-        $customer_id = (Mage::getSingleton('customer/session')->isLoggedIn() == true) ? Mage::getSingleton('customer/session')->getCustomer()->getId() : '0';
-
         // Get Additional Values
         $additional = 'USEMASTERPASS=1&RESPONSIVE=1&SHOPPINGCARTXML=' . urlencode( Mage::helper('payex/order')->getShoppingCartXML( $quote ) );
 
@@ -372,7 +366,7 @@ class PayEx_Payments_MasterpassController extends Mage_Core_Controller_Front_Act
             'currency' => $quote->getQuoteCurrencyCode(),
             'vat' => 0,
             'orderID' => $quote->getReservedOrderId(),
-            'productNumber' => $customer_id,
+            'productNumber' => $quote->getReservedOrderId(),
             'description' => Mage::app()->getStore()->getName(),
             'clientIPAddress' => Mage::helper('core/http')->getRemoteAddr(),
             'clientIdentifier' => 'USERAGENT=' . Mage::helper('core/http')->getHttpUserAgent(),

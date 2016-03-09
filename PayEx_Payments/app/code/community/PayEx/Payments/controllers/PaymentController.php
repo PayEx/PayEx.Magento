@@ -40,9 +40,6 @@ class PayEx_Payments_PaymentController extends Mage_Core_Controller_Front_Action
         // Get Operation Type (AUTHORIZATION / SALE)
         $operation = ($method->getConfigData('transactiontype') == 0) ? 'AUTHORIZATION' : 'SALE';
 
-        // Get CustomerId
-        $customer_id = (Mage::getSingleton('customer/session')->isLoggedIn() == true) ? Mage::getSingleton('customer/session')->getCustomer()->getId() : '0';
-
         // Get Payment Type (PX, CREDITCARD etc)
         $paymentview = $method->getConfigData('paymentview');
 
@@ -79,7 +76,7 @@ class PayEx_Payments_PaymentController extends Mage_Core_Controller_Front_Action
             'currency' => $currency_code,
             'vat' => 0,
             'orderID' => $order_id,
-            'productNumber' => $customer_id,
+            'productNumber' => $order_id,
             'description' => Mage::app()->getStore()->getName(),
             'clientIPAddress' => Mage::helper('core/http')->getRemoteAddr(),
             'clientIdentifier' => 'USERAGENT=' . Mage::helper('core/http')->getHttpUserAgent(),

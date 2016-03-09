@@ -33,9 +33,6 @@ class PayEx_Payments_BankdebitController extends Mage_Core_Controller_Front_Acti
         // Get Currency code
         $currency_code = $order->getOrderCurrency()->getCurrencyCode();
 
-        // Get CustomerId
-        $customer_id = (Mage::getSingleton('customer/session')->isLoggedIn() == true) ? Mage::getSingleton('customer/session')->getCustomer()->getId() : '0';
-
         // Get Additional Values
         $additional = '';
 
@@ -52,7 +49,6 @@ class PayEx_Payments_BankdebitController extends Mage_Core_Controller_Front_Acti
         // Get Bank Id
         $bank_id = Mage::getSingleton('checkout/session')->getBankId();
 
-        Mage::helper('payex/tools')->addToDebug('Reserved Order for CustomerId #' . $customer_id, $order_id );
         Mage::helper('payex/tools')->addToDebug('Selected bank: '.$bank_id);
 
         // Call PxOrder.Initialize8
@@ -64,7 +60,7 @@ class PayEx_Payments_BankdebitController extends Mage_Core_Controller_Front_Acti
             'currency' => $currency_code,
             'vat' => 0,
             'orderID' => $order_id,
-            'productNumber' => $customer_id,
+            'productNumber' => $order_id,
             'description' => Mage::app()->getStore()->getName(),
             'clientIPAddress' => Mage::helper('core/http')->getRemoteAddr(),
             'clientIdentifier' => 'USERAGENT=' . Mage::helper('core/http')->getHttpUserAgent(),

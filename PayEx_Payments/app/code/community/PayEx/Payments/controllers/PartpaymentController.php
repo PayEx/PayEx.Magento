@@ -36,9 +36,6 @@ class PayEx_Payments_PartpaymentController extends Mage_Core_Controller_Front_Ac
         // Get Currency code
         $currency_code = $order->getOrderCurrency()->getCurrencyCode();
 
-        // Get CustomerId
-        $customer_id = (Mage::getSingleton('customer/session')->isLoggedIn() == true) ? Mage::getSingleton('customer/session')->getCustomer()->getId() : '0';
-
         // Get Amount
         //$amount = $order->getGrandTotal();
         $amount = Mage::helper('payex/order')->getCalculatedOrderAmount($order)->getAmount();
@@ -52,7 +49,7 @@ class PayEx_Payments_PartpaymentController extends Mage_Core_Controller_Front_Ac
             'currency' => $currency_code,
             'vat' => 0,
             'orderID' => $order_id,
-            'productNumber' => $customer_id,
+            'productNumber' => $order_id,
             'description' => Mage::app()->getStore()->getName(),
             'clientIPAddress' => Mage::helper('core/http')->getRemoteAddr(),
             'clientIdentifier' => '',
