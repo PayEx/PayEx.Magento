@@ -8,7 +8,7 @@
     <?php $specific = $this->getSpecificInformation(); ?>
     <?php if (count($specific) > 0): ?>
         <?php foreach ($specific as $key => $value): ?>
-            <?php echo Mage::helper('partpayment')->__($key) . ': ' . $this->htmlEscape($value); ?><br/>
+            <?php echo Mage::helper('payex')->__($key) . ': ' . $this->htmlEscape($value); ?><br/>
         <?php endforeach; ?>
     <?php endif; ?>
 <?php else: ?>

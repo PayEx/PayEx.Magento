@@ -56,7 +56,7 @@ class PayEx_Payments_PartpaymentController extends Mage_Core_Controller_Front_Ac
             'additionalValues' => '',
             'externalID' => '',
             'returnUrl' => 'http://localhost.no/return',
-            'view' => 'CREDITACCOUNT',
+            'view' => 'FINANCING',
             'agreementRef' => '',
             'cancelUrl' => 'http://localhost.no/cancel',
             'clientLanguage' => $method->getConfigData('clientlanguage')
@@ -88,25 +88,24 @@ class PayEx_Payments_PartpaymentController extends Mage_Core_Controller_Front_Ac
         }
         $order_ref = $result['orderRef'];
 
-        // Call PxOrder.PurchasePartPaymentSale
+        // Call PxOrder.PurchaseCreditAccount
         $params = array(
             'accountNumber' => '',
             'orderRef' => $order_ref,
             'socialSecurityNumber' => $ssn,
-            'legalFirstName' => $order->getBillingAddress()->getFirstname(),
-            'legalLastName' => $order->getBillingAddress()->getLastname(),
-            'legalStreetAddress' => $order->getBillingAddress()->getStreet(-1),
-            'legalCoAddress' => '',
-            'legalPostNumber' => $order->getBillingAddress()->getPostcode(),
-            'legalCity' => $order->getBillingAddress()->getCity(),
-            'legalCountryCode' => $order->getBillingAddress()->getCountry(),
+            'legalName' => $order->getBillingAddress()->getName(),
+            'streetAddress' => $order->getBillingAddress()->getStreet(-1),
+            'coAddress' => '',
+            'zipCode' => $order->getBillingAddress()->getPostcode(),
+            'city' => $order->getBillingAddress()->getCity(),
+            'countryCode' => $order->getBillingAddress()->getCountry(),
+            'paymentMethod' => $order->getBillingAddress()->getCountry() === 'SE' ? 'PXCREDITACCOUNTSE' : 'PXCREDITACCOUNTNO',
             'email' => $order->getBillingAddress()->getEmail(),
             'msisdn' => (mb_substr($order->getBillingAddress()->getTelephone(), 0, 1) === '+') ? $order->getBillingAddress()->getTelephone() : '+' . $order->getBillingAddress()->getTelephone(),
-            'ipAddress' => Mage::helper('core/http')->getRemoteAddr(),
+            'ipAddress' => Mage::helper('core/http')->getRemoteAddr()
         );
-
-        $result = Mage::helper('payex/api')->getPx()->PurchasePartPaymentSale($params);
-        Mage::helper('payex/tools')->addToDebug('PxOrder.PurchasePartPaymentSale:' . $result['description']);
+        $result = Mage::helper('payex/api')->getPx()->PurchaseCreditAccount($params);
+        Mage::helper('payex/tools')->addToDebug('PxOrder.PurchaseCreditAccount:' . $result['description']);
 
         // Check Errors
         if ($result['code'] !== 'OK' || $result['description'] !== 'OK') {
