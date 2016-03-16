@@ -1,0 +1,14 @@
+app/code/community/PayEx/Payments
+app/design/adminhtml/default/default/layout/payex
+app/design/adminhtml/default/default/template/payex
+app/design/frontend/base/default/layout/payex
+app/design/frontend/base/default/template/payex
+app/etc/modules/PayEx_Payments.xml
+app/locale/en_US/PayEx_Payments.csv
+app/locale/sv_SE/PayEx_Payments.csv
+js/payex
+skin/adminhtml/base/default/payex
+skin/frontend/base/default/css/payex
+skin/frontend/base/default/images/payex
+lib/Px
+Changelog_payex.txt
