@@ -6,7 +6,7 @@ $this->startSetup();
 $this->_conn->addColumn($this->getTable('sales_flat_quote'), 'payex_payment_fee', 'decimal(12,4)');
 $this->_conn->addColumn($this->getTable('sales_flat_quote'), 'payex_payment_fee_tax', 'decimal(12,4)');
 $this->_conn->addColumn($this->getTable('sales_flat_quote'), 'base_payex_payment_fee', 'decimal(12,4)');
-$this->_conn->addColumn($this->getTable('sales_flat_order'), 'base_payex_payment_fee_tax', 'decimal(12,4)');
+$this->_conn->addColumn($this->getTable('sales_flat_quote'), 'base_payex_payment_fee_tax', 'decimal(12,4)');
 $this->_conn->addColumn($this->getTable('sales_flat_order'), 'payex_payment_fee', 'decimal(12,4)');
 $this->_conn->addColumn($this->getTable('sales_flat_order'), 'payex_payment_fee_tax', 'decimal(12,4)');
 $this->_conn->addColumn($this->getTable('sales_flat_order'), 'base_payex_payment_fee', 'decimal(12,4)');
