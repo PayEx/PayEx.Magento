@@ -84,10 +84,16 @@ class PayEx_Payments_Model_Feed extends Mage_AdminNotification_Model_Feed
         return $this;
     }
 
-    //public function getFrequency()
-    //{
-    //    return Mage::getStoreConfig(self::XML_FREQUENCY_PATH);
-    //}
+    public function getFrequency()
+    {
+        /**
+         * if adminnotification is disabled, parent::getFrequency() returns 0
+         * resulting in a new request on every admin page reload
+         */
+        if(parent::getFrequency()) return parent::getFrequency();
+
+        return 24*3600;
+    }
 
     /**
      * Get Last Update time

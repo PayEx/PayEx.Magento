@@ -374,9 +374,10 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
         $discountInclTax = (int) (100 * $discountData->getDiscountInclTax());
         $discountExclTax = (int) (100 * $discountData->getDiscountExclTax());
         $discountVatAmount = $discountInclTax - $discountExclTax;
-        $discountVatPercent = (($discountInclTax / $discountExclTax) - 1) * 100;
 
         if (abs($discountInclTax) > 0) {
+            $discountVatPercent = (($discountInclTax / $discountExclTax) - 1) * 100;
+
             $params = array(
                 'accountNumber' => '',
                 'orderRef' => $orderRef,

@@ -1351,7 +1351,7 @@
             <show_in_default>1</show_in_default>
             <show_in_website>1</show_in_website>
             <show_in_store>1</show_in_store>
-            <sort_order>10</sort_order>
+            <sort_order>100</sort_order>
             <groups>
                 <payex_ssn translate="label">
                     <label>PayEx Settings</label>
