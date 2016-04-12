@@ -669,9 +669,11 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
         $discountInclTax = $discountData->getDiscountInclTax();
         $discountExclTax = $discountData->getDiscountExclTax();
         $discountVatAmount = $discountInclTax - $discountExclTax;
-        $discountVatPercent = round((($discountInclTax / $discountExclTax) - 1) * 100);
 
         if (abs($discountInclTax) > 0) {
+
+            $discountVatPercent = round((($discountInclTax / $discountExclTax) - 1) * 100);
+
             $discount_description = ($order->getDiscountDescription() !== null) ? Mage::helper('sales')->__('Discount (%s)', $order->getDiscountDescription()) : Mage::helper('sales')->__('Discount');
 
             $OrderLine = $dom->createElement('OrderLine');
