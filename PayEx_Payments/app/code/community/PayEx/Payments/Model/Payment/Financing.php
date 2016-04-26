@@ -244,8 +244,6 @@ class PayEx_Payments_Model_Payment_Financing extends PayEx_Payments_Model_Paymen
                 ->setTransactionId($result['transactionNumber'])
                 ->setIsTransactionClosed(0);
 
-            // @todo Get Invoice Link URL using PxOrder.InvoiceLinkGet
-
             // Add Transaction fields
             $payment->setAdditionalInformation(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS, $result);
             return $this;
