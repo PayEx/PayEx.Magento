@@ -326,6 +326,8 @@ class PayEx_Payments_Model_Payment_MasterPass extends PayEx_Payments_Model_Payme
     {
         Mage::helper('payex/tools')->addToDebug('Action: fetchTransactionInfo. ID ' . $transactionId);
 
+        parent::fetchTransactionInfo($payment, $transactionId);
+
         // Get Transaction Details
         $params = array(
             'accountNumber' => '',
