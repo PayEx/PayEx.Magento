@@ -340,6 +340,8 @@ class PayEx_Payments_Model_Payment_Autopay extends PayEx_Payments_Model_Payment_
     {
         Mage::helper('payex/tools')->addToDebug('Action: fetchTransactionInfo. ID ' . $transactionId);
 
+        parent::fetchTransactionInfo($payment, $transactionId);
+
         // Get Transaction Details
         $params = array(
             'accountNumber' => '',

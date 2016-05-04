@@ -1,11 +1,11 @@
 <?php
 
-class PayEx_Payments_Model_Payment_CC extends PayEx_Payments_Model_Payment_Abstract
+class PayEx_Payments_Model_Payment_Swish extends PayEx_Payments_Model_Payment_Abstract
 {
     /**
      * Payment method code
      */
-    public $_code = 'payex_cc';
+    public $_code = 'payex_swish';
 
     /**
      * Availability options
@@ -21,12 +21,13 @@ class PayEx_Payments_Model_Payment_CC extends PayEx_Payments_Model_Payment_Abstr
     protected $_canUseCheckout = true;
     protected $_canUseForMultishipping = false;
     protected $_canFetchTransactionInfo = true;
+    //protected $_canCancelInvoice        = true;
 
     /**
      * Payment method blocks
      */
-    protected $_infoBlockType = 'payex/info_CC';
-    protected $_formBlockType = 'payex/form_CC';
+    protected $_infoBlockType = 'payex/info_swish';
+    protected $_formBlockType = 'payex/form_swish';
 
     /**
      * Get initialized flag status
@@ -64,7 +65,7 @@ class PayEx_Payments_Model_Payment_CC extends PayEx_Payments_Model_Payment_Abstr
 
     /**
      * Check whether payment method can be used
-     * @param Mage_Sales_Model_Quote $quote
+     * @param Mage_Sales_Model_Quote
      * @return bool
      */
     public function isAvailable($quote = null)
@@ -75,10 +76,6 @@ class PayEx_Payments_Model_Payment_CC extends PayEx_Payments_Model_Payment_Abstr
 
         // Check currency
         $allowedCurrency = array('DKK', 'EUR', 'GBP', 'NOK', 'SEK', 'USD');
-        //if ($this->getConfigData('paymentview') === 'DIRECTDEBIT') {
-        //    $allowedCurrency = array('NOK', 'SEK', 'USD');
-        //}
-
         return in_array($quote->getQuoteCurrencyCode(), $allowedCurrency);
     }
 
@@ -99,11 +96,12 @@ class PayEx_Payments_Model_Payment_CC extends PayEx_Payments_Model_Payment_Abstr
     public function getOrderPlaceRedirectUrl()
     {
         Mage::helper('payex/tools')->addToDebug('Action: getOrderPlaceRedirectUrl');
-        return Mage::getUrl('payex/payment/redirect', array('_secure' => true));
+        return Mage::getUrl('payex/swish/redirect', array('_secure' => true));
     }
 
     /**
      * Capture payment
+     * @note In BankDebit used auto-capture
      * @param Varien_Object $payment
      * @param $amount
      * @return $this
@@ -114,74 +112,16 @@ class PayEx_Payments_Model_Payment_CC extends PayEx_Payments_Model_Payment_Abstr
 
         parent::capture($payment, $amount);
 
-        if ($amount <= 0) {
-            Mage::throwException(Mage::helper('paygate')->__('Invalid amount for capture.'));
-        }
-
-        if (!$payment->getLastTransId()) {
-            Mage::throwException(Mage::helper('paygate')->__('Invalid transaction ID.'));
-        }
-
-        $payment->setAmount($amount);
-
-        // Load transaction Data
         $transactionId = $payment->getLastTransId();
-        $transaction = $payment->getTransaction($transactionId);
-        if (!$transaction) {
-            Mage::throwException(Mage::helper('payex')->__('Can\'t load last transaction.'));
-        }
+        //$transactionId = $transactionId . '-capture';
 
-        // Get Transaction Details
-        $details = $this->fetchTransactionInfo($payment, $transactionId);
+        // Add Capture Transaction
+        $payment->setStatus(self::STATUS_APPROVED)
+            ->setTransactionId($transactionId)
+            ->setIsTransactionClosed(0);
 
-        // Not to execute for Sale transactions
-        if ((int)$details['transactionStatus'] !== 3) {
-            Mage::throwException(Mage::helper('payex')->__('Can\'t capture captured order.'));
-            //return $this;
-        }
+        // Do nothing
 
-        $transactionNumber = $details['transactionNumber'];
-        $order_id = $details['orderId'];
-        if (!$order_id) {
-            $order_id = $payment->getOrder()->getIncrementId();
-        }
-
-        // Prevent Rounding Issue
-        // Difference can be ~0.0099999999999909
-        $order_amount = Mage::helper('payex/order')->getCalculatedOrderAmount($payment->getOrder())->getAmount();
-        $value = abs(sprintf("%.2f", $order_amount) - sprintf("%.2f", $amount));
-        if ($value > 0 && $value < 0.011) {
-            $amount = $order_amount;
-        }
-
-        // Call PxOrder.Capture5
-        $params = array(
-            'accountNumber' => '',
-            'transactionNumber' => $transactionNumber,
-            'amount' => round(100 * $amount),
-            'orderId' => $order_id,
-            'vatAmount' => 0,
-            'additionalValues' => ''
-        );
-        $result = Mage::helper('payex/api')->getPx()->Capture5($params);
-        Mage::helper('payex/tools')->addToDebug('PXOrder.Capture5:' . $result['description'], $order_id);
-
-        // Check Results
-        if ($result['code'] === 'OK' && $result['errorCode'] === 'OK' && $result['description'] === 'OK') {
-            // Note: Order Status will be changed in Observer
-
-            // Add Capture Transaction
-            $payment->setStatus(self::STATUS_APPROVED)
-                ->setTransactionId($result['transactionNumber'])
-                ->setIsTransactionClosed(0);
-
-            // Add Transaction fields
-            $payment->setAdditionalInformation(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS, $result);
-            return $this;
-        }
-
-        // Show Error
-        Mage::helper('payex/tools')->throwPayExException($result, 'PxOrder.Capture5');
         return $this;
     }
 
@@ -194,53 +134,15 @@ class PayEx_Payments_Model_Payment_CC extends PayEx_Payments_Model_Payment_Abstr
     {
         Mage::helper('payex/tools')->addToDebug('Action: Cancel');
 
-        if (!$payment->getLastTransId()) {
-            Mage::throwException(Mage::helper('paygate')->__('Invalid transaction ID.'));
-        }
-
-        // Load transaction Data
         $transactionId = $payment->getLastTransId();
-        $transaction = $payment->getTransaction($transactionId);
-        if (!$transaction) {
-            Mage::throwException(Mage::helper('payex')->__('Can\'t load last transaction.'));
-        }
 
-        // Get Transaction Details
-        $details = $this->fetchTransactionInfo($payment, $transactionId);
+        // Add Cancel Transaction
+        $payment->setStatus(self::STATUS_DECLINED)
+            ->setTransactionId($transactionId)
+            ->setIsTransactionClosed(1); // Closed
 
-        // Not to execute for Sale transactions
-        if ((int)$details['transactionStatus'] !== 3) {
-            Mage::throwException(Mage::helper('payex')->__('Unable to execute cancel.'));
-        }
+        // Do nothing
 
-        $transactionNumber = $details['transactionNumber'];
-        $order_id = $details['orderId'];
-        if (!$order_id) {
-            $order_id = $payment->getOrder()->getId();
-        }
-
-        // Call PXOrder.Cancel2
-        $params = array(
-            'accountNumber' => '',
-            'transactionNumber' => $transactionNumber
-        );
-        $result = Mage::helper('payex/api')->getPx()->Cancel2($params);
-        Mage::helper('payex/tools')->addToDebug('PxOrder.Cancel2:' . $result['description'], $order_id);
-
-        // Check Results
-        if ($result['code'] === 'OK' && $result['errorCode'] === 'OK' && $result['description'] === 'OK') {
-            // Add Cancel Transaction
-            $payment->setStatus(self::STATUS_DECLINED)
-                ->setTransactionId($result['transactionNumber'])
-                ->setIsTransactionClosed(1); // Closed
-
-            // Add Transaction fields
-            $payment->setAdditionalInformation(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS, $result);
-            return $this;
-        }
-
-        // Show Error
-        Mage::helper('payex/tools')->throwPayExException($result, 'PxOrder.Cancel2');
         return $this;
     }
 
@@ -285,11 +187,11 @@ class PayEx_Payments_Model_Payment_CC extends PayEx_Payments_Model_Payment_Abstr
             $order_id = $payment->getOrder()->getId();
         }
 
-        // Call PXOrder.PXOrder.Credit5
+        // Call PxOrder.Credit5
         $params = array(
             'accountNumber' => '',
             'transactionNumber' => $transactionNumber,
-            'amount' => round(100 * $amount),
+            'amount' => round($amount * 100),
             'orderId' => $order_id,
             'vatAmount' => 0,
             'additionalValues' => ''
@@ -298,7 +200,7 @@ class PayEx_Payments_Model_Payment_CC extends PayEx_Payments_Model_Payment_Abstr
         Mage::helper('payex/tools')->debugApi($result, 'PxOrder.Credit');
 
         // Check Results
-        if ($result['code'] === 'OK' && $result['errorCode'] === 'OK' && $result['description'] === 'OK') {
+        if ($result['code'] == 'OK' && $result['errorCode'] == 'OK' && $result['description'] == 'OK') {
             // Add Credit Transaction
             $payment->setAnetTransType(Mage_Sales_Model_Order_Payment_Transaction::TYPE_REFUND);
             $payment->setAmount($amount);
@@ -314,7 +216,6 @@ class PayEx_Payments_Model_Payment_CC extends PayEx_Payments_Model_Payment_Abstr
 
         // Show Error
         Mage::helper('payex/tools')->throwPayExException($result, 'PxOrder.Credit5');
-        return $this;
     }
 
     /**
@@ -338,8 +239,6 @@ class PayEx_Payments_Model_Payment_CC extends PayEx_Payments_Model_Payment_Abstr
     {
         Mage::helper('payex/tools')->addToDebug('Action: fetchTransactionInfo. ID ' . $transactionId);
 
-        parent::fetchTransactionInfo($payment, $transactionId);
-
         // Get Transaction Details
         $params = array(
             'accountNumber' => '',
@@ -362,20 +261,6 @@ class PayEx_Payments_Model_Payment_CC extends PayEx_Payments_Model_Payment_Abstr
         // Show Error
         Mage::helper('payex/tools')->throwPayExException($details, 'GetTransactionDetails2');
     }
-
-    /**
-     * Create Payment Block
-     * @param $name
-     * @return mixed
-     */
-    /* public function createFormBlock($name)
-    {
-        $block = $this->getLayout()->createBlock('payex/form', $name)
-            ->setMethod('payex')
-            ->setPayment($this->getPayment())
-            ->setTemplate('payex/form.phtml');
-        return $block;
-    } */
 
     public function getStandardCheckoutFormFields()
     {
@@ -426,9 +311,9 @@ class PayEx_Payments_Model_Payment_CC extends PayEx_Payments_Model_Payment_Abstr
         return $this->_canCapture;
     }
 
-
     public function canFetchTransactionInfo()
     {
         return $this->_canFetchTransactionInfo;
     }
+
 }

@@ -236,8 +236,6 @@ class PayEx_Payments_Model_Payment_PartPayment extends PayEx_Payments_Model_Paym
                 ->setTransactionId($result['transactionNumber'])
                 ->setIsTransactionClosed(0);
 
-            // @todo Get Invoice Link URL using PxOrder.InvoiceLinkGet
-
             // Add Transaction fields
             $payment->setAdditionalInformation(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS, $result);
             return $this;
@@ -402,6 +400,8 @@ class PayEx_Payments_Model_Payment_PartPayment extends PayEx_Payments_Model_Paym
     public function fetchTransactionInfo(Mage_Payment_Model_Info $payment, $transactionId)
     {
         Mage::helper('payex/tools')->addToDebug('Action: fetchTransactionInfo. ID ' . $transactionId);
+
+        parent::fetchTransactionInfo($payment, $transactionId);
 
         // Get Transaction Details
         $params = array(

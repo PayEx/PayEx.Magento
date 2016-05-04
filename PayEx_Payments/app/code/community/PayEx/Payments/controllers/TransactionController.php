@@ -55,19 +55,20 @@ class PayEx_Payments_TransactionController extends Mage_Core_Controller_Front_Ac
         }
 
         // Check Payment Method
-        $payment_method = $order->getPayment()->getMethodInstance();
-        $payment_method_code = $payment_method->getCode();
-        if (strpos($payment_method_code, 'payex_') === false) {
-            Mage::helper('payex/tools')->addToDebug('TC: Unsupported payment method: ' . $payment_method_code);
+        if (strpos($order->getPayment()->getMethodInstance()->getCode(), 'payex_') === false) {
+            Mage::helper('payex/tools')->addToDebug('TC: Unsupported payment method: ' . $order->getPayment()->getMethodInstance()->getCode());
             header(sprintf('%s %s %s', 'HTTP/1.1', '500', 'FAILURE'), true, '500');
             header(sprintf('Status: %s %s', '500', 'FAILURE'), true, '500');
             exit('FAILURE');
         }
 
+        // Get Payment Method instance
+        $payment_method = $order->getPayment()->getMethodInstance();
+
         // Get Account Details
-        $accountNumber = $payment_method->getConfigData('accountnumber');
-        $encryptionKey = $payment_method->getConfigData('encryptionkey');
-        $debug = (bool)$payment_method->getConfigData('debug');
+        $accountNumber = $payment_method->getConfigData('accountnumber', $order->getStoreId());
+        $encryptionKey = $payment_method->getConfigData('encryptionkey', $order->getStoreId());
+        $debug = (bool)$payment_method->getConfigData('debug', $order->getStoreId());
 
         // Check Requested Account Number
         if ($_POST['accountNumber'] !== $accountNumber) {
@@ -114,7 +115,7 @@ class PayEx_Payments_TransactionController extends Mage_Core_Controller_Front_Ac
         Mage::helper('payex/tools')->addToDebug('TC: OrderId: ' . $order_id);
 
         // Get Order Status from External Payment Module
-        switch ($payment_method_code) {
+        switch ($payment_method->getCode()) {
             case 'payex_bankdebit':
                 $order_status_authorize = $payment_method->getConfigData('order_status');
                 $order_status_capture = $payment_method->getConfigData('order_status');

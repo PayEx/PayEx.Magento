@@ -297,6 +297,25 @@
                 <invoiceduedays>15</invoiceduedays>
                 <unapproved>0</unapproved>
             </payex_invoice>
+
+            <!-- 'newmodule' configuration group (fieldset) -->
+            <payex_swish>
+                <!-- by default this payment method is inactive -->
+                <active>1</active>
+                <!-- model to handle logic for this payment method -->
+                <model>payex/payment_swish</model>
+                <!-- default title for payment checkout page and order view page -->
+                <title>Swish Payments (via PayEx)</title>
+                <allowspecific>0</allowspecific>
+                <accountnumber>payex account number</accountnumber>
+                <encryptionkey>payex encryption key</encryptionkey>
+                <debug>1</debug>
+                <order_status>1</order_status>
+                <clientlanguage>en-US</clientlanguage>
+                <cleantime>20</cleantime>
+                <responsive>0</responsive>
+                <checkoutinfo>1</checkoutinfo>
+            </payex_swish>
         </payment>
     </default>
 

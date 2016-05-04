@@ -712,4 +712,19 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
             ->getFirstItem();
         return $status;
     }
+
+    /**
+     * Get Invoice URL for Financing Invoice transaction
+     * @param string|int $transaction_id
+     * @return array
+     */
+    public function getInvoiceLink($transaction_id) {
+        // Call PxOrder.InvoiceLinkGet
+        $params = array (
+            'accountNumber' => '',
+            'transactionNumber' => $transaction_id
+        );
+        $result = Mage::helper('payex/api')->getPx()->InvoiceLinkGet($params);
+        return $result;
+    }
 }

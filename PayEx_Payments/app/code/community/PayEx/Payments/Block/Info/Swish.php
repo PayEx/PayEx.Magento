@@ -1,18 +1,13 @@
 <?php
 
-class PayEx_Payments_Block_Info_Financing extends Mage_Payment_Block_Info
+class PayEx_Payments_Block_Info_Swish extends Mage_Payment_Block_Info
 {
     protected function _construct()
     {
         parent::_construct();
-
-        $this->setTemplate('payex/financing/info.phtml');
-        // Template for Checkout page
-        if ($this->getRequest()->getRequestedActionName() === 'progress') {
-            $this->setTemplate('payex/financing/title.phtml');
-        }
-
+        $this->setTemplate('payex/swish/info.phtml');
     }
+
 
     /**
      * Returns code of payment method
@@ -39,8 +34,8 @@ class PayEx_Payments_Block_Info_Financing extends Mage_Payment_Block_Info
             'PayEx Payment Method' => array('paymentMethod', 'cardProduct'),
             //'Masked Number' => array('maskedNumber', 'maskedCard'),
             //'Bank Hash' => array('BankHash', 'csId', 'panId'),
-            'Bank Reference' => array('bankReference'),
-            'Authenticated Status' => array('AuthenticatedStatus', 'authenticatedStatus'),
+            //'Bank Reference' => array('bankReference'),
+            //'Authenticated Status' => array('AuthenticatedStatus', 'authenticatedStatus'),
             'Transaction Ref' => array('transactionRef'),
             'PayEx Transaction Number' => array('transactionNumber'),
             'PayEx Transaction Status' => array('transactionStatus'),
@@ -74,14 +69,6 @@ class PayEx_Payments_Block_Info_Financing extends Mage_Payment_Block_Info
                         }
                     }
 
-                    // Add Invoice Url
-                    if (in_array($transaction_data['transactionStatus'], array(0, 6))) {
-                        $invoice_url = $this->getInvoiceLink();
-                        if ($invoice_url) {
-                            $result['Invoice'] = $this->getInvoiceLink();
-                        }
-                    }
-
                     return $result;
                 }
             }
@@ -98,41 +85,7 @@ class PayEx_Payments_Block_Info_Financing extends Mage_Payment_Block_Info
      */
     public function toPdf()
     {
-        $this->setTemplate('payex/financing/pdf/info.phtml');
+        $this->setTemplate('payex/swish/pdf/info.phtml');
         return $this->toHtml();
-    }
-
-    /**
-     * Get Invoice Url
-     * @return bool|string
-     */
-    public function getInvoiceLink()
-    {
-        $_info = $this->getInfo();
-        if ($_info) {
-            $transactionId = $_info->getLastTransId();
-            if ($transactionId) {
-                $transaction = $_info->getTransaction($transactionId);
-
-                // Get Invoice Url from Payment
-                $payment = $transaction->getOrderPaymentObject(true);
-                $invoice_url = $payment->getAdditionalInformation('payex_invoice_url');
-                if (!$invoice_url) {
-                    $result = Mage::helper('payex/order')->getInvoiceLink($transactionId);
-                    if ($result['code'] !== 'OK' || $result['description'] !== 'OK' || $result['errorCode'] !== 'OK') {
-                        return false;
-                    }
-
-                    $invoice_url = $result['url'];
-
-                    // Save Invoice Url in Payment
-                    $payment->setAdditionalInformation('payex_invoice_url', $invoice_url);
-                }
-
-                return $invoice_url;
-            }
-        }
-
-        return false;
     }
 }
