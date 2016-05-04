@@ -1,3 +1,8 @@
+Version 3.0.1
+* Implemented Swish Payment Method
+* Financing Invoice: Invoice link
+* Fixed payex account problem for multiple stores
+
 Version 3.0.0
 * Init release of PayEx Payments module
 * Payment modules have been assembled in a single module
