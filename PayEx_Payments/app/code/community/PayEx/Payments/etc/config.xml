@@ -127,7 +127,7 @@
             <!-- 'newmodule' configuration group (fieldset) -->
             <payex_cc>
                 <!-- by default this payment method is inactive -->
-                <active>1</active>
+                <active>0</active>
                 <!-- model to handle logic for this payment method -->
                 <model>payex/payment_CC</model>
                 <!-- default title for payment checkout page and order view page -->
@@ -149,7 +149,7 @@
             <!-- 'newmodule' configuration group (fieldset) -->
             <payex_bankdebit>
                 <!-- by default this payment method is inactive -->
-                <active>1</active>
+                <active>0</active>
                 <!-- model to handle logic for this payment method -->
                 <model>payex/payment_bankdebit</model>
                 <!-- default title for payment checkout page and order view page -->
@@ -169,7 +169,7 @@
             <!-- 'newmodule' configuration group (fieldset) -->
             <payex_wywallet>
                 <!-- by default this payment method is inactive -->
-                <active>1</active>
+                <active>0</active>
                 <!-- model to handle logic for this payment method -->
                 <model>payex/payment_wywallet</model>
                 <!-- default title for payment checkout page and order view page -->
@@ -190,7 +190,7 @@
             <!-- 'newmodule' configuration group (fieldset) -->
             <payex_autopay>
                 <!-- by default this payment method is inactive -->
-                <active>1</active>
+                <active>0</active>
                 <!-- model to handle logic for this payment method -->
                 <model>payex/payment_autopay</model>
                 <!-- order status for new orders paid by this payment method -->
@@ -214,7 +214,7 @@
             <!-- 'newmodule' configuration group (fieldset) -->
             <payex_masterpass>
                 <!-- by default this payment method is inactive -->
-                <active>1</active>
+                <active>0</active>
                 <!-- model to handle logic for this payment method -->
                 <model>payex/payment_MasterPass</model>
                 <!-- default title for payment checkout page and order view page -->
@@ -233,7 +233,7 @@
             <!-- 'newmodule' configuration group (fieldset) -->
             <payex_financing>
                 <!-- by default this payment method is inactive -->
-                <active>1</active>
+                <active>0</active>
                 <!-- model to handle logic for this payment method -->
                 <model>payex/payment_financing</model>
                 <!-- default title for payment checkout page and order view page -->
@@ -255,7 +255,7 @@
             <!-- 'newmodule' configuration group (fieldset) -->
             <payex_partpayment>
                 <!-- by default this payment method is inactive -->
-                <active>1</active>
+                <active>0</active>
                 <!-- model to handle logic for this payment method -->
                 <model>payex/payment_PartPayment</model>
                 <!-- default title for payment checkout page and order view page -->
@@ -278,7 +278,7 @@
             <payex_invoice>
                 <!-- model to handle logic for this payment method -->
                 <model>payex/payment_invoice</model>
-                <active>1</active>
+                <active>0</active>
                 <!-- default title for payment checkout page and order view page -->
                 <title>PayEx Invoice Payments (Ledger Service)</title>
                 <allowspecific>0</allowspecific>
@@ -301,7 +301,7 @@
             <!-- 'newmodule' configuration group (fieldset) -->
             <payex_swish>
                 <!-- by default this payment method is inactive -->
-                <active>1</active>
+                <active>0</active>
                 <!-- model to handle logic for this payment method -->
                 <model>payex/payment_swish</model>
                 <!-- default title for payment checkout page and order view page -->
