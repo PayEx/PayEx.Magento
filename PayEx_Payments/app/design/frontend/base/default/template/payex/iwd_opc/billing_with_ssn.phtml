@@ -26,7 +26,7 @@
                     </div>
                     <script type="application/javascript">
                         //<![CDATA[
-                        var MAGENTO_BASE_URL = '<?php echo  Mage::getBaseUrl(); ?>';
+                        var MAGENTO_BASE_URL = '<?php echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_LINK, true); ?>';
                         window.PAYEX_SSN_FORM = new VarienForm('social_security_number_form', false);
                         //]]>
                     </script>
