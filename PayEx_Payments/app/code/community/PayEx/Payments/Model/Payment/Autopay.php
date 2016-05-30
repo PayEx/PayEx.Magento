@@ -146,7 +146,7 @@ class PayEx_Payments_Model_Payment_Autopay extends PayEx_Payments_Model_Payment_
         $details = $this->fetchTransactionInfo($payment, $transactionId);
 
         // Not to execute for Sale transactions
-        if ($details['transactionStatus'] !== 3) {
+        if ((int)$details['transactionStatus'] !== 3) {
             Mage::throwException(Mage::helper('payex')->__('Can\'t capture captured order.'));
         }
 
