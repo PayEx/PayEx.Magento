@@ -110,48 +110,34 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
 
     /**
      * Create Invoice
-     * @param $order
+     * @param Mage_Sales_Model_Order $order
      * @param bool $online
      * @return Mage_Sales_Model_Order_Invoice
      */
     public function makeInvoice(&$order, $online = false)
     {
         // Prepare Invoice
-        $magento_version = Mage::getVersion();
-        if (version_compare($magento_version, '1.4.2', '>=')) {
-            $invoice = Mage::getModel('sales/order_invoice_api_v2');
-            $invoice_id = $invoice->create($order->getIncrementId(), $order->getAllItems(), Mage::helper('payex')->__('Auto-generated from PayEx module'), false, false);
-            $invoice = Mage::getModel('sales/order_invoice')->loadByIncrementId($invoice_id);
+        /** @var Mage_Sales_Model_Order_Invoice $invoice */
+        $invoice = Mage::getModel('sales/service_order', $order)->prepareInvoice();
+        $invoice->addComment(Mage::helper('payex')->__('Auto-generated from PayEx module'), false, false);
+        $invoice->setRequestedCaptureCase($online ? Mage_Sales_Model_Order_Invoice::CAPTURE_ONLINE : Mage_Sales_Model_Order_Invoice::CAPTURE_OFFLINE);
+        $invoice->register();
 
-            if ($online) {
-                $invoice->setRequestedCaptureCase(Mage_Sales_Model_Order_Invoice::CAPTURE_ONLINE);
-                $invoice->capture()->save();
-            } else {
-                $invoice->setRequestedCaptureCase(Mage_Sales_Model_Order_Invoice::CAPTURE_OFFLINE);
-                $invoice->pay()->save();
-            }
-        } else {
-            $invoice = Mage::getModel('sales/service_order', $order)->prepareInvoice();
-            $invoice->addComment(Mage::helper('payex')->__('Auto-generated from PayEx module'), false, false);
-            $invoice->setRequestedCaptureCase($online ? Mage_Sales_Model_Order_Invoice::CAPTURE_ONLINE : Mage_Sales_Model_Order_Invoice::CAPTURE_OFFLINE);
-            $invoice->register();
+        $invoice->getOrder()->setIsInProcess(true);
 
-            $invoice->getOrder()->setIsInProcess(true);
-
-            try {
-                $transactionSave = Mage::getModel('core/resource_transaction')
-                    ->addObject($invoice)
-                    ->addObject($invoice->getOrder());
-                $transactionSave->save();
-            } catch (Mage_Core_Exception $e) {
-                // Save Error Message
-                $order->addStatusToHistory(
-                    $order->getStatus(),
-                    'Failed to create invoice: ' . $e->getMessage(),
-                    true
-                );
-                Mage::throwException($e->getMessage());
-            }
+        try {
+            $transactionSave = Mage::getModel('core/resource_transaction')
+                ->addObject($invoice)
+                ->addObject($invoice->getOrder());
+            $transactionSave->save();
+        } catch (Mage_Core_Exception $e) {
+            // Save Error Message
+            $order->addStatusToHistory(
+                $order->getStatus(),
+                'Failed to create invoice: ' . $e->getMessage(),
+                true
+            );
+            Mage::throwException($e->getMessage());
         }
 
         $invoice->setIsPaid(true);
