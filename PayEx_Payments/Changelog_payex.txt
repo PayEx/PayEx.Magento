@@ -1,3 +1,11 @@
+Version 3.0.2
+* Social Security Number: Use secure base URL
+* Added Missing Block: payex/invoice_totals_fee
+* Fixed capturing
+* Fixed invoicing
+* Set to inactive status of payment methods by default
+* Updated Px library
+
 Version 3.0.1
 * Implemented Swish Payment Method
 * Financing Invoice: Invoice link
