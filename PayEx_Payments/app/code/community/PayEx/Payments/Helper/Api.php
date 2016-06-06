@@ -1,6 +1,6 @@
 <?php
 
-require_once(Mage::getBaseDir('lib') . '/Px/Px.php');
+require_once(Mage::getBaseDir('lib') . '/PayEx.Ecommerce.Php/src/PayEx/Px.php');
 
 class PayEx_Payments_Helper_Api extends Mage_Core_Helper_Abstract
 {
@@ -15,7 +15,7 @@ class PayEx_Payments_Helper_Api extends Mage_Core_Helper_Abstract
     {
         // Use Singleton
         if (is_null(self::$_px)) {
-            self::$_px = new Px();
+            self::$_px = new PayEx\Px();
         }
         return self::$_px;
     }
