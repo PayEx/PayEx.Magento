@@ -53,7 +53,21 @@ class PayEx_Payments_InvoiceController extends Mage_Core_Controller_Front_Action
         $amount = Mage::helper('payex/order')->getCalculatedOrderAmount($order)->getAmount();
 
         $ssn = Mage::getSingleton('checkout/session')->getSocialSecurtyNumber();
-        $credit_data = Mage::getSingleton('checkout/session')->getCreditData();
+
+        // Credit Check is disabled
+        if ($method->getConfigData('credit_check')) {
+            $credit_data = Mage::getSingleton('checkout/session')->getCreditData();
+        } else {
+            $credit_data = array(
+                'firstName' => $order->getBillingAddress()->getFirstname(),
+                'lastName' => $order->getBillingAddress()->getLastname(),
+                'address' => $order->getBillingAddress()->getStreetFull(),
+                'postCode' => $order->getBillingAddress()->getPostcode(),
+                'city' => $order->getBillingAddress()->getCity(),
+                'name' => $order->getBillingAddress()->getCompany(),
+                'creditCheckRef' => ''
+            );
+        }
 
         // Call PxOrder.Initialize8
         $params = array(
@@ -107,7 +121,7 @@ class PayEx_Payments_InvoiceController extends Mage_Core_Controller_Front_Action
         Mage::helper('payex/order')->addOrderLine($order_ref, $order);
         Mage::helper('payex/order')->addOrderAddress($order_ref, $order);
 
-        $credit_data['full_name'] = $credit_data['firstName'] . ' ' . $credit_data['lastName'];
+        $credit_data['full_name'] = trim($credit_data['firstName'] . ' ' . $credit_data['lastName']);
 
         // Limit strings
         $limit_rules = array(

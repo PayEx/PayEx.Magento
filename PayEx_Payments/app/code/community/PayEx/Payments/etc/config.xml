@@ -296,6 +296,7 @@
                 <invoicetext>Invoice text</invoicetext>
                 <invoiceduedays>15</invoiceduedays>
                 <unapproved>0</unapproved>
+                <credit_check>0</credit_check>
             </payex_invoice>
 
             <!-- 'newmodule' configuration group (fieldset) -->

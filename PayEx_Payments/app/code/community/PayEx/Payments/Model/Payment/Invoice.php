@@ -86,6 +86,11 @@ class PayEx_Payments_Model_Payment_Invoice extends PayEx_Payments_Model_Payment_
     {
         Mage::helper('payex/tools')->addToDebug('Action: Validate');
 
+        // Credit Check is disabled
+        if (!$this->getConfigData('credit_check')) {
+            return true;
+        }
+
         // Get Total Amount
         $amount = $this->getQuote()->getGrandTotal();
 
