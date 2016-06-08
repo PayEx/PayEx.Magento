@@ -3,6 +3,10 @@
 <?php if (!empty($trans_id)): ?>
     <?php $specific = $this->getSpecificInformation(); ?>
     <?php if (count($specific) > 0): ?>
+        <?php unset($specific['PayEx Payment Method']); ?>
+        <?php unset($specific['Authenticated Status']); ?>
+        <?php unset($specific['Transaction Ref']); ?>
+        <?php unset($specific['PayEx Transaction Status']); ?>
         <?php foreach($specific as $key => $value): ?>
             <?php echo Mage::helper('payex')->__($key) . ': ' . $value; ?>
             {{pdf_row_separator}}
