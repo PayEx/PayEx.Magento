@@ -178,3 +178,5 @@
 "Country is empty","Country is empty"
 "Your country don't supported","Your country don't supported"
 "Postcode is empty","Postcode is empty"
+"Perform validation of SSN before checkout";"Perform validation of SSN before checkout"
+"Please enter Social Security Number.";"Please enter Social Security Number."

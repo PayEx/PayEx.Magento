@@ -250,6 +250,7 @@
                 <cleantime>20</cleantime>
                 <replace_illegal>1</replace_illegal>
                 <replacement_char>-</replacement_char>
+                <ssn_check>1</ssn_check>
             </payex_financing>
 
             <!-- 'newmodule' configuration group (fieldset) -->
@@ -272,6 +273,7 @@
                 <cleantime>20</cleantime>
                 <replace_illegal>1</replace_illegal>
                 <replacement_char>-</replacement_char>
+                <ssn_check>1</ssn_check>
             </payex_partpayment>
 
             <!-- 'newmodule' configuration group (fieldset) -->
