@@ -146,7 +146,7 @@ class PayEx_Payments_Model_Payment_PartPayment extends PayEx_Payments_Model_Paym
 
         $params = array(
             'accountNumber' => '',
-            'paymentMethod' => $country_code === 'SE' ? 'PXFINANCINGINVOICESE' : 'PXFINANCINGINVOICENO',
+            'paymentMethod' => $country_code === 'SE' ? 'PXCREDITACCOUNTSE' : 'PXCREDITACCOUNTNO',
             'ssn' => $ssn,
             'zipcode' => $postcode,
             'countryCode' => $country_code,
