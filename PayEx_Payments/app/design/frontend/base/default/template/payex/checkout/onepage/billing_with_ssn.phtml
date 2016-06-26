@@ -27,6 +27,17 @@
 <!-- Start Social Security Number Block -->
 <form id="social_security_number_form">
     <div class="form-list">
+        <div id="ssn-error-placeholder" class="field" style="display: none;">
+            <ul class="messages">
+                <li class="error-msg">
+                    <ul>
+                        <li>
+                            <span id="ssn-error">&nbsp;</span>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
         <div class="field">
             <label for="socialSecurityNumber" class="required"><em>*</em><?php echo Mage::helper('payex')->__('Social Security Number'); ?></label>
             <div class="input-box">

@@ -45,9 +45,23 @@ Event.observe(document, 'dom:loaded', function () {
                         $(self).removeClassName('disabled');
                         var json = response.responseText.evalJSON();
                         if (!json.success) {
-                            alert(json.message);
+                            if ($('social_security_number_form') != undefined) {
+                                // Use HTML placeholder to show message
+                                $('ssn-error').update(json.message);
+                                $('ssn-error-placeholder').show();
+                            } else {
+                                // Use popup message as failback
+                                alert(json.message);
+                            }
+
                             return;
                         }
+
+                        // Hide error placeholder
+                        if ($('social_security_number_form') != undefined) {
+                            $('social_security_number_form').hide();
+                        }
+
                         // Set Form Fields
                         if ($('billing:firstname')) $('billing:firstname').setValue(json.first_name);
                         if ($('billing:lastname')) $('billing:lastname').setValue(json.last_name);
