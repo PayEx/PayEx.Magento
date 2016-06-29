@@ -144,6 +144,7 @@
                 <cleantime>20</cleantime>
                 <responsive>0</responsive>
                 <checkoutinfo>1</checkoutinfo>
+                <discount_calc>advanced</discount_calc>
             </payex_cc>
 
             <!-- 'newmodule' configuration group (fieldset) -->
@@ -164,6 +165,7 @@
                 <cleantime>20</cleantime>
                 <responsive>0</responsive>
                 <checkoutinfo>1</checkoutinfo>
+                <discount_calc>advanced</discount_calc>
             </payex_bankdebit>
 
             <!-- 'newmodule' configuration group (fieldset) -->
@@ -185,6 +187,7 @@
                 <cleantime>20</cleantime>
                 <responsive>0</responsive>
                 <checkoutinfo>1</checkoutinfo>
+                <discount_calc>advanced</discount_calc>
             </payex_wywallet>
 
             <!-- 'newmodule' configuration group (fieldset) -->
@@ -209,6 +212,7 @@
                 <cleantime>20</cleantime>
                 <responsive>0</responsive>
                 <checkoutinfo>1</checkoutinfo>
+                <discount_calc>advanced</discount_calc>
             </payex_autopay>
 
             <!-- 'newmodule' configuration group (fieldset) -->
@@ -228,6 +232,7 @@
                 <order_status_capture>complete</order_status_capture>
                 <clientlanguage>en-US</clientlanguage>
                 <cleantime>20</cleantime>
+                <discount_calc>advanced</discount_calc>
             </payex_masterpass>
 
             <!-- 'newmodule' configuration group (fieldset) -->
@@ -251,6 +256,7 @@
                 <replace_illegal>1</replace_illegal>
                 <replacement_char>-</replacement_char>
                 <ssn_check>1</ssn_check>
+                <discount_calc>advanced</discount_calc>
             </payex_financing>
 
             <!-- 'newmodule' configuration group (fieldset) -->
@@ -274,6 +280,7 @@
                 <replace_illegal>1</replace_illegal>
                 <replacement_char>-</replacement_char>
                 <ssn_check>1</ssn_check>
+                <discount_calc>advanced</discount_calc>
             </payex_partpayment>
 
             <!-- 'newmodule' configuration group (fieldset) -->
@@ -299,6 +306,7 @@
                 <invoiceduedays>15</invoiceduedays>
                 <unapproved>0</unapproved>
                 <credit_check>0</credit_check>
+                <discount_calc>advanced</discount_calc>
             </payex_invoice>
 
             <!-- 'newmodule' configuration group (fieldset) -->
@@ -318,6 +326,7 @@
                 <cleantime>20</cleantime>
                 <responsive>0</responsive>
                 <checkoutinfo>1</checkoutinfo>
+                <discount_calc>advanced</discount_calc>
             </payex_swish>
         </payment>
     </default>

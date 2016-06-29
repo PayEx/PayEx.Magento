@@ -42,9 +42,14 @@ class PayEx_Payments_Helper_Discount extends Mage_Core_Helper_Abstract
      */
     public function getDiscountData(Mage_Sales_Model_Quote $quote)
     {
-        // if catalog-prices includes tax
-        $CatPriceIncl = Mage::getStoreConfig(Mage_Tax_Model_Config::CONFIG_XML_PATH_PRICE_INCLUDES_TAX);
+        // Classic Mode
+        if ($this->getDiscountCalcMode($quote) === 'classic') {
+            $discount = -1 * ($quote->getDiscountAmount() + $quote->getShippingDiscountAmount());
+            $return = new Varien_Object();
+            return $return->setDiscountInclTax($discount)->setDiscountExclTax($discount);
+        }
 
+        // Advanced Mode
         /** @var Mage_Sales_Model_Quote_Address $shippingAddress */
         $shippingAddress = $quote->getShippingAddress();
 
@@ -54,7 +59,7 @@ class PayEx_Payments_Helper_Discount extends Mage_Core_Helper_Abstract
         // find discount on the items
         foreach ($quote->getItemsCollection() as $item) {
             /** @var Mage_Sales_Model_Quote_Item $item */
-            if (!$CatPriceIncl) {
+            if (!Mage::helper('tax')->priceIncludesTax($quote->getStore())) {
                 $discountExcl += $item->getDiscountAmount();
                 $discountIncl += $item->getDiscountAmount() * (($item->getTaxPercent() / 100) + 1);
             } else {
@@ -64,7 +69,7 @@ class PayEx_Payments_Helper_Discount extends Mage_Core_Helper_Abstract
         }
 
         // find out tax-rate for the shipping
-        if ((float)$shippingAddress->getShippingInclTax() && (float)$shippingAddress->getShippingAmount()) {
+        if ($shippingAddress->getShippingInclTax() > 0 && $shippingAddress->getShippingAmount() > 0) {
             $shippingTaxRate = $shippingAddress->getShippingInclTax() / $shippingAddress->getShippingAmount();
         } else {
             $shippingTaxRate = 1;
@@ -72,14 +77,14 @@ class PayEx_Payments_Helper_Discount extends Mage_Core_Helper_Abstract
 
         // how much differs between $discountExcl and total discount?
         // (the difference is due to discount on the shipping)
-        if (!$CatPriceIncl) {
+        if (!Mage::helper('tax')->shippingPriceIncludesTax($quote->getStore())) {
             $shippingDiscount = abs($quote->getShippingAddress()->getDiscountAmount()) - $discountExcl;
         } else {
             $shippingDiscount = abs($quote->getShippingAddress()->getDiscountAmount()) - $discountIncl;
         }
 
         // apply/remove tax to shipping-discount
-        if (!$CatPriceIncl) {
+        if (!Mage::helper('tax')->priceIncludesTax($quote->getStore())) {
             $discountIncl += $shippingDiscount * $shippingTaxRate;
             $discountExcl += $shippingDiscount;
         } else {
@@ -119,16 +124,21 @@ class PayEx_Payments_Helper_Discount extends Mage_Core_Helper_Abstract
      */
     public function getOrderDiscountData(Mage_Sales_Model_Order $order)
     {
-        // if catalog-prices includes tax
-        $CatPriceIncl = Mage::getStoreConfig(Mage_Tax_Model_Config::CONFIG_XML_PATH_PRICE_INCLUDES_TAX, $order->getStore());
+        // Classic Mode
+        if ($this->getDiscountCalcMode($order) === 'classic') {
+            $discount = -1 * ($order->getDiscountAmount() + $order->getShippingDiscountAmount());
+            $return = new Varien_Object();
+            return $return->setDiscountInclTax($discount)->setDiscountExclTax($discount);
+        }
 
+        // Advanced Mode
         $discountIncl = 0;
         $discountExcl = 0;
 
         // find discount on the items
         foreach ($order->getItemsCollection() as $item) {
             /** @var Mage_Sales_Model_Quote_Item $item */
-            if (!$CatPriceIncl) {
+            if (!Mage::helper('tax')->priceIncludesTax($order->getStore())) {
                 $discountExcl += $item->getDiscountAmount();
                 $discountIncl += $item->getDiscountAmount() * (($item->getTaxPercent() / 100) + 1);
             } else {
@@ -138,7 +148,7 @@ class PayEx_Payments_Helper_Discount extends Mage_Core_Helper_Abstract
         }
 
         // find out tax-rate for the shipping
-        if ((float)$order->getShippingInclTax() && (float)$order->getShippingAmount()) {
+        if ($order->getShippingInclTax() > 0 && $order->getShippingAmount() > 0) {
             $shippingTaxRate = $order->getShippingInclTax() / $order->getShippingAmount();
         } else {
             $shippingTaxRate = 1;
@@ -148,7 +158,7 @@ class PayEx_Payments_Helper_Discount extends Mage_Core_Helper_Abstract
         $shippingDiscount = (float)$order->getShippingDiscountAmount();
 
         // apply/remove tax to shipping-discount
-        if (!$CatPriceIncl) {
+        if (!Mage::helper('tax')->shippingPriceIncludesTax($order->getStore())) {
             $discountIncl += $shippingDiscount * $shippingTaxRate;
             $discountExcl += $shippingDiscount;
         } else {
@@ -166,5 +176,21 @@ class PayEx_Payments_Helper_Discount extends Mage_Core_Helper_Abstract
 
         $return = new Varien_Object();
         return $return->setDiscountInclTax($discountIncl)->setDiscountExclTax($discountExcl);
+    }
+
+    /**
+     * Get Discount Calculation Mode
+     * @param Mage_Sales_Model_Quote|Mage_Sales_Model_Order $obj
+     * @return string
+     */
+    public function getDiscountCalcMode($obj)
+    {
+        $method = $obj->getPayment()->getMethodInstance();
+        $discount_calc = $method->getConfigData('discount_calc', $obj->getStoreId());
+        if (empty($discount_calc)) {
+            $discount_calc = 'advanced';
+        }
+        
+        return $discount_calc;
     }
 }
