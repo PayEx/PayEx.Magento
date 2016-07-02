@@ -18,6 +18,10 @@ Event.observe(document, 'dom:loaded', function () {
         fireEvent(document.getElementById('billing-address-select'), 'change');
     }
 
+    $('socialSecurityNumber').on('focus', 'input', function() {
+        $('ssn_details').show();
+    });
+
     $('ssn_click').observe('click', function (event) {
         // Check button is disabled
         if ($(this).hasClassName('disabled')) {
