@@ -25,7 +25,7 @@
  */
 ?>
 <!-- Start Social Security Number Block -->
-<form id="social_security_number_form">
+<form id="social_security_number_form" class="theme-<?php echo Mage::getSingleton('core/design_package')->getPackageName(); ?>">
     <div class="form-list">
         <div id="ssn-error-placeholder" class="field" style="display: none">
             <ul class="messages">
@@ -45,11 +45,13 @@
                 <input type="text" title="<?php echo Mage::helper('payex')->__('Social Security Number'); ?>" name="socialSecurityNumber" id="socialSecurityNumber" class="input-text required-entry" />
             </div>
         </div>
+        <div class="clearer">&nbsp;</div>
 
         <div id="ssn_details" style="display: none">
             <div class="field">
                 <strong><?php echo Mage::helper('payex')->__('Please enter additional fields:'); ?></strong>
             </div>
+            <div class="clearer">&nbsp;</div>
             <div class="field">
                 <div class="field_left">
                     <div class="input-box">
@@ -75,7 +77,6 @@
         </div>
 
         <div class="clearer">&nbsp;</div>
-
     </div>
 </form>
 <div class="clearer">&nbsp;</div>
