@@ -28,8 +28,10 @@ class PayEx_Payments_Helper_Fee extends Mage_Core_Helper_Abstract
         }
 
         $result = new Varien_Object();
-        return $result->setPaymentFeePrice($fee)
+        $result->setPaymentFeeExclTax($fee)
+            ->setPaymentFeeInclTax($fee + $taxAmount)
             ->setPaymentFeeTax($taxAmount);
+        return $result;
     }
 
     /**

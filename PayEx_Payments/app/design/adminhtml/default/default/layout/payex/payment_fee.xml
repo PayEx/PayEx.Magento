@@ -17,4 +17,29 @@
             <block name="payex_payment_fee" type="payex/invoice_totals_fee" before="tax"/>
         </reference>
     </adminhtml_sales_order_invoice_new>
+
+    <adminhtml_sales_order_invoice_updateqty>
+        <reference name="invoice_totals">
+            <block name="payex_payment_fee" type="payex/invoice_totals_fee" before="tax"/>
+        </reference>
+    </adminhtml_sales_order_invoice_updateqty>
+
+    <adminhtml_sales_order_creditmemo_view>
+        <reference name="creditmemo_totals">
+            <block name="payex_payment_fee" type="payex/creditmemo_totals_fee" before="tax" />
+        </reference>
+    </adminhtml_sales_order_creditmemo_view>
+
+    <adminhtml_sales_order_creditmemo_new>
+        <reference name="creditmemo_totals">
+            <block name="payex_payment_fee" type="payex/creditmemo_totals_fee" before="tax" />
+        </reference>
+    </adminhtml_sales_order_creditmemo_new>
+
+    <adminhtml_sales_order_creditmemo_updateqty>
+        <reference name="creditmemo_totals">
+            <block name="payex_payment_fee" type="payex/creditmemo_totals_fee" before="tax" />
+        </reference>
+    </adminhtml_sales_order_creditmemo_updateqty>
+
 </layout>
