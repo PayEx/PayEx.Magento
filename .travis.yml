@@ -52,7 +52,7 @@ install:
   - ./modman clone https://github.com/EcomDev/EcomDev_PHPUnit.git
   - sed -i -e 's/<allow_same_db>0/<allow_same_db>1/g' ./app/etc/local.xml.phpunit
   - ./modman link $(readlink -f ./../../../)
-  - wget https://files.magerun.net/n98-magerun.phar
+  - wget --no-check-certificate https://files.magerun.net/n98-magerun.phar
   - chmod +x ./n98-magerun.phar
   - wget http://magento7.aait.nu/magento_test.sql
   - mysql -e 'create database `magento_test`;'
