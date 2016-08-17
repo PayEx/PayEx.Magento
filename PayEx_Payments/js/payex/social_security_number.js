@@ -13,10 +13,9 @@ function fireEvent(element, event) {
 }
 
 Event.observe(document, 'dom:loaded', function () {
-    if ($('billing-address-select')) {
-        document.getElementById('billing-address-select').value = '';
-        fireEvent(document.getElementById('billing-address-select'), 'change');
-    }
+    $('socialSecurityNumber').on('focus', 'input', function() {
+        $('ssn_details').show();
+    });
 
     $('ssn_click').observe('click', function (event) {
         // Check button is disabled
@@ -57,6 +56,12 @@ Event.observe(document, 'dom:loaded', function () {
                             return;
                         }
 
+                        // Show "New Address" fieldset
+                        if ($('billing-address-select')) {
+                            document.getElementById('billing-address-select').value = '';
+                            fireEvent(document.getElementById('billing-address-select'), 'change');
+                        }
+
                         // Hide error placeholder
                         if ($('social_security_number_form') != undefined) {
                             $('social_security_number_form').hide();
@@ -75,7 +80,11 @@ Event.observe(document, 'dom:loaded', function () {
                         if ($('billing:city')) $('billing:city').setValue(json.city);
                         if ($('billing:region')) $('billing:region').setValue('');
                         if ($('billing:postcode')) $('billing:postcode').setValue(json.postcode);
-                        if ($('billing:country_id')) $('billing:country_id').setValue(json.country);
+                        if ($('billing:country_id')) {
+                            $('billing:country_id').setValue(json.country);
+                            //$('billing:country_id').fire('change');
+                            fireEvent(document.getElementById('billing:country_id'), 'change');
+                        }
                     }
                 }
             );

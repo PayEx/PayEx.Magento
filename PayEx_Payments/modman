@@ -10,4 +10,5 @@ js/payex
 skin/adminhtml/base/default/payex
 skin/frontend/base/default/css/payex
 skin/frontend/base/default/images/payex
-lib/Px
+lib/PayEx.Ecommerce.Php
+lib/PHP-Name-Parser

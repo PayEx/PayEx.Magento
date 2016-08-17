@@ -18,24 +18,58 @@ class PayEx_Payments_Block_Invoice_Totals_Fee extends Mage_Core_Block_Abstract
             return $this;
         }
 
-        if ($invoice->getOrder()->getBasePayexPaymentFeeTax()) {
-            $total = new Varien_Object();
-            $total->setLabel(Mage::helper('payex')->__('Payment fee (Incl.Tax)'));
-            $total->setValue($invoice->getOrder()->getPayexPaymentFee() + $invoice->getOrder()->getPayexPaymentFeeTax());
-            $total->setBaseValue($invoice->getOrder()->getPayexBasePaymentFee() + $invoice->getOrder()->getPayexBasePaymentFeeTax());
-            $total->setCode('payex_payment_fee_with_tax');
-            $parent->addTotalBefore($total, 'tax');
-        }
+        if ($invoice->getBasePayexPaymentFeeTax() > 0) {
+            if ($this->displaySalesPayExFeeBoth()) {
+                $total = new Varien_Object();
+                $total->setLabel(Mage::helper('payex')->__('Payment fee (Incl.Tax)'));
+                $total->setValue($invoice->getPayexPaymentFee() + $invoice->getPayexPaymentFeeTax());
+                $total->setBaseValue($invoice->getPayexBasePaymentFee() + $invoice->getPayexBasePaymentFeeTax());
+                $total->setCode('payex_payment_fee_with_tax');
+                $parent->addTotalBefore($total, 'tax');
 
-        if ($invoice->getOrder()->getBasePayexPaymentFee()) {
-            $total = new Varien_Object();
-            $total->setLabel(Mage::helper('payex')->__('Payment fee (Excl.Tax)'));
-            $total->setValue($invoice->getOrder()->getPayexPaymentFee());
-            $total->setBaseValue($invoice->getOrder()->getPayexBasePaymentFee());
-            $total->setCode('payex_payment_fee');
-            $parent->addTotalBefore($total, 'payex_payment_fee_with_tax');
+                $total = new Varien_Object();
+                $total->setLabel(Mage::helper('payex')->__('Payment fee (Excl.Tax)'));
+                $total->setValue($invoice->getPayexPaymentFee());
+                $total->setBaseValue($invoice->getPayexBasePaymentFee());
+                $total->setCode('payex_payment_fee');
+                $parent->addTotalBefore($total, 'payex_payment_fee_with_tax');
+            } elseif ($this->displaySalesPayExFeeInclTax()) {
+                $total = new Varien_Object();
+                $total->setLabel(Mage::helper('payex')->__('Payment fee'));
+                $total->setValue($invoice->getPayexPaymentFee() + $invoice->getPayexPaymentFeeTax());
+                $total->setBaseValue($invoice->getPayexBasePaymentFee() + $invoice->getPayexBasePaymentFeeTax());
+                $total->setCode('payex_payment_fee_with_tax');
+                $parent->addTotalBefore($total, 'tax');
+            } else {
+                $total = new Varien_Object();
+                $total->setLabel(Mage::helper('payex')->__('Payment fee'));
+                $total->setValue($invoice->getPayexPaymentFee());
+                $total->setBaseValue($invoice->getPayexBasePaymentFee());
+                $total->setCode('payex_payment_fee');
+                $parent->addTotalBefore($total, 'tax');
+            }
         }
 
         return $this;
+    }
+
+    /**
+     * Check if display cart prices fee included and excluded tax
+     * @return mixed
+     */
+    public function displaySalesPayExFeeBoth()
+    {
+        $config = Mage::getSingleton('payex/fee_config');
+        return $config->displaySalesPayExFeeBoth($this->getParentBlock()->getInvoice()->getStoreId());
+    }
+
+    /**
+     * Check if display cart prices fee included tax
+     * @return mixed
+     */
+    public function displaySalesPayExFeeInclTax()
+    {
+        $config = Mage::getSingleton('payex/fee_config');
+        return $config->displaySalesPayExFeeInclTax($this->getParentBlock()->getInvoice()->getStoreId());
     }
 }

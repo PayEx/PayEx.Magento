@@ -357,11 +357,10 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
 
         // add Discount
         $discountData = Mage::helper('payex/discount')->getOrderDiscountData($order);
-        $discountInclTax = (int) (100 * $discountData->getDiscountInclTax());
-        $discountExclTax = (int) (100 * $discountData->getDiscountExclTax());
-        $discountVatAmount = $discountInclTax - $discountExclTax;
-
-        if (abs($discountInclTax) > 0) {
+        if (abs($discountData->getDiscountInclTax()) > 0) {
+            $discountInclTax = (int) (100 * $discountData->getDiscountInclTax());
+            $discountExclTax = (int) (100 * $discountData->getDiscountExclTax());
+            $discountVatAmount = $discountInclTax - $discountExclTax;
             $discountVatPercent = (($discountInclTax / $discountExclTax) - 1) * 100;
 
             $params = array(
@@ -391,7 +390,7 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
             $feeIncTax = $feeExclTax + $feeTax;
 
             // find out tax-rate for the fee
-            if ((float) $feeIncTax && (float) $feeExclTax) {
+            if ($feeIncTax > 0 && $feeExclTax > 0) {
                 $feeTaxRate = Mage::app()->getStore()->roundPrice((($feeIncTax / $feeExclTax) - 1) * 100);
             } else {
                 $feeTaxRate = 0;
@@ -634,7 +633,7 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
             $feeIncTax = $feeExclTax + $feeTax;
 
             // find out tax-rate for the fee
-            if ((float) $feeIncTax && (float) $feeExclTax) {
+            if ($feeIncTax > 0 && $feeExclTax > 0) {
                 $feeTaxRate = round((($feeIncTax / $feeExclTax) - 1) * 100);
             } else {
                 $feeTaxRate = 0;
@@ -652,14 +651,11 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
 
         // add Discount
         $discountData = Mage::helper('payex/discount')->getOrderDiscountData($order);
-        $discountInclTax = $discountData->getDiscountInclTax();
-        $discountExclTax = $discountData->getDiscountExclTax();
-        $discountVatAmount = $discountInclTax - $discountExclTax;
-
-        if (abs($discountInclTax) > 0) {
-
+        if (abs($discountData->getDiscountInclTax()) > 0) {
+            $discountInclTax = $discountData->getDiscountInclTax();
+            $discountExclTax = $discountData->getDiscountExclTax();
+            $discountVatAmount = $discountInclTax - $discountExclTax;
             $discountVatPercent = round((($discountInclTax / $discountExclTax) - 1) * 100);
-
             $discount_description = ($order->getDiscountDescription() !== null) ? Mage::helper('sales')->__('Discount (%s)', $order->getDiscountDescription()) : Mage::helper('sales')->__('Discount');
 
             $OrderLine = $dom->createElement('OrderLine');

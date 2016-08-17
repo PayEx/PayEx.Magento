@@ -1,0 +1,74 @@
+language: php
+sudo: false
+
+php:
+  #- 5.3
+  - 5.4
+  - 5.5
+  - 5.6
+
+env:
+  - MAGENTO_VERSION="1.7.0.2"
+  - MAGENTO_VERSION="1.8.1.0"
+  - MAGENTO_VERSION="1.9.2.4"
+
+matrix:
+  fast_finish: true
+  allow_failures:
+    - php: 5.6
+  exclude:
+    # Newer Magento versions uses newer PHP versions
+    - php: 5.3
+      env: MAGENTO_VERSION="1.9.2.4"
+
+    # Old Magento Versions are not officially supported to run with PHP 5.5+
+    - php: 5.5
+      env: MAGENTO_VERSION="1.7.0.2"
+    - php: 5.6
+      env: MAGENTO_VERSION="1.7.0.2"
+
+install:
+  - git submodule update --init --recursive
+  - composer require firegento/magento ~$MAGENTO_VERSION
+  - cp phpunit.xml ./vendor/firegento/magento
+  - cd ./vendor/firegento/magento
+  - cp ./app/etc/local.xml.template ./app/etc/local.xml
+  - sed -i -e 's/{{date}}/Thu, 14 Jul 2016 10:03:10 +0000/g' ./app/etc/local.xml
+  - sed -i -e 's/{{key}}/8532ecf375979bf5658401d2b7ca2040/g' ./app/etc/local.xml
+  - sed -i -e 's/{{db_prefix}}//g' ./app/etc/local.xml
+  - sed -i -e 's/{{db_host}}/localhost/g' ./app/etc/local.xml
+  - sed -i -e 's/{{db_user}}/travis/g' ./app/etc/local.xml
+  - sed -i -e 's/{{db_pass}}//g' ./app/etc/local.xml
+  - sed -i -e 's/{{db_name}}/magento_test/g' ./app/etc/local.xml
+  - sed -i -e 's/{{db_init_statemants}}/SET NAMES utf8/g' ./app/etc/local.xml
+  - sed -i -e 's/{{db_model}}/mysql4/g' ./app/etc/local.xml
+  - sed -i -e 's/{{db_pdo_type}}//g' ./app/etc/local.xml
+  - sed -i -e 's/{{db_type}}/pdo_mysql/g' ./app/etc/local.xml
+  - sed -i -e 's/{{session_save}}/files/g' ./app/etc/local.xml
+  - sed -i -e 's/{{admin_frontname}}/admin/g' ./app/etc/local.xml
+  - wget https://raw.githubusercontent.com/colinmollenhour/modman/master/modman
+  - chmod +x ./modman
+  - ./modman init
+  - ./modman clone https://github.com/EcomDev/EcomDev_PHPUnit.git
+  - sed -i -e 's/<allow_same_db>0/<allow_same_db>1/g' ./app/etc/local.xml.phpunit
+  - ./modman link $(readlink -f ./../../../)
+  - wget https://files.magerun.net/n98-magerun.phar
+  - chmod +x ./n98-magerun.phar
+  - wget http://magento7.aait.nu/magento_test.sql
+  - mysql -e 'create database `magento_test`;'
+  - mysql -utravis -Dmagento_test < ./magento_test.sql
+  - ./n98-magerun.phar sys:setup:run
+  - ./n98-magerun.phar cache:clean
+  - ./n98-magerun.phar index:reindex:all
+  - cd shell
+  - php ./ecomdev-phpunit.php -a magento-config --db-name travis --base-url http://magetest7.local/
+  - cd ..
+
+script:
+  - phpunit
+
+notifications:
+  email:
+    recipients:
+      - ottofromhell@gmail.com
+    on_failure: always

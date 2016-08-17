@@ -108,7 +108,7 @@ class PayEx_Payments_Model_Observer extends Mage_Core_Model_Abstract
      */
     public function sales_quote_collect_totals_after(Varien_Event_Observer $observer)
     {
-        $quote = $observer->getEvent()->getQuote();
+        /* $quote = $observer->getEvent()->getQuote();
         $quote->setBasePayexPaymentFee(0);
         $quote->setBasePayexPaymentFeeTax(0);
         $quote->setPayexPaymentFee(0);
@@ -119,7 +119,7 @@ class PayEx_Payments_Model_Observer extends Mage_Core_Model_Abstract
             $quote->setBasePayexPaymentFeeTax((float)($quote->getBasePayexPaymentFeeTax() + $address->getBasePayexPaymentFeeTax()));
             $quote->setPayexPaymentFee((float)($quote->getPayexPaymentFee() + $address->getPayexPaymentFee()));
             $quote->setPayexPaymentFeeTax((float)($quote->getPayexPaymentFeeTax() + $address->getPayexPaymentFeeTax()));
-        }
+        } */
         return $this;
     }
 

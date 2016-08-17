@@ -9,6 +9,10 @@
             <action method="addJs" ifconfig="payex_ssn/payex_ssn/active">
                 <script>payex/social_security_number.js</script>
             </action>
+            <action method="addItem" ifconfig="payex_ssn/payex_ssn/active">
+                <type>skin_css</type>
+                <name>css/payex/social_security_number.css</name>
+            </action>
         </reference>
     </checkout_onepage_index>
 

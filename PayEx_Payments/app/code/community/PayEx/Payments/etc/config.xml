@@ -3,7 +3,7 @@
     <modules>
         <PayEx_Payments>
             <!-- declare module's version information for database updates -->
-            <version>3.0.2</version>
+            <version>3.0.3</version>
         </PayEx_Payments>
     </modules>
 
@@ -76,18 +76,57 @@
                         <after>subtotal,discount,shipping</after>
                         <before>tax,grand_total</before>
                         <renderer>payex/checkout_fee</renderer>
-                        <admin_renderer>payex/adminhtml_sales_order_create_totals_fee</admin_renderer>
+                        <!-- <admin_renderer>payex/adminhtml_sales_order_create_totals_fee</admin_renderer> -->
                     </payex_payment_fee>
+                    <payex_payment_fee_tax>
+                        <class>payex/quote_tax</class>
+                        <after>subtotal,discount,shipping,tax</after>
+                        <before>grand_total</before>
+                    </payex_payment_fee_tax>
                 </totals>
             </quote>
             <order_invoice>
                 <totals>
                     <payex_payment_fee>
                         <class>payex/invoice_total</class>
+                        <after>subtotal,discount,shipping</after>
+                        <before>tax,grand_total</before>
                     </payex_payment_fee>
+                    <payex_payment_fee_tax>
+                        <class>payex/invoice_tax</class>
+                        <after>subtotal,discount,shipping,tax</after>
+                        <before>grand_total</before>
+                    </payex_payment_fee_tax>
                 </totals>
             </order_invoice>
+            <order_creditmemo>
+                <totals>
+                    <payex_payment_fee>
+                        <class>payex/creditmemo_total</class>
+                        <after>subtotal,discount,shipping</after>
+                        <before>tax,grand_total</before>
+                    </payex_payment_fee>
+                    <payex_payment_fee_tax>
+                        <class>payex/creditmemo_tax</class>
+                        <after>subtotal,discount,shipping,tax</after>
+                        <before>grand_total</before>
+                    </payex_payment_fee_tax>
+                </totals>
+            </order_creditmemo>
         </sales>
+
+        <pdf>
+            <totals>
+                <payex_payment_fee translate="title">
+                    <title>Payment fee</title>
+                    <source_field>payment_fee</source_field>
+                    <font_size>7</font_size>
+                    <display_zero>0</display_zero>
+                    <sort_order>550</sort_order>
+                    <model>payex/invoice_pdf_total</model>
+                </payex_payment_fee>
+            </totals>
+        </pdf>
 
         <events>
             <sales_order_invoice_save_after>
@@ -144,6 +183,7 @@
                 <cleantime>20</cleantime>
                 <responsive>0</responsive>
                 <checkoutinfo>1</checkoutinfo>
+                <discount_calc>advanced</discount_calc>
             </payex_cc>
 
             <!-- 'newmodule' configuration group (fieldset) -->
@@ -164,6 +204,7 @@
                 <cleantime>20</cleantime>
                 <responsive>0</responsive>
                 <checkoutinfo>1</checkoutinfo>
+                <discount_calc>advanced</discount_calc>
             </payex_bankdebit>
 
             <!-- 'newmodule' configuration group (fieldset) -->
@@ -185,6 +226,7 @@
                 <cleantime>20</cleantime>
                 <responsive>0</responsive>
                 <checkoutinfo>1</checkoutinfo>
+                <discount_calc>advanced</discount_calc>
             </payex_wywallet>
 
             <!-- 'newmodule' configuration group (fieldset) -->
@@ -209,6 +251,7 @@
                 <cleantime>20</cleantime>
                 <responsive>0</responsive>
                 <checkoutinfo>1</checkoutinfo>
+                <discount_calc>advanced</discount_calc>
             </payex_autopay>
 
             <!-- 'newmodule' configuration group (fieldset) -->
@@ -228,6 +271,7 @@
                 <order_status_capture>complete</order_status_capture>
                 <clientlanguage>en-US</clientlanguage>
                 <cleantime>20</cleantime>
+                <discount_calc>advanced</discount_calc>
             </payex_masterpass>
 
             <!-- 'newmodule' configuration group (fieldset) -->
@@ -251,6 +295,7 @@
                 <replace_illegal>1</replace_illegal>
                 <replacement_char>-</replacement_char>
                 <ssn_check>1</ssn_check>
+                <discount_calc>advanced</discount_calc>
             </payex_financing>
 
             <!-- 'newmodule' configuration group (fieldset) -->
@@ -274,6 +319,7 @@
                 <replace_illegal>1</replace_illegal>
                 <replacement_char>-</replacement_char>
                 <ssn_check>1</ssn_check>
+                <discount_calc>advanced</discount_calc>
             </payex_partpayment>
 
             <!-- 'newmodule' configuration group (fieldset) -->
@@ -299,6 +345,7 @@
                 <invoiceduedays>15</invoiceduedays>
                 <unapproved>0</unapproved>
                 <credit_check>0</credit_check>
+                <discount_calc>advanced</discount_calc>
             </payex_invoice>
 
             <!-- 'newmodule' configuration group (fieldset) -->
@@ -318,8 +365,18 @@
                 <cleantime>20</cleantime>
                 <responsive>0</responsive>
                 <checkoutinfo>1</checkoutinfo>
+                <discount_calc>advanced</discount_calc>
             </payex_swish>
         </payment>
+
+        <tax>
+            <cart_display>
+                <payex_fee>3</payex_fee>
+            </cart_display>
+            <sales_display>
+                <payex_fee>3</payex_fee>
+            </sales_display>
+        </tax>
     </default>
 
     <adminhtml>

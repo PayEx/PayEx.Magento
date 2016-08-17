@@ -1,0 +1,28 @@
+.field_left {
+    display: inline-block;
+    vertical-align: top;
+    width: 137px;
+}
+
+.field_right {
+    display: inline-block;
+    vertical-align: top;
+    width: 225px;
+}
+
+#ssn_click {
+    margin-top: 17px;
+}
+
+#social_security_number_form label[for="socialSecurityNumber"].required:after {
+    display: none;
+}
+
+#ssn-error-placeholder {
+    clear: both;
+    width: 100%;
+}
+
+.theme-rwd .clearer {
+    display: none;
+}

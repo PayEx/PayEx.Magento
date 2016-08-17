@@ -1,3 +1,15 @@
+Version 3.0.3
+* Improvements of Social Security Number addon
+* Improvements of Payment Fee feature
+* Option: Perform validation of SSN before checkout
+* Option: Discount calculation mode
+* Option: Credit Check for Invoice method
+* Removed unnecessary info that is presented to end user
+* AutoPay frontend changes
+* PartPayment fixes
+* More descriptions for error codes
+* Added Unit Tests
+
 Version 3.0.2
 * Social Security Number: Use secure base URL
 * Added Missing Block: payex/invoice_totals_fee

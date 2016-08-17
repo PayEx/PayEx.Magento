@@ -17,25 +17,14 @@ class PayEx_Payments_Model_Invoice_Total extends Mage_Sales_Model_Order_Invoice_
         }
 
         if ($order->getBasePayexPaymentFee()) {
-            $baseInvoiceTotal = $invoice->getBaseGrandTotal();
-            $invoiceTotal = $invoice->getGrandTotal();
+            $invoice->setBaseGrandTotal($invoice->getBaseGrandTotal() + $order->getBasePayexPaymentFee());
+            $invoice->setGrandTotal($invoice->getGrandTotal() + $order->getPayexPaymentFee());
 
-            $baseInvoiceTotal = $baseInvoiceTotal + $order->getBasePayexPaymentFee();
-            $invoiceTotal = $invoiceTotal + $order->getPayexPaymentFee();
+            $invoice->setBasePayexPaymentFee($order->getBasePayexPaymentFee());
+            $invoice->setPayexPaymentFee($order->getPayexPaymentFee());
 
-            $invoice->setBaseGrandTotal($baseInvoiceTotal);
-            $invoice->setGrandTotal($invoiceTotal);
-        }
-
-        if ($order->getBasePayexPaymentFeeTax()) {
-            $baseInvoiceTotal = $invoice->getBaseGrandTotal();
-            $invoiceTotal = $invoice->getGrandTotal();
-
-            $baseInvoiceTotal = $baseInvoiceTotal + $order->getBasePayexPaymentFeeTax();
-            $invoiceTotal = $invoiceTotal + $order->getPayexPaymentFeeTax();
-
-            $invoice->setBaseGrandTotal($baseInvoiceTotal);
-            $invoice->setGrandTotal($invoiceTotal);
+            $order->setBasePayexPaymentFeeInvoiced($order->getBasePayexPaymentFee());
+            $order->setPayexPaymentFeeInvoiced($order->getPayexPaymentFee());
         }
     }
 }

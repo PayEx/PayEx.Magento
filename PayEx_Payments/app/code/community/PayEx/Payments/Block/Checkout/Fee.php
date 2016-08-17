@@ -9,37 +9,61 @@ class PayEx_Payments_Block_Checkout_Fee extends Mage_Checkout_Block_Total_Defaul
         'payex_partpayment',
         'payex_invoice'
     );
-
+    
     /**
-     * Get Payment fee
-     * @return float
+     * Get Payment Fee Incl Tax
+     * @return mixed
      */
-    public function getPaymentFee()
+    public function getPayExFeeIncludeTax()
     {
-        $paymentMethod = Mage::app()->getFrontController()->getRequest()->getParam('payment');
-        $paymentMethod = Mage::app()->getStore()->isAdmin() && isset($paymentMethod['method']) ? $paymentMethod['method'] : null;
-        if (!in_array($paymentMethod, self::$_allowed_methods) && (!count($this->getQuote()->getPaymentsCollection()) || !$this->getQuote()->getPayment()->hasMethodInstance())) {
-            return $this;
-        }
-
-        $paymentMethod = $this->getQuote()->getPayment()->getMethodInstance();
-        if (!in_array($paymentMethod->getCode(), self::$_allowed_methods)) {
-            return $this;
-        }
-
-        $price = (float) $paymentMethod->getConfigData('paymentfee');
-        $tax_class = $paymentMethod->getConfigData('paymentfee_tax_class');
-        $fee = Mage::helper('payex/fee')->getPaymentFeePrice($price, $tax_class);
-        return $fee;
+        return $this->getTotal()->getAddress()->getPayexPaymentFee() + $this->getTotal()->getAddress()->getPayexPaymentFeeTax();
     }
 
     /**
-     * Get Quote
-     * @return Mage_Sales_Model_Quote
+     * Get Payment Fee Excl Tax
+     * @return mixed
      */
-    public function getQuote()
+    public function getPayExFeeExcludeTax()
     {
-        return Mage::getModel('checkout/cart')->getQuote();
+        return $this->getTotal()->getAddress()->getPayexPaymentFee();
+    }
+
+    /**
+     * Check if display cart prices fee included and excluded tax
+     * @return mixed
+     */
+    public function displayCartPayExFeeBoth()
+    {
+        $config = Mage::getSingleton('payex/fee_config');
+        return $config->displayCartPayExFeeBoth($this->getStore());
+    }
+
+    /**
+     * Check if display cart prices fee included tax
+     * @return mixed
+     */
+    public function displayCartPayExFeeInclTax()
+    {
+        $config = Mage::getSingleton('payex/fee_config');
+        return $config->displayCartPayExFeeInclTax($this->getStore());
+    }
+
+    /**
+     * Get "Exclude Tax" Label
+     * @return mixed
+     */
+    public function getExcludeTaxLabel()
+    {
+        return Mage::helper('tax')->getIncExcTaxLabel(false);
+    }
+
+    /**
+     * Get "Include Tax" Label
+     * @return mixed
+     */
+    public function getIncludeTaxLabel()
+    {
+        return Mage::helper('tax')->getIncExcTaxLabel(true);
     }
 
 }
