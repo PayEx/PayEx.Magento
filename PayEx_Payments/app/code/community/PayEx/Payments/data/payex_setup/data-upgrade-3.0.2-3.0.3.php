@@ -24,7 +24,11 @@ foreach ($orders as $order) {
                 $invoice->setPayexPaymentFee($order->getPayexPaymentFee());
                 $invoice->setBasePayexPaymentFeeTax($order->getBasePayexPaymentFeeTax());
                 $invoice->setPayexPaymentFeeTax($order->getPayexPaymentFeeTax());
-                $invoice->save();
+                try {
+                    $invoice->save();
+                } catch (Exception $e) {
+                    //
+                }
 
                 $update = true;
             }

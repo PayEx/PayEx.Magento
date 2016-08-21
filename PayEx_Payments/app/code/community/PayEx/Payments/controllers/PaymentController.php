@@ -251,7 +251,6 @@ class PayEx_Payments_PaymentController extends Mage_Core_Controller_Front_Action
                     switch ($agreement_status) {
                         case (PayEx_Payments_Model_Payment_Agreement::AGREEMENT_VERIFIED):
                             // Update Billing Agreement
-                            //$cc_details = Mage::helper('payex/order')->getFormattedCC($result);
                             $masked_number = Mage::helper('payex/order')->getFormattedCC($result);
                             $billing_agreement->setAgreementLabel($masked_number)->save();
                             break;

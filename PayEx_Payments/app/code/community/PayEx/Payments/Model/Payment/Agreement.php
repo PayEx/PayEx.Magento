@@ -271,7 +271,7 @@ class PayEx_Payments_Model_Payment_Agreement extends Mage_Sales_Model_Payment_Me
             case 4:
             case 5:
                 if ($transaction_status === 2) {
-                    $message = Mage::helper('payex')->__('Detected an abnormal payment process (Transaction Status: %1).', $transaction_status);
+                    $message = Mage::helper('payex')->__('Detected an abnormal payment process (Transaction Status: %s).', $transaction_status);
                 } elseif ($transaction_status === 4) {
                     $message = Mage::helper('payex')->__('Order automatically canceled.');
                 } else {

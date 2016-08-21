@@ -25,7 +25,7 @@
                     <!-- will have title 'New Module' -->
                     <label>PayEx Payments</label>
                     <!-- position between other payment methods -->
-                    <sort_order>610</sort_order>
+                    <sort_order>609</sort_order>
                     <!-- do not show this configuration options in store scope -->
                     <show_in_default>1</show_in_default>
                     <show_in_website>1</show_in_website>
