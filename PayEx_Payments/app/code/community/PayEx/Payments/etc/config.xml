@@ -18,14 +18,14 @@
                 <resourceModel>payex_mysql4</resourceModel>
             </payex>
 
-            <payex_mysql4>
+            <!-- <payex_mysql4>
                 <class>PayEx_Payments_Model_Mysql4</class>
                 <entities>
                     <payex_agreement>
                         <table>payexautopay_agreement</table>
                     </payex_agreement>
                 </entities>
-            </payex_mysql4>
+            </payex_mysql4> -->
         </models>
 
         <!-- IMPORTANT: if you use your own namespace (i.e. CompanyName) you also have to declare blocks group for new module. See topic: http://www.magentocommerce.com/boards/viewthread/22416/#t102732 -->
@@ -238,31 +238,6 @@
                 <checkoutinfo>1</checkoutinfo>
                 <discount_calc>advanced</discount_calc>
             </payex_wywallet>
-
-            <!-- 'newmodule' configuration group (fieldset) -->
-            <payex_autopay>
-                <!-- by default this payment method is inactive -->
-                <active>0</active>
-                <!-- model to handle logic for this payment method -->
-                <model>payex/payment_autopay</model>
-                <!-- order status for new orders paid by this payment method -->
-                <order_status>1</order_status>
-                <!-- default title for payment checkout page and order view page -->
-                <title>PayEx Credit Card One-click Payments</title>
-                <allowspecific>0</allowspecific>
-                <accountnumber>payex account number</accountnumber>
-                <encryptionkey>payex encryption key</encryptionkey>
-                <transactiontype>1</transactiontype>
-                <debug>1</debug>
-                <order_status>1</order_status>
-                <clientlanguage>en-US</clientlanguage>
-                <agreementurl>http://example.com</agreementurl>
-                <maxamount>1000</maxamount>
-                <cleantime>20</cleantime>
-                <responsive>0</responsive>
-                <checkoutinfo>1</checkoutinfo>
-                <discount_calc>advanced</discount_calc>
-            </payex_autopay>
 
             <!-- 'newmodule' configuration group (fieldset) -->
             <payex_masterpass>
