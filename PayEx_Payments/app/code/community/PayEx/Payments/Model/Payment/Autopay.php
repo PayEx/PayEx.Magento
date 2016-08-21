@@ -83,6 +83,10 @@ class PayEx_Payments_Model_Payment_Autopay extends PayEx_Payments_Model_Payment_
             return true; // Available for Admin only
         }
 
+        if (!$quote) {
+            return false;
+        }
+
         // Check currency
         $allowedCurrency = array('DKK', 'EUR', 'GBP', 'NOK', 'SEK', 'USD');
         if (!in_array($quote->getQuoteCurrencyCode(), $allowedCurrency)) {

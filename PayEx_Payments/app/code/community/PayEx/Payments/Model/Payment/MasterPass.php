@@ -73,6 +73,10 @@ class PayEx_Payments_Model_Payment_MasterPass extends PayEx_Payments_Model_Payme
             return false;
         }
 
+        if (!$quote) {
+            return false;
+        }
+
         // Check currency
         $allowedCurrency = array('DKK', 'EUR', 'GBP', 'NOK', 'SEK', 'USD');
         return in_array($quote->getQuoteCurrencyCode(), $allowedCurrency);

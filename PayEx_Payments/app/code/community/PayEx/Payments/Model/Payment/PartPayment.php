@@ -79,6 +79,10 @@ class PayEx_Payments_Model_Payment_PartPayment extends PayEx_Payments_Model_Paym
             return false;
         }
 
+        if (!$quote) {
+            return false;
+        }
+
         return true;
     }
 

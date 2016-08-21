@@ -186,6 +186,16 @@
                 <discount_calc>advanced</discount_calc>
             </payex_cc>
 
+            <payex_billing_agreement>
+                <active>0</active>
+                <model>payex/payment_agreement</model>
+                <title>PayEx Billing Agreement</title>
+                <transactiontype>1</transactiontype>
+                <allow_billing_agreement_wizard>0</allow_billing_agreement_wizard>
+                <agreementurl>http://example.com</agreementurl>
+                <maxamount>1000</maxamount>
+            </payex_billing_agreement>
+
             <!-- 'newmodule' configuration group (fieldset) -->
             <payex_bankdebit>
                 <!-- by default this payment method is inactive -->

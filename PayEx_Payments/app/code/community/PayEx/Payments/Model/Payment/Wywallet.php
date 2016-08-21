@@ -79,6 +79,10 @@ class PayEx_Payments_Model_Payment_Wywallet extends PayEx_Payments_Model_Payment
             return false;
         }
 
+        if (!$quote) {
+            return false;
+        }
+
         return true;
     }
 
