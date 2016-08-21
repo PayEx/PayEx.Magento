@@ -3,14 +3,20 @@
 class PayEx_Payments_Model_Payment_CC extends PayEx_Payments_Model_Payment_Abstract
 {
     /**
+     * Payment Method Code
+     */
+    const METHOD_CODE = 'payex_cc';
+
+    /**
      * Payment method code
      */
-    public $_code = 'payex_cc';
+    public $_code = self::METHOD_CODE;
 
     /**
      * Availability options
      */
     protected $_isGateway = true;
+    protected $_canOrder = true;
     protected $_canAuthorize = true;
     protected $_canCapture = true;
     protected $_canCapturePartial = false;
@@ -20,7 +26,10 @@ class PayEx_Payments_Model_Payment_CC extends PayEx_Payments_Model_Payment_Abstr
     protected $_canUseInternal = true;
     protected $_canUseCheckout = true;
     protected $_canUseForMultishipping = false;
+    protected $_isInitializeNeeded = false;
     protected $_canFetchTransactionInfo = true;
+    protected $_canCreateBillingAgreement = true;
+    protected $_canManageRecurringProfiles = false;
 
     /**
      * Payment method blocks
@@ -29,37 +38,12 @@ class PayEx_Payments_Model_Payment_CC extends PayEx_Payments_Model_Payment_Abstr
     protected $_formBlockType = 'payex/form_CC';
 
     /**
-     * Get initialized flag status
-     * @return true
-     */
-    public function isInitializeNeeded()
-    {
-        return true;
-    }
-
-    /**
-     * Instantiate state and set it to state object
-     * @param  $paymentAction
-     * @param  $stateObject
-     * @return void
-     */
-    public function initialize($paymentAction, $stateObject)
-    {
-        // Set Initial Order Status
-        $state = Mage_Sales_Model_Order::STATE_NEW;
-        $stateObject->setState($state);
-        $stateObject->setStatus($state);
-        $stateObject->setIsNotified(false);
-    }
-
-    /**
      * Get config action to process initialization
      * @return string
      */
     public function getConfigPaymentAction()
     {
-        $paymentAction = $this->getConfigData('payment_action');
-        return empty($paymentAction) ? true : $paymentAction;
+        return Mage_Payment_Model_Method_Abstract::ACTION_ORDER;
     }
 
     /**
@@ -73,6 +57,10 @@ class PayEx_Payments_Model_Payment_CC extends PayEx_Payments_Model_Payment_Abstr
             return false;
         }
 
+        if (!$quote) {
+            return false;
+        }
+
         // Check currency
         $allowedCurrency = array('DKK', 'EUR', 'GBP', 'NOK', 'SEK', 'USD');
         //if ($this->getConfigData('paymentview') === 'DIRECTDEBIT') {
@@ -80,6 +68,97 @@ class PayEx_Payments_Model_Payment_CC extends PayEx_Payments_Model_Payment_Abstr
         //}
 
         return in_array($quote->getQuoteCurrencyCode(), $allowedCurrency);
+    }
+
+    /**
+     * Assign data to info model instance
+     *
+     * @param   mixed $data
+     * @return  Mage_Payment_Model_Info
+     */
+    public function assignData($data)
+    {
+        $result = parent::assignData($data);
+        $key = PayEx_Payments_Model_Payment_Agreement::PAYMENT_INFO_TRANSPORT_BILLING_AGREEMENT;
+        if (is_array($data)) {
+            $this->getInfoInstance()->setAdditionalInformation($key, isset($data[$key]) ? $data[$key] : null);
+        } elseif ($data instanceof Varien_Object) {
+            $this->getInfoInstance()->setAdditionalInformation($key, $data->getData($key));
+        }
+        return $result;
+    }
+
+    /**
+     * Order payment method
+     *
+     * @param Varien_Object $payment
+     * @param float $amount
+     *
+     * @return $this
+     */
+    public function order(Varien_Object $payment, $amount)
+    {
+        Mage::helper('payex/tools')->addToDebug('Action: Order');
+        parent::order($payment, $amount);
+
+        // Set state
+        /** @var Mage_Sales_Model_Order $order */
+        $order = $payment->getOrder();
+        $order->setState(Mage_Sales_Model_Order::STATE_NEW, true);
+
+        $isBARequested = (bool)$this->getInfoInstance()->getAdditionalInformation(
+            PayEx_Payments_Model_Payment_Agreement::PAYMENT_INFO_TRANSPORT_BILLING_AGREEMENT
+        );
+        if ($isBARequested) {
+            $customer = Mage::getSingleton('customer/session')->getCustomer();
+            if ($customer && $customer->getId()) {
+                /** @var PayEx_Payments_Model_Payment_Agreement $method */
+                $method = Mage::helper('payment')->getMethodInstance(PayEx_Payments_Model_Payment_Agreement::METHOD_BILLING_AGREEMENT);
+
+                // Call PxAgreement.CreateAgreement3
+                $params = array(
+                    'accountNumber' => '',
+                    'merchantRef' => $method->getConfigData('agreementurl', $order->getStore()),
+                    'description' => Mage::app()->getStore()->getName(),
+                    'purchaseOperation' => ($this->getConfigData('transactiontype') == 0) ? 'AUTHORIZATION' : 'SALE',
+                    'maxAmount' => round($method->getConfigData('maxamount', $order->getStore()) * 100),
+                    'notifyUrl' => '',
+                    'startDate' => '',
+                    'stopDate' => ''
+                );
+                $result = Mage::helper('payex/api')->getPx()->CreateAgreement3($params);
+                Mage::helper('payex/tools')->debugApi($result, 'PxAgreement.CreateAgreement3');
+                if ($result['code'] !== 'OK' || $result['description'] !== 'OK' || $result['errorCode'] !== 'OK') {
+                    $message = Mage::helper('payex/tools')->getVerboseErrorMessage($result);
+
+                    // Cancel order
+                    $order->cancel();
+                    $order->addStatusHistoryComment($message, Mage_Sales_Model_Order::STATE_CANCELED);
+                    $order->save();
+
+                    Mage::throwException($message);
+                    return $this;
+                }
+
+                // Agreement Reference
+                $agreement_reference = $result['agreementRef'];
+
+                // Set Agreement Reference Info
+                $this->getInfoInstance()->setAdditionalInformation(
+                    PayEx_Payments_Model_Payment_Agreement::PAYMENT_INFO_TRANSPORT_AGREEMENT_REFERENCE,
+                    $agreement_reference
+                );
+
+                // Set Billing Agreement Data
+                $payment->setBillingAgreementData(array(
+                    'billing_agreement_id'  => $agreement_reference,
+                    'method_code'           => PayEx_Payments_Model_Payment_Agreement::METHOD_BILLING_AGREEMENT,
+                ));
+            }
+        }
+
+        $payment->setSkipOrderProcessing(true);
+        return $this;
     }
 
     /**

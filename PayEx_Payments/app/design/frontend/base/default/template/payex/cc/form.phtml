@@ -26,5 +26,11 @@
                 <li><img src="<?php echo Mage::getDesign()->getSkinUrl('images/payex/american_express_64.png'); ?>" /></li>
             </ul>
         </li>
+        <?php if ($code = $this->getCreateBACode()): ?>
+            <li class="form-alt">
+                <label for="<?php echo $code ?>"><input type="checkbox" id="<?php echo $code ?>" value="1" name="payment[<?php echo $code ?>]" class="checkbox" />
+                    <?php echo $this->__('Sign a billing agreement to streamline further purchases with PayEx.') ?></label>
+            </li>
+        <?php endif; ?>
     </ul>
 </fieldset>

@@ -1,3 +1,7 @@
+Version 3.0.4
+* Implemented PayEx Billing Agreement Method
+* Removed PayEx AutoPay Method
+
 Version 3.0.3
 * Improvements of Social Security Number addon
 * Improvements of Payment Fee feature

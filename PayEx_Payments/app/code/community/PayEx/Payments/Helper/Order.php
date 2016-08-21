@@ -711,4 +711,65 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
         $result = Mage::helper('payex/api')->getPx()->InvoiceLinkGet($params);
         return $result;
     }
+
+    /**
+     * Extract Credit Card Details
+     * @param array $transaction
+     * @return Varien_Object
+     */
+    public function getCCDetails(array $transaction)
+    {
+        // Get Masked Credit Card Number
+        $masked_number = Mage::helper('payex')->__('Untitled Credit Card');
+        if (!empty($transaction['maskedNumber'])) {
+            $masked_number = $transaction['maskedNumber'];
+        } elseif (!empty($transaction['maskedCard'])) {
+            $masked_number = $transaction['maskedCard'];
+        }
+
+        // Get Card Type
+        $card_type = '';
+        if (!empty($transaction['cardProduct'])) {
+            $card_type = $transaction['cardProduct'];
+        } elseif (!empty( $transaction['paymentMethod'])) {
+            $card_type = $transaction['paymentMethod'];
+        }
+
+        /**
+         * Card types: VISA, MC (Mastercard), EUROCARD, MAESTRO, DINERS (Diners Club), AMEX (American Express), LIC,
+         * FDM, FORBRUGSFORENINGEN, JCB, FINAX, DANKORT
+         */
+        $card_type = strtolower(preg_replace('/[^A-Z]+/', '', $card_type));
+        $card_type = str_replace('mc', 'mastercard', $card_type);
+        if (empty($card_type)){
+            $card_type = 'visa';
+        }
+
+        // Get Expired
+        $expire_date = '';
+        if (!empty($transaction['paymentMethodExpireDate'])) {
+            $expire_date = $transaction['paymentMethodExpireDate'];
+        }
+
+        $return = new Varien_Object();
+        return $return->setMaskedNumber($masked_number)
+            ->setType($card_type)
+            ->setExpireDate($expire_date);
+    }
+
+    /**
+     * Get Formatted CC name
+     * Pattern: TYPE MASKED_NUMBER YYYY/MM
+     * @param array $transaction
+     * @return string
+     */
+    public function getFormattedCC(array $transaction)
+    {
+        $details = $this->getCCDetails($transaction);
+        return sprintf('%s %s %s', strtoupper(
+            $details->getType()),
+            $details->getMaskedNumber(),
+            date('Y/m', strtotime($details->getExpireDate()))
+        );
+    }
 }

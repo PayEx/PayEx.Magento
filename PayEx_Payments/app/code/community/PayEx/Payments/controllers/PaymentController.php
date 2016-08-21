@@ -63,6 +63,15 @@ class PayEx_Payments_PaymentController extends Mage_Core_Controller_Front_Action
             }
         }
 
+        // Get Agreement Reference
+        $agreement = '';
+        $isBARequested = (bool)$order->getPayment()
+            ->getAdditionalInformation(PayEx_Payments_Model_Payment_Agreement::PAYMENT_INFO_TRANSPORT_BILLING_AGREEMENT);
+        if ($isBARequested) {
+            $agreement = (string)$order->getPayment()
+                ->getAdditionalInformation(PayEx_Payments_Model_Payment_Agreement::PAYMENT_INFO_TRANSPORT_AGREEMENT_REFERENCE);
+        }
+
         // Get Amount
         //$amount = $order->getGrandTotal();
         $amount = Mage::helper('payex/order')->getCalculatedOrderAmount($order)->getAmount();
@@ -84,7 +93,7 @@ class PayEx_Payments_PaymentController extends Mage_Core_Controller_Front_Action
             'externalID' => '',
             'returnUrl' => Mage::getUrl('payex/payment/success', array('_secure' => true)),
             'view' => $paymentview,
-            'agreementRef' => '',
+            'agreementRef' => $agreement,
             'cancelUrl' => Mage::getUrl('payex/payment/cancel', array('_secure' => true)),
             'clientLanguage' => $method->getConfigData('clientlanguage')
         );
@@ -221,6 +230,42 @@ class PayEx_Payments_PaymentController extends Mage_Core_Controller_Front_Action
         Mage::helper('payex/tools')->addToDebug('Process Payment Transaction...', $order_id);
         $transaction = Mage::helper('payex/order')->processPaymentTransaction($order, $result);
         $transaction_status = isset($result['transactionStatus']) ? (int)$result['transactionStatus'] : null;
+
+        // Save Agreement Reference
+        if (!empty($result['agreementRef'])) {
+            /** @var Mage_Sales_Model_Billing_Agreement $billing_agreement */
+            $billing_agreement = Mage::getModel('sales/billing_agreement')->load($result['agreementRef'], 'reference_id');
+            if ($billing_agreement->getId()) {
+                // Verify Agreement Reference
+                // Call PxAgreement.AgreementCheck
+                $params = array(
+                    'accountNumber' => '',
+                    'agreementRef' => $result['agreementRef'],
+                );
+                $check = Mage::helper('payex/api')->getPx()->AgreementCheck($params);
+                Mage::helper('payex/tools')->debugApi($result, 'PxAgreement.AgreementCheck');
+                if ($check['code'] === 'OK' && $check['description'] === 'OK' && $check['errorCode'] === 'OK') {
+                    $agreement_status = (int)$check['agreementStatus'];
+
+                    // Check Agreement Status
+                    switch ($agreement_status) {
+                        case (PayEx_Payments_Model_Payment_Agreement::AGREEMENT_VERIFIED):
+                            // Update Billing Agreement
+                            $masked_number = Mage::helper('payex/order')->getFormattedCC($result);
+                            $billing_agreement->setAgreementLabel($masked_number)->save();
+                            break;
+                        case (PayEx_Payments_Model_Payment_Agreement::AGREEMENT_NOTVERIFIED):
+                        case (PayEx_Payments_Model_Payment_Agreement::AGREEMENT_DELETED):
+                        case (PayEx_Payments_Model_Payment_Agreement::AGREEMENT_NOTEXISTS):
+                            // Remove Billing Agreement
+                            $billing_agreement->delete();
+                            break;
+                        default:
+                            // no break
+                    }
+                }
+            }
+        }
 
         // Check Order and Transaction Result
         /* Transaction statuses: 0=Sale, 1=Initialize, 2=Credit, 3=Authorize, 4=Cancel, 5=Failure, 6=Capture */

@@ -74,6 +74,10 @@ class PayEx_Payments_Model_Payment_Swish extends PayEx_Payments_Model_Payment_Ab
             return false;
         }
 
+        if (!$quote) {
+            return false;
+        }
+
         // Check currency
         $allowedCurrency = array('DKK', 'EUR', 'GBP', 'NOK', 'SEK', 'USD');
         return in_array($quote->getQuoteCurrencyCode(), $allowedCurrency);
