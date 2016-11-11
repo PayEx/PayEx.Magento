@@ -352,6 +352,25 @@
                 <checkoutinfo>1</checkoutinfo>
                 <discount_calc>advanced</discount_calc>
             </payex_swish>
+
+            <!-- 'newmodule' configuration group (fieldset) -->
+            <payex_evc>
+                <active>0</active>
+                <model>payex/payment_EVC</model>
+                <title>Purchase using Electronic Value Codes</title>
+                <allowspecific>0</allowspecific>
+                <debug>1</debug>
+                <accountnumber>payex account number</accountnumber>
+                <encryptionkey>payex encryption key</encryptionkey>
+                <transactiontype>1</transactiontype>
+                <order_status_authorize>processing</order_status_authorize>
+                <order_status_capture>complete</order_status_capture>
+                <clientlanguage>en-US</clientlanguage>
+                <cleantime>20</cleantime>
+                <responsive>0</responsive>
+                <checkoutinfo>1</checkoutinfo>
+                <discount_calc>advanced</discount_calc>
+            </payex_evc>
         </payment>
 
         <tax>
