@@ -1505,42 +1505,319 @@
                     </fields>
                 </payex_swish>
 
-                <!-- 'newmodule' configuration group (fieldset) -->
-                <payex_gc>
-                    <active>0</active>
-                    <model>payex/payment_GC</model>
-                    <title>Purchase using PayEx Gift Card</title>
-                    <allowspecific>0</allowspecific>
-                    <debug>1</debug>
-                    <accountnumber>payex account number</accountnumber>
-                    <encryptionkey>payex encryption key</encryptionkey>
-                    <transactiontype>1</transactiontype>
-                    <order_status_authorize>processing</order_status_authorize>
-                    <order_status_capture>complete</order_status_capture>
-                    <clientlanguage>en-US</clientlanguage>
-                    <cleantime>20</cleantime>
-                    <responsive>0</responsive>
-                    <checkoutinfo>1</checkoutinfo>
-                    <discount_calc>advanced</discount_calc>
+
+                <!-- newmodule fieldset -->
+                <payex_gc translate="label" module="payex">
+                    <label>PayEx Gift Card</label>
+                    <sort_order>619</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <comment><![CDATA[This payment module provide <a href="http://www.payexpim.com/payment-methods/gift-cards-generic-cards/" target="_blank">PayEx Gift Card Payments</a>.]]></comment>
+                    <fields>
+                        <active translate="label">
+                            <label>Enabled</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </active>
+
+                        <title translate="label">
+                            <label>Title</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </title>
+
+                        <allowspecific translate="label">
+                            <label>Payment to applicable countries</label>
+                            <frontend_type>allowspecific</frontend_type>
+                            <sort_order>4</sort_order>
+                            <source_model>adminhtml/system_config_source_payment_allspecificcountries</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </allowspecific>
+
+                        <specificcountry translate="label">
+                            <label>Payment to Specific countries</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <sort_order>5</sort_order>
+                            <source_model>adminhtml/system_config_source_country</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </specificcountry>
+
+                        <debug translate="label">
+                            <label>Enable test mode</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>6</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </debug>
+
+                        <accountnumber>
+                            <label>Account Number</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>7</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </accountnumber>
+
+                        <encryptionkey>
+                            <label>Encryption Key</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>8</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </encryptionkey>
+
+                        <transactiontype translate="label">
+                            <label>Transaction Type</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>payex/source_paymentAction</source_model>
+                            <sort_order>9</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </transactiontype>
+
+                        <order_status_authorize translate="label">
+                            <label>Order status (for authorize)</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_order_status</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </order_status_authorize>
+
+                        <order_status_capture translate="label">
+                            <label>Order status (for capture)</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_order_status</source_model>
+                            <sort_order>11</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </order_status_capture>
+
+                        <clientlanguage translate="label">
+                            <label>Client language</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>payex/source_clientLanguage</source_model>
+                            <sort_order>12</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </clientlanguage>
+
+                        <cleantime translate="label">
+                            <label>Time to clean pending orders (0 - disabled)</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>13</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </cleantime>
+
+                        <responsive translate="label">
+                            <label>Enable Responsive Skinning</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>14</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </responsive>
+
+                        <checkoutinfo translate="label">
+                            <label>Send order lines and billing/delivery addresses to PayEx</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>15</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </checkoutinfo>
+
+                        <discount_calc translate="label">
+                            <label>Discount Calculation</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>payex/source_discountCalculation</source_model>
+                            <sort_order>16</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </discount_calc>
+                    </fields>
                 </payex_gc>
 
-                <!-- 'newmodule' configuration group (fieldset) -->
-                <payex_evc>
-                    <active>0</active>
-                    <model>payex/payment_EVC</model>
-                    <title>Purchase using Electronic Value Codes</title>
-                    <allowspecific>0</allowspecific>
-                    <debug>1</debug>
-                    <accountnumber>payex account number</accountnumber>
-                    <encryptionkey>payex encryption key</encryptionkey>
-                    <transactiontype>1</transactiontype>
-                    <order_status_authorize>processing</order_status_authorize>
-                    <order_status_capture>complete</order_status_capture>
-                    <clientlanguage>en-US</clientlanguage>
-                    <cleantime>20</cleantime>
-                    <responsive>0</responsive>
-                    <checkoutinfo>1</checkoutinfo>
-                    <discount_calc>advanced</discount_calc>
+                <!-- newmodule fieldset -->
+                <payex_evc translate="label" module="payex">
+                    <label>PayEx Electronic Value Codes</label>
+                    <sort_order>620</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <comment><![CDATA[This payment module provide <a href="http://www.payexpim.com/payment-methods/electronic-value-codes/" target="_blank">PayEx Electronic Value Codes</a>.]]></comment>
+                    <fields>
+                        <active translate="label">
+                            <label>Enabled</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </active>
+
+                        <title translate="label">
+                            <label>Title</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>2</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </title>
+
+                        <allowspecific translate="label">
+                            <label>Payment to applicable countries</label>
+                            <frontend_type>allowspecific</frontend_type>
+                            <sort_order>4</sort_order>
+                            <source_model>adminhtml/system_config_source_payment_allspecificcountries</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </allowspecific>
+
+                        <specificcountry translate="label">
+                            <label>Payment to Specific countries</label>
+                            <frontend_type>multiselect</frontend_type>
+                            <sort_order>5</sort_order>
+                            <source_model>adminhtml/system_config_source_country</source_model>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </specificcountry>
+
+                        <debug translate="label">
+                            <label>Enable test mode</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>6</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </debug>
+
+                        <accountnumber>
+                            <label>Account Number</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>7</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </accountnumber>
+
+                        <encryptionkey>
+                            <label>Encryption Key</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>8</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </encryptionkey>
+
+                        <transactiontype translate="label">
+                            <label>Transaction Type</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>payex/source_paymentAction</source_model>
+                            <sort_order>9</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </transactiontype>
+
+                        <order_status_authorize translate="label">
+                            <label>Order status (for authorize)</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_order_status</source_model>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </order_status_authorize>
+
+                        <order_status_capture translate="label">
+                            <label>Order status (for capture)</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_order_status</source_model>
+                            <sort_order>11</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </order_status_capture>
+
+                        <clientlanguage translate="label">
+                            <label>Client language</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>payex/source_clientLanguage</source_model>
+                            <sort_order>12</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </clientlanguage>
+
+                        <cleantime translate="label">
+                            <label>Time to clean pending orders (0 - disabled)</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>13</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </cleantime>
+
+                        <responsive translate="label">
+                            <label>Enable Responsive Skinning</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>14</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </responsive>
+
+                        <checkoutinfo translate="label">
+                            <label>Send order lines and billing/delivery addresses to PayEx</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>15</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </checkoutinfo>
+
+                        <discount_calc translate="label">
+                            <label>Discount Calculation</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>payex/source_discountCalculation</source_model>
+                            <sort_order>16</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </discount_calc>
+                    </fields>
                 </payex_evc>
             </groups>
         </payment>
