@@ -154,8 +154,12 @@ class PayEx_Payments_Model_Payment_Wywallet extends PayEx_Payments_Model_Payment
         }
 
         // Get Transaction Details
-        $this->fetchTransactionInfo($payment, $transactionId);
         $details = $transaction->getAdditionalInformation(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS);
+        if (!is_array($details) || count($details) === 0) {
+            $details = $this->fetchTransactionInfo($payment, $transactionId);
+            $transaction->setAdditionalInformation(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS, $details);
+            $transaction->save();
+        }
 
         // Not to execute for Sale transactions
         if ((int)$details['transactionStatus'] !== 3) {
@@ -165,8 +169,16 @@ class PayEx_Payments_Model_Payment_Wywallet extends PayEx_Payments_Model_Payment
 
         $transactionNumber = $details['transactionNumber'];
         $order_id = $details['orderId'];
+        $available = $details['amount'];
         if (!$order_id) {
             $order_id = $payment->getOrder()->getIncrementId();
+        }
+
+        // Prevent Rounding Issue
+        $value = abs(sprintf("%.2f", $amount) - sprintf("%.2f", $available));
+        if ($value > 0 && $value < 0.2) {
+            $amount = $available;
+            $payment->setAmount($amount);
         }
 
         // Call PxOrder.Capture5

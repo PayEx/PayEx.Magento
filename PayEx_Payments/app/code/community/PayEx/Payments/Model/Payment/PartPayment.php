@@ -207,8 +207,12 @@ class PayEx_Payments_Model_Payment_PartPayment extends PayEx_Payments_Model_Paym
         }
 
         // Get Transaction Details
-        $this->fetchTransactionInfo($payment, $transactionId);
         $details = $transaction->getAdditionalInformation(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS);
+        if (!is_array($details) || count($details) === 0) {
+            $details = $this->fetchTransactionInfo($payment, $transactionId);
+            $transaction->setAdditionalInformation(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS, $details);
+            $transaction->save();
+        }
 
         // Not to execute for Sale transactions
         if ((int)$details['transactionStatus'] !== 3) {
@@ -218,13 +222,13 @@ class PayEx_Payments_Model_Payment_PartPayment extends PayEx_Payments_Model_Paym
 
         $transactionNumber = $details['transactionNumber'];
         $order_id = $payment->getOrder()->getIncrementId();
+        $available = $details['amount'];
 
         // Prevent Rounding Issue
-        // Difference can be ~0.0099999999999909
-        $order_amount = Mage::helper('payex/order')->getCalculatedOrderAmount($payment->getOrder())->getAmount();
-        $value = abs(sprintf("%.2f", $order_amount) - sprintf("%.2f", $amount));
-        if ($value > 0 && $value < 0.011) {
-            $amount = $order_amount;
+        $value = abs(sprintf("%.2f", $amount) - sprintf("%.2f", $available));
+        if ($value > 0 && $value < 0.2) {
+            $amount = $available;
+            $payment->setAmount($amount);
         }
 
         $xml = Mage::helper('payex/order')->getInvoiceExtraPrintBlocksXML($payment->getOrder());
