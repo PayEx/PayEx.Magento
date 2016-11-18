@@ -19,8 +19,8 @@ class PayEx_Payments_Test_Helper_Order extends EcomDev_PHPUnit_Test_Case
     public function testMethods()
     {
         $methods = array(
-            'processPaymentTransaction', 'makeInvoice', 'makeCreditMemo', 'getCalculatedOrderAmount', 'addOrderLine',
-            'addOrderAddress', 'getShoppingCartXML', 'getInvoiceExtraPrintBlocksXML', 'getAssignedStatus',
+            'processPaymentTransaction', 'makeInvoice', 'makeCreditMemo', 'getCalculatedOrderAmount', 'getOrderItems',
+            'getAddressInfo', 'getShoppingCartXML', 'getInvoiceExtraPrintBlocksXML', 'getAssignedStatus',
             'getInvoiceLink'
         );
         foreach ($methods as $method) {
