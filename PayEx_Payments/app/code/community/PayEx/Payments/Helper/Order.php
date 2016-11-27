@@ -643,8 +643,8 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
             $OrderLine->appendChild($dom->createElement('Product', Mage::helper('payex')->__('Payment fee')));
             $OrderLine->appendChild($dom->createElement('Qty', 1));
             $OrderLine->appendChild($dom->createElement('UnitPrice', sprintf("%.2f", $feeExclTax)));
-            $OrderLine->appendChild($dom->createElement('VatRate', $feeTaxRate));
-            $OrderLine->appendChild($dom->createElement('VatAmount', $feeTax));
+            $OrderLine->appendChild($dom->createElement('VatRate', sprintf("%.2f", $feeTaxRate)));
+            $OrderLine->appendChild($dom->createElement('VatAmount', sprintf("%.2f", $feeTax)));
             $OrderLine->appendChild($dom->createElement('Amount', sprintf("%.2f", $feeIncTax)));
             $OrderLines->appendChild($OrderLine);
         }
