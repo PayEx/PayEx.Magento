@@ -1,3 +1,6 @@
+Version 3.1.3
+* Improved order lines and capture rounding issue workaround
+
 Version 3.1.2
 * Fixed install script bug
 
