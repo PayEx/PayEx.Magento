@@ -1,0 +1,18 @@
+<?php
+/** @var $this PayEx_Payments_Block_Form_Mobilepay */
+?>
+
+<fieldset class="form-list">
+    <?php $_code=$this->getMethodCode() ?>
+    <ul id="payment_form_<?php echo $_code ?>" style="display:none">
+        <li>
+            <div style="float:left">
+                <img src="<?php echo Mage::getDesign()->getSkinUrl('images/payex/mobilepay_online.png'); ?>" alt="MobilePay Online" /><br />
+            </div>
+            <div style="float:left">
+                <?php echo Mage::helper('payex')->__('You will be redirected to <a target="_blank" href="http://www.payex.com">PayEx</a> website when you place an order.'); ?>
+            </div>
+            <div class="clearfix">&nbsp;</div>
+        </li>
+    </ul>
+</fieldset>
