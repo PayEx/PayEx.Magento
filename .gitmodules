@@ -1,6 +1,0 @@
-[submodule "PayEx_Payments/lib/PHP-Name-Parser"]
-	path = PayEx_Payments/lib/PHP-Name-Parser
-	url = https://github.com/joshfraser/PHP-Name-Parser
-[submodule "PayEx_Payments/lib/PayEx.Ecommerce.Php"]
-	path = PayEx_Payments/lib/PayEx.Ecommerce.Php
-	url = https://github.com/PayEx/PayEx.Ecommerce.Php
