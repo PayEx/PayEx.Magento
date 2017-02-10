@@ -85,6 +85,7 @@ class PayEx_Payments_Model_Payment_CC extends PayEx_Payments_Model_Payment_Abstr
         } elseif ($data instanceof Varien_Object) {
             $this->getInfoInstance()->setAdditionalInformation($key, $data->getData($key));
         }
+
         return $result;
     }
 
@@ -150,10 +151,12 @@ class PayEx_Payments_Model_Payment_CC extends PayEx_Payments_Model_Payment_Abstr
                 );
 
                 // Set Billing Agreement Data
-                $payment->setBillingAgreementData(array(
+                $payment->setBillingAgreementData(
+                    array(
                     'billing_agreement_id'  => $agreement_reference,
                     'method_code'           => PayEx_Payments_Model_Payment_Agreement::METHOD_BILLING_AGREEMENT,
-                ));
+                    )
+                );
             }
         }
 
@@ -440,6 +443,7 @@ class PayEx_Payments_Model_Payment_CC extends PayEx_Payments_Model_Payment_Abstr
                     unset($details[$key]);
                 }
             }
+
             return $details;
         }
 
@@ -478,6 +482,7 @@ class PayEx_Payments_Model_Payment_CC extends PayEx_Payments_Model_Payment_Abstr
         ) {
             return false;
         }
+
         return $this->_canVoid;
     }
 

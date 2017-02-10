@@ -88,6 +88,7 @@ class PayEx_Payments_EvcController extends Mage_Core_Controller_Front_Action
             $this->_redirect('checkout/cart');
             return;
         }
+
         $order_ref = $result['orderRef'];
         $redirectUrl = $result['redirectUrl'];
 
@@ -102,7 +103,6 @@ class PayEx_Payments_EvcController extends Mage_Core_Controller_Front_Action
         $order->save();
 
         // Redirect to PayEx
-        header('Location: ' . $redirectUrl);
-        exit();
+        Mage::app()->getFrontController()->getResponse()->setRedirect($redirectUrl)->sendResponse();
     }
 }

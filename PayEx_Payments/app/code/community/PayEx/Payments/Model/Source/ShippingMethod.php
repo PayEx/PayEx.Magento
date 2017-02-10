@@ -20,8 +20,8 @@ class PayEx_Payments_Model_Source_ShippingMethod
                 foreach ($carrierMethods as $methodCode => $method) {
                     $code = $carrierCode . '_' . $methodCode;
                     $options[] = array('value' => $code, 'label' => $method);
-
                 }
+
                 $carrierTitle = Mage::getStoreConfig('carriers/' . $carrierCode . '/title');
             }
 

@@ -3,30 +3,30 @@
 class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
 {
 
-	/**
-	 * Process Payment Transaction
-	 * @param Mage_Sales_Model_Order $order
-	 * @param array                  $fields
-	 *
-	 * @return Mage_Sales_Model_Order_Payment_Transaction|null
-	 * @throws Exception
-	 */
+    /**
+     * Process Payment Transaction
+     * @param Mage_Sales_Model_Order $order
+     * @param array                  $fields
+     *
+     * @return Mage_Sales_Model_Order_Payment_Transaction|null
+     * @throws Exception
+     */
     public function processPaymentTransaction(Mage_Sales_Model_Order $order, array $fields)
     {
         // Lookup Transaction
         $collection = Mage::getModel('sales/order_payment_transaction')->getCollection()
             ->addAttributeToFilter('txn_id', $fields['transactionNumber']);
         if (count($collection) > 0) {
-	        Mage::helper('payex/tools')->addToDebug(sprintf('Transaction %s already processed.', $fields['transactionNumber']), $order->getIncrementId());
+            Mage::helper('payex/tools')->addToDebug(sprintf('Transaction %s already processed.', $fields['transactionNumber']), $order->getIncrementId());
             return $collection->getFirstItem();
         }
 
-	    // Set Payment Transaction Id
+        // Set Payment Transaction Id
         $payment = $order->getPayment();
         $payment->setTransactionId($fields['transactionNumber']);
 
         /* Transaction statuses: 0=Sale, 1=Initialize, 2=Credit, 3=Authorize, 4=Cancel, 5=Failure, 6=Capture */
-	    $transaction_status = isset($fields['transactionStatus']) ? (int)$fields['transactionStatus'] : null;
+        $transaction_status = isset($fields['transactionStatus']) ? (int)$fields['transactionStatus'] : null;
         switch ($transaction_status) {
             case 1:
                 // From PayEx PIM:
@@ -38,11 +38,11 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
                     $transaction->setIsClosed(0);
                     $transaction->setAdditionalInformation(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS, $fields);
                     $transaction->setMessage($message);
-	                $transaction->save();
-	                break;
+                    $transaction->save();
+                    break;
                 }
 
-	            $message = Mage::helper('payex')->__('Transaction Status: %s.', $transaction_status);
+                $message = Mage::helper('payex')->__('Transaction Status: %s.', $transaction_status);
                 $transaction = $payment->addTransaction(Mage_Sales_Model_Order_Payment_Transaction::TYPE_PAYMENT, null, true, $message);
                 $transaction->setAdditionalInformation(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS, $fields);
                 $transaction->setMessage($message);
@@ -54,7 +54,7 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
                 $transaction->setIsClosed(0);
                 $transaction->setAdditionalInformation(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS, $fields);
                 $transaction->setMessage($message);
-	            $transaction->save();
+                $transaction->save();
                 break;
             case 0;
             case 6:
@@ -63,14 +63,14 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
                 $transaction->setAdditionalInformation(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS, $fields);
                 $transaction->isFailsafe(true)->close(false);
                 $transaction->setMessage($message);
-	            $transaction->save();
+                $transaction->save();
                 break;
             case 2:
                 $message = Mage::helper('payex')->__('Detected an abnormal payment process (Transaction Status: %s).', $transaction_status);
                 $transaction = $payment->addTransaction(Mage_Sales_Model_Order_Payment_Transaction::TYPE_PAYMENT, null, true, $message);
                 $transaction->setAdditionalInformation(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS, $fields);
                 $transaction->setMessage($message);
-	            $transaction->setIsCancel(true);
+                $transaction->setIsCancel(true);
                 $transaction->save();
                 break;
             case 4;
@@ -78,7 +78,7 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
                 $transaction = $payment->addTransaction(Mage_Sales_Model_Order_Payment_Transaction::TYPE_PAYMENT, null, true);
                 $transaction->setAdditionalInformation(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS, $fields);
                 $transaction->setMessage($message);
-	            $transaction->setIsCancel(true);
+                $transaction->setIsCancel(true);
                 $transaction->save();
                 break;
             case 5;
@@ -87,7 +87,7 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
                 $transaction = $payment->addTransaction(Mage_Sales_Model_Order_Payment_Transaction::TYPE_PAYMENT, null, true);
                 $transaction->setAdditionalInformation(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS, $fields);
                 $transaction->setMessage($message);
-	            $transaction->setIsCancel(true);
+                $transaction->setIsCancel(true);
                 $transaction->save();
                 break;
             default:
@@ -98,12 +98,12 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
                 break;
         }
 
-	    try {
-		    $order->save();
-		    Mage::helper('payex/tools')->addToDebug($message, $order->getIncrementId());
-	    } catch (Exception $e) {
-		    Mage::helper('payex/tools')->addToDebug('Error: ' . $e->getMessage(), $order->getIncrementId());
-	    }
+        try {
+            $order->save();
+            Mage::helper('payex/tools')->addToDebug($message, $order->getIncrementId());
+        } catch (Exception $e) {
+            Mage::helper('payex/tools')->addToDebug('Error: ' . $e->getMessage(), $order->getIncrementId());
+        }
 
         return $transaction;
     }
@@ -163,6 +163,7 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
         if (!$order_id) {
             return false;
         }
+
         $collection = Mage::getModel('sales/order_payment_transaction')->getCollection()
             ->addOrderIdFilter($order_id)
             ->setOrder('transaction_id', 'ASC')
@@ -190,12 +191,14 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
         } else {
             $creditmemo = $service->prepareCreditmemo();
         }
+
         $creditmemo->addComment(Mage::helper('payex')->__('Auto-generated from PayEx module'));
 
         // Refund
         if (!$online) {
             $creditmemo->setPaymentRefundDisallowed(true);
         }
+
         //$creditmemo->setRefundRequested(true);
         $invoice->getOrder()->setBaseTotalRefunded(0);
         $creditmemo->setBaseGrandTotal($amount);
@@ -206,6 +209,7 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
         if ($transactionId) {
             $creditmemo->setTransactionId($transactionId);
         }
+
         // Save CreditMemo
         $transactionSave = Mage::getModel('core/resource_transaction')
             ->addObject($creditmemo)
@@ -213,6 +217,7 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
         if ($creditmemo->getInvoice()) {
             $transactionSave->addObject($creditmemo->getInvoice());
         }
+
         $transactionSave->save();
 
         return $creditmemo;
@@ -250,6 +255,7 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
             } else {
                 $rounding = -1 * ($rounded_control_amount - $rounded_total);
             }
+
             $rounding = sprintf("%.2f", $rounding);
         }
 
@@ -319,13 +325,16 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
                 $replacement_char = '-';
             }
 
-            $lines = array_map(function ($value) use ($replacement_char) {
+            $lines = array_map(
+                function ($value) use ($replacement_char) {
                 if (isset($value['name'])) {
                     mb_regex_encoding('utf-8');
                     $value['name'] = mb_ereg_replace('[^a-zA-Z0-9_:!#=?\[\]@{}´ %-\/À-ÖØ-öø-ú]', $replacement_char, $value['name']);
                 }
+
                 return $value;
-            }, $lines);
+                }, $lines
+            );
         }
 
         $dom = new DOMDocument('1.0', 'utf-8');
@@ -357,7 +366,8 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
      * @param $status
      * @return Mage_Sales_Model_Order_Status
      */
-    public function getAssignedStatus($status) {
+    public function getAssignedStatus($status) 
+    {
         $status = Mage::getModel('sales/order_status')
             ->getCollection()
             ->joinStates()
@@ -371,7 +381,8 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
      * @param string|int $transaction_id
      * @return array
      */
-    public function getInvoiceLink($transaction_id) {
+    public function getInvoiceLink($transaction_id) 
+    {
         // Call PxOrder.InvoiceLinkGet
         $params = array (
             'accountNumber' => '',
@@ -400,7 +411,7 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
         $card_type = '';
         if (!empty($transaction['cardProduct'])) {
             $card_type = $transaction['cardProduct'];
-        } elseif (!empty( $transaction['paymentMethod'])) {
+        } elseif (!empty($transaction['paymentMethod'])) {
             $card_type = $transaction['paymentMethod'];
         }
 
@@ -435,8 +446,10 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
     public function getFormattedCC(array $transaction)
     {
         $details = $this->getCCDetails($transaction);
-        return sprintf('%s %s %s', strtoupper(
-            $details->getType()),
+        return sprintf(
+            '%s %s %s', strtoupper(
+                $details->getType()
+            ),
             $details->getMaskedNumber(),
             date('Y/m', strtotime($details->getExpireDate()))
         );
@@ -449,7 +462,7 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
      */
     public function getOrderItems($order)
     {
-        $lines = [];
+        $lines = array();
         $items = $order->getAllVisibleItems();
         foreach ($items as $item) {
             /** @var Mage_Sales_Model_Order_Item $item */
@@ -519,11 +532,13 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
 
         // add Payment Fee
         if ($order->getPayexPaymentFee() > 0 &&
-            in_array($order->getPayment()->getMethod(), array(
+            in_array(
+                $order->getPayment()->getMethod(), array(
                 'payex_financing',
                 'payex_partpayment',
                 'payex_invoice'
-            ))) {
+                )
+            )) {
             $feeExclTax = $order->getPayexPaymentFee();
             $feeTax = $order->getPayexPaymentFeeTax();
             $feeIncTax = $feeExclTax + $feeTax;
@@ -589,7 +604,8 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
             $deliveryCountryCode = $order->getShippingAddress()->getCountry();
             $deliveryCountry = Mage::getModel('directory/country')->load($deliveryCountryCode)->getName();
 
-            $params = array_merge($params, array(
+            $params = array_merge(
+                $params, array(
                 'deliveryFirstName' => $order->getShippingAddress()->getFirstname(),
                 'deliveryLastName' => $order->getShippingAddress()->getLastname(),
                 'deliveryAddress1' => $deliveryAddress[0],
@@ -603,7 +619,8 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
                 'deliveryEmail' => (string)$order->getShippingAddress()->getEmail(),
                 'deliveryPhone' => (string)$order->getShippingAddress()->getTelephone(),
                 'deliveryGsm' => '',
-            ));
+                )
+            );
         }
 
         return $params;

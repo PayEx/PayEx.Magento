@@ -83,6 +83,7 @@ class PayEx_Payments_WywalletController extends Mage_Core_Controller_Front_Actio
             $this->_redirect('checkout/cart');
             return;
         }
+
         $order_ref = $result['orderRef'];
         $redirectUrl = $result['redirectUrl'];
 
@@ -112,10 +113,12 @@ class PayEx_Payments_WywalletController extends Mage_Core_Controller_Front_Actio
             }
 
             // Add Order Address Info
-            $params = array_merge(array(
+            $params = array_merge(
+                array(
                 'accountNumber' => '',
                 'orderRef' => $order_ref
-            ), Mage::helper('payex/order')->getAddressInfo($order));
+                ), Mage::helper('payex/order')->getAddressInfo($order)
+            );
 
             $result = Mage::helper('payex/api')->getPx()->AddOrderAddress2($params);
             Mage::helper('payex/tools')->debugApi($result, 'PxOrder.AddOrderAddress2');
@@ -126,8 +129,7 @@ class PayEx_Payments_WywalletController extends Mage_Core_Controller_Front_Actio
         $order->save();
 
         // Redirect to Bank
-        header('Location: ' . $redirectUrl);
-        exit();
+        Mage::app()->getFrontController()->getResponse()->setRedirect($redirectUrl)->sendResponse();
     }
 
     public function successAction()
@@ -135,7 +137,8 @@ class PayEx_Payments_WywalletController extends Mage_Core_Controller_Front_Actio
         Mage::helper('payex/tools')->addToDebug('Controller: success');
 
         // Check OrderRef
-        if (empty($_GET['orderRef'])) {
+        $orderRef = $this->getRequest()->getParam('orderRef');
+        if (empty($orderRef)) {
             $this->_redirect('checkout/cart');
         }
 
@@ -155,7 +158,7 @@ class PayEx_Payments_WywalletController extends Mage_Core_Controller_Front_Actio
         // Call PxOrder.Complete
         $params = array(
             'accountNumber' => '',
-            'orderRef' => $_GET['orderRef']
+            'orderRef' => $orderRef
         );
         $result = Mage::helper('payex/api')->getPx()->Complete($params);
         Mage::helper('payex/tools')->debugApi($result, 'PxOrder.Complete');

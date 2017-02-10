@@ -20,14 +20,18 @@ class PayEx_Payments_Helper_Api extends Mage_Core_Helper_Abstract
             // Set User Agent
             $modules = Mage::getConfig()->getNode('modules')->children();
             $modulesArray = (array)$modules;
-            self::$_px->setUserAgent(sprintf("PayEx.Ecommerce.Php/%s PHP/%s Magento%s/%s PayEx.Magento/%s",
-                \PayEx\Px::VERSION,
-                phpversion(),
-                Mage::getEdition(),
-                Mage::getVersion(),
-                (string)$modulesArray['PayEx_Payments']->version
-            ));
+            self::$_px->setUserAgent(
+                sprintf(
+                    "PayEx.Ecommerce.Php/%s PHP/%s Magento%s/%s PayEx.Magento/%s",
+                    \PayEx\Px::VERSION,
+                    phpversion(),
+                    Mage::getEdition(),
+                    Mage::getVersion(),
+                    (string)$modulesArray['PayEx_Payments']->version
+                )
+            );
         }
+
         return self::$_px;
     }
 }

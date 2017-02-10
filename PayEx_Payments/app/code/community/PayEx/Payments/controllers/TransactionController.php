@@ -25,22 +25,36 @@ class PayEx_Payments_TransactionController extends Mage_Core_Controller_Front_Ac
         // Check is PayEx Request
         if (!in_array($remote_addr, self::$_allowed_ips)) {
             Mage::helper('payex/tools')->addToDebug('TC: Access denied for this request. It\'s not PayEx Spider.');
-            header(sprintf('%s %s %s', 'HTTP/1.1', '403', 'Access denied. Accept PayEx Transaction Callback only.'), true, '403');
-            header(sprintf('Status: %s %s', '403', 'Access denied. Accept PayEx Transaction Callback only.'), true, '403');
-            exit('Error: Access denied. Accept PayEx Transaction Callback only. ');
+
+            $this->getResponse()
+                ->setHeader('HTTP/1.1', 403, true)
+                ->setBody('Access denied. Accept PayEx Transaction Callback only.');
+            return;
+        }
+
+        // is Post
+        if (!$this->getRequest()->isPost()) {
+            Mage::helper('payex/tools')->addToDebug('TC: Error: Empty request received.');
+
+            $this->getResponse()
+                ->setHeader('HTTP/1.1', 500, true)
+                ->setBody('FAILURE');
+            return;
         }
 
         // Check Post Fields
-        Mage::helper('payex/tools')->addToDebug('TC: Requested Params: ' . var_export($_POST, true));
-        if (count($_POST) == 0) {
+        if (!$this->getRequest()->isPost() || count($this->getRequest()->getPost()) == 0) {
+            Mage::helper('payex/tools')->addToDebug('TC: Requested Params: ' . var_export($this->getRequest()->getPost(), true));
             Mage::helper('payex/tools')->addToDebug('TC: Error: Empty request received.');
-            header(sprintf('%s %s %s', 'HTTP/1.1', '500', 'FAILURE'), true, '500');
-            header(sprintf('Status: %s %s', '500', 'FAILURE'), true, '500');
-            exit('FAILURE');
+
+            $this->getResponse()
+                ->setHeader('HTTP/1.1', 500, true)
+                ->setBody('FAILURE');
+            return;
         }
 
         // Detect Payment Method of Order
-        $order_id = $_POST['orderId'];
+        $order_id = $this->getRequest()->getPost('orderId');
 
         /**
          * @var Mage_Sales_Model_Order @order
@@ -49,17 +63,21 @@ class PayEx_Payments_TransactionController extends Mage_Core_Controller_Front_Ac
         $order->loadByIncrementId($order_id);
         if (!$order->getId()) {
             Mage::helper('payex/tools')->addToDebug('TC: Error: OrderID ' . $order_id . ' not found on store.');
-            header(sprintf('%s %s %s', 'HTTP/1.1', '500', 'FAILURE'), true, '500');
-            header(sprintf('Status: %s %s', '500', 'FAILURE'), true, '500');
-            exit('FAILURE');
+
+            $this->getResponse()
+                ->setHeader('HTTP/1.1', 500, true)
+                ->setBody('FAILURE');
+            return;
         }
 
         // Check Payment Method
         if (strpos($order->getPayment()->getMethodInstance()->getCode(), 'payex_') === false) {
             Mage::helper('payex/tools')->addToDebug('TC: Unsupported payment method: ' . $order->getPayment()->getMethodInstance()->getCode());
-            header(sprintf('%s %s %s', 'HTTP/1.1', '500', 'FAILURE'), true, '500');
-            header(sprintf('Status: %s %s', '500', 'FAILURE'), true, '500');
-            exit('FAILURE');
+
+            $this->getResponse()
+                ->setHeader('HTTP/1.1', 500, true)
+                ->setBody('FAILURE');
+            return;
         }
 
         // Get Payment Method instance
@@ -71,27 +89,31 @@ class PayEx_Payments_TransactionController extends Mage_Core_Controller_Front_Ac
         $debug = (bool)$payment_method->getConfigData('debug', $order->getStoreId());
 
         // Check Requested Account Number
-        if ($_POST['accountNumber'] !== $accountNumber) {
-            Mage::helper('payex/tools')->addToDebug('TC: Error: Can\'t to get account details of : ' . $_POST['accountNumber']);
-            header(sprintf('%s %s %s', 'HTTP/1.1', '500', 'FAILURE'), true, '500');
-            header(sprintf('Status: %s %s', '500', 'FAILURE'), true, '500');
-            exit('FAILURE');
+        if ($this->getRequest()->getPost('accountNumber') !== $accountNumber) {
+            Mage::helper('payex/tools')->addToDebug('TC: Error: Can\'t to get account details of : ' . $this->getRequest()->getPost('accountNumber'));
+
+            $this->getResponse()
+                ->setHeader('HTTP/1.1', 500, true)
+                ->setBody('FAILURE');
+            return;
         }
 
         // Define PayEx Settings
         Mage::helper('payex/api')->getPx()->setEnvironment($accountNumber, $encryptionKey, $debug);
 
         // Get Transaction Details
-        $transactionId = $_POST['transactionNumber'];
+        $transactionId = $this->getRequest()->getPost('transactionNumber');
 
         // Lookup Transaction
         $collection = Mage::getModel('sales/order_payment_transaction')->getCollection()
             ->addAttributeToFilter('txn_id', $transactionId);
         if (count($collection) > 0) {
             Mage::helper('payex/tools')->addToDebug(sprintf('TC: Transaction %s already processed.', $transactionId));
-            header(sprintf('%s %s %s', 'HTTP/1.1', '500', 'FAILURE'), true, '500');
-            header(sprintf('Status: %s %s', '500', 'FAILURE'), true, '500');
-            exit('FAILURE');
+
+            $this->getResponse()
+                ->setHeader('HTTP/1.1', 500, true)
+                ->setBody('FAILURE');
+            return;
         }
 
         // Call PxOrder.GetTransactionDetails2
@@ -143,23 +165,27 @@ class PayEx_Payments_TransactionController extends Mage_Core_Controller_Front_Ac
                 // Call PxOrder.Complete
                 $params = array(
                     'accountNumber' => '',
-                    'orderRef' => $_POST['orderRef'],
+                    'orderRef' => $this->getRequest()->getPost('orderRef'),
                 );
                 $result = Mage::helper('payex/api')->getPx()->Complete($params);
                 Mage::helper('payex/tools')->debugApi($result, 'PxOrder.Complete');
                 if ($result['errorCodeSimple'] !== 'OK') {
                     Mage::helper('payex/tools')->addToDebug('TC: Failed to complete payment.');
-                    header(sprintf('%s %s %s', 'HTTP/1.1', '500', 'FAILURE'), true, '500');
-                    header(sprintf('Status: %s %s', '500', 'FAILURE'), true, '500');
-                    exit('FAILURE');
+
+                    $this->getResponse()
+                        ->setHeader('HTTP/1.1', 500, true)
+                        ->setBody('FAILURE');
+                    return;
                 }
 
                 // Verify transaction status
                 if ((int)$result['transactionStatus'] !== $transaction_status) {
                     Mage::helper('payex/tools')->addToDebug('TC: Failed to complete payment. Transaction status is different!');
-                    header(sprintf('%s %s %s', 'HTTP/1.1', '500', 'FAILURE'), true, '500');
-                    header(sprintf('Status: %s %s', '500', 'FAILURE'), true, '500');
-                    exit('FAILURE');
+
+                    $this->getResponse()
+                        ->setHeader('HTTP/1.1', 500, true)
+                        ->setBody('FAILURE');
+                    return;
                 }
 
                 // Select Order Status
@@ -257,16 +283,18 @@ class PayEx_Payments_TransactionController extends Mage_Core_Controller_Front_Ac
                 }
                 break;
             default:
-                Mage::helper('payex/tools')->addToDebug('TC: Unknown Transaction Status', $order_id);
-                header(sprintf('%s %s %s', 'HTTP/1.1', '500', 'FAILURE'), true, '500');
-                header(sprintf('Status: %s %s', '500', 'FAILURE'), true, '500');
-                exit('FAILURE');
+                $this->getResponse()
+                    ->setHeader('HTTP/1.1', 500, true)
+                    ->setBody('FAILURE');
+
+                return;
         }
 
         // Show "OK"
         Mage::helper('payex/tools')->addToDebug('TC: Done.');
-        header(sprintf('%s %s %s', 'HTTP/1.1', '200', 'OK'), true, '200');
-        header(sprintf('Status: %s %s', '200', 'OK'), true, '200');
-        exit('OK');
+
+        $this->getResponse()
+            ->setHeader('HTTP/1.1', 200, true)
+            ->setBody('OK');
     }
 }

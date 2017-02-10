@@ -153,6 +153,7 @@ class PayEx_Payments_Model_Payment_Invoice extends PayEx_Payments_Model_Payment_
                 Mage::throwException('Unfortunately PayEx did not grant you Invoice credit. Please try other means of payment');
             }
         }
+
         // Show Error Message
         Mage::helper('payex/tools')->throwPayExException($status, 'PxVerification.CreditCheck');
         return false;
@@ -435,6 +436,7 @@ class PayEx_Payments_Model_Payment_Invoice extends PayEx_Payments_Model_Payment_
                     unset($details[$key]);
                 }
             }
+
             return $details;
         }
 
@@ -459,6 +461,7 @@ class PayEx_Payments_Model_Payment_Invoice extends PayEx_Payments_Model_Payment_
         ) {
             return false;
         }
+
         return $this->_canVoid;
     }
 

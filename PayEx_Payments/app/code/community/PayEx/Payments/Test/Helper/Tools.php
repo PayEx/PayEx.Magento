@@ -36,6 +36,7 @@ class PayEx_Payments_Test_Helper_Tools extends EcomDev_PHPUnit_Test_Case
         if (file_exists($log_file)) {
             unlink($log_file);
         }
+
         $this->object->addToDebug('Log test');
         //$this->assertFileExists($log_file);
         //$this->assertContains('Log test', file_get_contents($log_file));

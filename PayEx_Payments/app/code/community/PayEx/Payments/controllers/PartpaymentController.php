@@ -86,6 +86,7 @@ class PayEx_Payments_PartpaymentController extends Mage_Core_Controller_Front_Ac
             $this->_redirect('checkout/cart');
             return;
         }
+
         $order_ref = $result['orderRef'];
 
         // Call PxOrder.PurchaseCreditAccount

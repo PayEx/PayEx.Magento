@@ -88,6 +88,7 @@ class PayEx_Payments_FinancingController extends Mage_Core_Controller_Front_Acti
             $this->_redirect('checkout/cart');
             return;
         }
+
         $order_ref = $result['orderRef'];
 
         // Call PxOrder.PurchaseFinancingInvoice

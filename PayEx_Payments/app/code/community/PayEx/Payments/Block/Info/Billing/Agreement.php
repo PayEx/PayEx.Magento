@@ -23,9 +23,11 @@ class PayEx_Payments_Block_Info_Billing_Agreement extends Mage_Payment_Block_Inf
         $referenceID = $info->getAdditionalInformation(
             Mage_Sales_Model_Payment_Method_Billing_AgreementAbstract::PAYMENT_INFO_REFERENCE_ID
         );
-        $transport = new Varien_Object(array(
+        $transport = new Varien_Object(
+            array(
             $this->__('Reference ID') => $referenceID,
-        ));
+            )
+        );
         if (!empty($referenceID)) {
             /** @var Mage_Sales_Model_Billing_Agreement $billing_agreement */
             $billing_agreement = Mage::getModel('sales/billing_agreement')->load($referenceID, 'reference_id');

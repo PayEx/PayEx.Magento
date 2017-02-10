@@ -1,6 +1,7 @@
 <?php
 
-class PayEx_Payments_Block_MasterPass_Button extends Mage_Core_Block_Template {
+class PayEx_Payments_Block_MasterPass_Button extends Mage_Core_Block_Template
+{
     /**
      * Get MasterPass Checkout URL
      * @return string

@@ -115,6 +115,7 @@ class PayEx_Payments_InvoiceController extends Mage_Core_Controller_Front_Action
             $this->_redirect('checkout/cart');
             return;
         }
+
         $order_ref = $result['orderRef'];
 
         // Add Order Items
@@ -141,10 +142,12 @@ class PayEx_Payments_InvoiceController extends Mage_Core_Controller_Front_Action
         }
 
         // Add Order Address Info
-        $params = array_merge(array(
+        $params = array_merge(
+            array(
             'accountNumber' => '',
             'orderRef' => $order_ref
-        ), Mage::helper('payex/order')->getAddressInfo($order));
+            ), Mage::helper('payex/order')->getAddressInfo($order)
+        );
 
         $result = Mage::helper('payex/api')->getPx()->AddOrderAddress2($params);
         Mage::helper('payex/tools')->debugApi($result, 'PxOrder.AddOrderAddress2');

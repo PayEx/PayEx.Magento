@@ -1,3 +1,4 @@
+// @codingStandardsIgnoreFile
 jQuery(document).ready(function($) {
     $(document).on('click', '#ssn_click', function(e) {
         if ($(this).hasClass('disabled')) {

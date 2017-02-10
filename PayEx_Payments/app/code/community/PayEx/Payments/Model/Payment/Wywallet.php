@@ -385,6 +385,7 @@ class PayEx_Payments_Model_Payment_Wywallet extends PayEx_Payments_Model_Payment
                     unset($details[$key]);
                 }
             }
+
             return $details;
         }
 
@@ -409,6 +410,7 @@ class PayEx_Payments_Model_Payment_Wywallet extends PayEx_Payments_Model_Payment
         ) {
             return false;
         }
+
         return $this->_canVoid;
     }
 

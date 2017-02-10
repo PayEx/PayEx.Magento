@@ -22,8 +22,8 @@ class PayEx_Payments_Block_Adminhtml_Config_Hint extends Mage_Adminhtml_Block_Ab
             $last_version = $availableVersions['PayEx_Payments']['version'];
         }
 
-        $this->assign('current_version',  $current_version);
-        $this->assign('last_version',  $last_version);
+        $this->assign('current_version', $current_version);
+        $this->assign('last_version', $last_version);
         Mage::getSingleton('adminhtml/session')->setIsPayexHintShowed(true);
         return $this->toHtml();
     }

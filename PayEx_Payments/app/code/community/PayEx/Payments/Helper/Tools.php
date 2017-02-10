@@ -26,7 +26,6 @@ class PayEx_Payments_Helper_Tools extends Mage_Core_Helper_Abstract
         if (is_array($message)) {
             if (isset($message['code']) && isset($message['description'])) {
                 $error_message = Mage::helper('payex')->__($message['code']) . ' (' . Mage::helper('payex')->__($message['description']) . ')';
-
             } else {
                 $error_message = Mage::helper('payex')->__('Unknown error');
             }
@@ -34,6 +33,7 @@ class PayEx_Payments_Helper_Tools extends Mage_Core_Helper_Abstract
             if (!empty($message['thirdPartyError'])) {
                 $error_message .= ' Third Party Error: ' . Mage::helper('payex')->__($message['thirdPartyError']);
             }
+
             if (!empty($message['transactionErrorCode']) && !empty($message['transactionErrorDescription'])) {
                 $error_message .= ' Transaction Error: ' . Mage::helper('payex')->__($message['transactionErrorCode']) . ' (' . $message['transactionErrorDescription'] . ')';
             }
@@ -56,6 +56,7 @@ class PayEx_Payments_Helper_Tools extends Mage_Core_Helper_Abstract
         if (!empty($order_id)) {
             $message .= ' OrderId: ' . $order_id;
         }
+
         Mage::log($message, null, 'payment_payex.log');
     }
 
@@ -144,7 +145,8 @@ class PayEx_Payments_Helper_Tools extends Mage_Core_Helper_Abstract
      *
      * @return string|bool
      */
-    public function getCountryCodeBySSN($ssn) {
+    public function getCountryCodeBySSN($ssn) 
+    {
         $rules = array(
             'NO' => '/^[0-9]{6,6}((-[0-9]{5,5})|([0-9]{2,2}((-[0-9]{5,5})|([0-9]{1,1})|([0-9]{3,3})|([0-9]{5,5))))$/',
             'SE' => '/^[0-9]{6,6}(([0-9]{2,2}[-\+]{1,1}[0-9]{4,4})|([-\+]{1,1}[0-9]{4,4})|([0-9]{4,6}))$/',
