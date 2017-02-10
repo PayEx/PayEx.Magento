@@ -1,3 +1,6 @@
+Version 3.1.5
+* Magento Code Standards Compliance
+
 Version 3.1.4
 * Implemented MobilePay Online payment method
 
