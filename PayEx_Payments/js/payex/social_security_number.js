@@ -1,3 +1,4 @@
+// @codingStandardsIgnoreFile
 function fireEvent(element, event) {
     if (document.createEventObject) {
         // dispatch for IE

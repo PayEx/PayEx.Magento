@@ -266,6 +266,7 @@ class PayEx_Payments_Model_Payment_Bankdebit extends PayEx_Payments_Model_Paymen
                     unset($details[$key]);
                 }
             }
+
             return $details;
         }
 
@@ -290,6 +291,7 @@ class PayEx_Payments_Model_Payment_Bankdebit extends PayEx_Payments_Model_Paymen
         ) {
             return false;
         }
+
         return $this->_canVoid;
     }
 

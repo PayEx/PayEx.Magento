@@ -90,6 +90,7 @@ class PayEx_Payments_MobilepayController extends Mage_Core_Controller_Front_Acti
             $this->_redirect('checkout/cart');
             return;
         }
+
         $order_ref = $result['orderRef'];
         $redirectUrl = $result['redirectUrl'];
 

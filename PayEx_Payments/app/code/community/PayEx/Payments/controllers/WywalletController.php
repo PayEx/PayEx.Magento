@@ -83,6 +83,7 @@ class PayEx_Payments_WywalletController extends Mage_Core_Controller_Front_Actio
             $this->_redirect('checkout/cart');
             return;
         }
+
         $order_ref = $result['orderRef'];
         $redirectUrl = $result['redirectUrl'];
 
@@ -112,10 +113,12 @@ class PayEx_Payments_WywalletController extends Mage_Core_Controller_Front_Actio
             }
 
             // Add Order Address Info
-            $params = array_merge(array(
+            $params = array_merge(
+                array(
                 'accountNumber' => '',
                 'orderRef' => $order_ref
-            ), Mage::helper('payex/order')->getAddressInfo($order));
+                ), Mage::helper('payex/order')->getAddressInfo($order)
+            );
 
             $result = Mage::helper('payex/api')->getPx()->AddOrderAddress2($params);
             Mage::helper('payex/tools')->debugApi($result, 'PxOrder.AddOrderAddress2');

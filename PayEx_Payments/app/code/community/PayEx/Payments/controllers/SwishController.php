@@ -97,6 +97,7 @@ class PayEx_Payments_SwishController extends Mage_Core_Controller_Front_Action
             $this->_redirect('checkout/cart');
             return;
         }
+
         Mage::helper('payex/tools')->addToDebug('Redirect URL: ' . $result['redirectUrl']);
         $order_ref = $result['orderRef'];
 
@@ -126,17 +127,19 @@ class PayEx_Payments_SwishController extends Mage_Core_Controller_Front_Action
             }
 
             // Add Order Address Info
-            $params = array_merge(array(
+            $params = array_merge(
+                array(
                 'accountNumber' => '',
                 'orderRef' => $order_ref
-            ), Mage::helper('payex/order')->getAddressInfo($order));
+                ), Mage::helper('payex/order')->getAddressInfo($order)
+            );
 
             $result = Mage::helper('payex/api')->getPx()->AddOrderAddress2($params);
             Mage::helper('payex/tools')->debugApi($result, 'PxOrder.AddOrderAddress2');
         }
 
         // Set Pending Payment status
-        $order->setState(Mage_Sales_Model_Order::STATE_PENDING_PAYMENT, Mage_Sales_Model_Order::STATE_PENDING_PAYMENT,  Mage::helper('payex')->__('The customer was redirected to PayEx.'));
+        $order->setState(Mage_Sales_Model_Order::STATE_PENDING_PAYMENT, Mage_Sales_Model_Order::STATE_PENDING_PAYMENT, Mage::helper('payex')->__('The customer was redirected to PayEx.'));
         $order->save();
 
         // Redirect to Bank

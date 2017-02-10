@@ -23,7 +23,8 @@ $eav->addAttribute('order', 'base_payex_payment_fee', array('type' => 'decimal')
 $eav->addAttribute('order', 'base_payex_payment_fee_tax', array('type' => 'decimal'));
 
 // Install Agreement table
-$installer->run("
+$installer->run(
+    "
 CREATE TABLE IF NOT EXISTS `{$this->getTable('payexautopay_agreement')}` (
   `agreement_id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'Agreement Reference',
   `customer_id` int(10) NOT NULL COMMENT 'Customer Id',
@@ -33,6 +34,7 @@ CREATE TABLE IF NOT EXISTS `{$this->getTable('payexautopay_agreement')}` (
   UNIQUE KEY `agreement_ref` (`agreement_ref`),
   UNIQUE KEY `customer_id` (`customer_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Payex Autopay: Agreements';
-");
+"
+);
 
 $this->endSetup();

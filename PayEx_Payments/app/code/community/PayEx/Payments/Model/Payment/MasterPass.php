@@ -361,6 +361,7 @@ class PayEx_Payments_Model_Payment_MasterPass extends PayEx_Payments_Model_Payme
                     unset($details[$key]);
                 }
             }
+
             return $details;
         }
 
@@ -385,6 +386,7 @@ class PayEx_Payments_Model_Payment_MasterPass extends PayEx_Payments_Model_Payme
         ) {
             return false;
         }
+
         return $this->_canVoid;
     }
 

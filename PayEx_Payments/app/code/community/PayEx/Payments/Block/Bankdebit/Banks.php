@@ -8,7 +8,8 @@ class PayEx_Payments_Block_Bankdebit_Banks extends Mage_Core_Block_Abstract impl
      * Get Block Html
      * @return mixed
      */
-    protected function _toHtml() {
+    protected function _toHtml() 
+    {
         $options = $this->getOptions();
 
         $select = Mage::app()->getLayout()->createBlock('core/html_select')
@@ -25,7 +26,8 @@ class PayEx_Payments_Block_Bankdebit_Banks extends Mage_Core_Block_Abstract impl
      * Set Options
      * @param $options
      */
-    public function setOptions($options) {
+    public function setOptions($options) 
+    {
         $this->_options = $options;
     }
 
@@ -33,10 +35,12 @@ class PayEx_Payments_Block_Bankdebit_Banks extends Mage_Core_Block_Abstract impl
      * Get Options
      * @return array|null
      */
-    public function getOptions() {
-        if ( count($this->_options) === 0 ) {
+    public function getOptions() 
+    {
+        if (count($this->_options) === 0) {
             return $this->getAvailableBanks();
         }
+
         return $this->_options;
     }
 
@@ -44,17 +48,19 @@ class PayEx_Payments_Block_Bankdebit_Banks extends Mage_Core_Block_Abstract impl
      * Get Available Banks
      * @return array
      */
-    public function getAvailableBanks() {
+    public function getAvailableBanks() 
+    {
         $selected_banks = Mage::getStoreConfig('payment/payex_bankdebit/banks');
         $selected_banks = explode(',', $selected_banks);
         $banks = Mage::getModel('payex/source_banks')->toOptionArray();
 
         $result = array();
         foreach($banks as $current) {
-            if ( in_array($current['value'], $selected_banks) ) {
+            if (in_array($current['value'], $selected_banks)) {
                 $result[] = $current;
             }
         }
+
         return $result;
     }
 }

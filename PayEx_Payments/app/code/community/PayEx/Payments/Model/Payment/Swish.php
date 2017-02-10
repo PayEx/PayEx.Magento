@@ -259,6 +259,7 @@ class PayEx_Payments_Model_Payment_Swish extends PayEx_Payments_Model_Payment_Ab
                     unset($details[$key]);
                 }
             }
+
             return $details;
         }
 
@@ -283,6 +284,7 @@ class PayEx_Payments_Model_Payment_Swish extends PayEx_Payments_Model_Payment_Ab
         ) {
             return false;
         }
+
         return $this->_canVoid;
     }
 

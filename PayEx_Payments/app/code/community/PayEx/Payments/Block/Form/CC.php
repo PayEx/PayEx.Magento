@@ -16,13 +16,13 @@ class PayEx_Payments_Block_Form_CC extends Mage_Payment_Block_Form
     protected function _beforeToHtml()
     {
         $customerId = Mage::getSingleton('customer/session')->getCustomerId();
-        if (
-            $customerId > 0 &&
+        if ($customerId > 0 &&
             Mage::helper('payex')->isBillingAgreementAvailable() &&
             $this->canCreateBillingAgreement()
         ) {
             $this->setCreateBACode(PayEx_Payments_Model_Payment_Agreement::PAYMENT_INFO_TRANSPORT_BILLING_AGREEMENT);
         }
+
         return parent::_beforeToHtml();
     }
 }

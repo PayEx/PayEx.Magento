@@ -98,6 +98,7 @@ class PayEx_Payments_Model_Observer extends Mage_Core_Model_Abstract
             $order->addStatusHistoryComment(Mage::helper('payex')->__('Order has been paid'), $new_status);
             $order->save();
         }
+
         return $this;
     }
 

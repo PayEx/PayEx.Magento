@@ -40,7 +40,7 @@ class PayEx_Payments_MasterpassController extends Mage_Core_Controller_Front_Act
         //$amount = $order->getGrandTotal();
         $amount = Mage::helper('payex/order')->getCalculatedOrderAmount($order)->getAmount();
 
-        $additional = 'USEMASTERPASS=1&RESPONSIVE=1&SHOPPINGCARTXML=' . urlencode( Mage::helper('payex/order')->getShoppingCartXML( $order ) );
+        $additional = 'USEMASTERPASS=1&RESPONSIVE=1&SHOPPINGCARTXML=' . urlencode(Mage::helper('payex/order')->getShoppingCartXML($order));
 
         // Call PxOrder.Initialize8
         $params = array(
@@ -88,6 +88,7 @@ class PayEx_Payments_MasterpassController extends Mage_Core_Controller_Front_Act
             $this->_redirect('checkout/cart');
             return;
         }
+
         //$order_ref = $result['orderRef'];
         $redirectUrl = $result['redirectUrl'];
 
@@ -129,13 +130,13 @@ class PayEx_Payments_MasterpassController extends Mage_Core_Controller_Front_Act
         $params = array(
             'accountNumber'   => '',
             'orderRef'        => $orderRef,
-            'amount'          => round( $amount * 100 ),
+            'amount'          => round($amount * 100),
             'vatAmount'       => 0,
             'clientIPAddress' => Mage::helper('core/http')->getRemoteAddr()
         );
-        $result = Mage::helper('payex/api')->getPx()->FinalizeTransaction( $params );
+        $result = Mage::helper('payex/api')->getPx()->FinalizeTransaction($params);
         Mage::helper('payex/tools')->debugApi($result, 'PxOrder.FinalizeTransaction');
-        if ( $result['code'] !== 'OK' || $result['description'] !== 'OK' || $result['errorCode'] !== 'OK' ) {
+        if ($result['code'] !== 'OK' || $result['description'] !== 'OK' || $result['errorCode'] !== 'OK') {
             // Check order has already been purchased
             //if ( $result['code'] === 'Order_AlreadyPerformed' ) {
             //    @todo
@@ -334,6 +335,7 @@ class PayEx_Payments_MasterpassController extends Mage_Core_Controller_Front_Act
             if (!$quote->hasItems()) {
                 Mage::throwException(Mage::helper('payex')->__('You don\'t have any items in your cart'));
             }
+
             if (!$quote->getGrandTotal() && !$quote->hasNominalItems()) {
                 Mage::throwException(Mage::helper('payex')->__('Order total is too small'));
             }
@@ -355,7 +357,7 @@ class PayEx_Payments_MasterpassController extends Mage_Core_Controller_Front_Act
         $operation = (Mage::getSingleton('payex/payment_MasterPass')->getConfigData('transactiontype') == 0) ? 'AUTHORIZATION' : 'SALE';
 
         // Get Additional Values
-        $additional = 'USEMASTERPASS=1&RESPONSIVE=1&SHOPPINGCARTXML=' . urlencode( Mage::helper('payex/order')->getShoppingCartXML( $quote ) );
+        $additional = 'USEMASTERPASS=1&RESPONSIVE=1&SHOPPINGCARTXML=' . urlencode(Mage::helper('payex/order')->getShoppingCartXML($quote));
 
         // Call PxOrder.Initialize8
         $params = array(
@@ -410,7 +412,8 @@ class PayEx_Payments_MasterpassController extends Mage_Core_Controller_Front_Act
         Mage::app()->getFrontController()->getResponse()->setRedirect($redirectUrl)->sendResponse();
     }
 
-    public function mp_successAction() {
+    public function mp_successAction() 
+    {
         // Check OrderRef
         $orderRef = $this->getRequest()->getParam('orderRef');
         if (empty($orderRef)) {
@@ -435,8 +438,8 @@ class PayEx_Payments_MasterpassController extends Mage_Core_Controller_Front_Act
             'accountNumber' => '',
             'orderRef'      => $orderRef
         );
-        $result = Mage::helper('payex/api')->getPx()->GetApprovedDeliveryAddress( $params );
-        if ( $result['code'] !== 'OK' || $result['description'] !== 'OK' || $result['errorCode'] !== 'OK' ) {
+        $result = Mage::helper('payex/api')->getPx()->GetApprovedDeliveryAddress($params);
+        if ($result['code'] !== 'OK' || $result['description'] !== 'OK' || $result['errorCode'] !== 'OK') {
             $message = Mage::helper('payex/tools')->getVerboseErrorMessage($result);
 
             Mage::getSingleton('checkout/session')->addError($message);
@@ -538,12 +541,12 @@ class PayEx_Payments_MasterpassController extends Mage_Core_Controller_Front_Act
         $params = array(
             'accountNumber'   => '',
             'orderRef'        => $orderRef,
-            'amount'          => round( $order->getGrandTotal() * 100 ),
+            'amount'          => round($order->getGrandTotal() * 100),
             'vatAmount'       => 0,
             'clientIPAddress' => Mage::helper('core/http')->getRemoteAddr()
         );
-        $result = Mage::helper('payex/api')->getPx()->FinalizeTransaction( $params );
-        if ( $result['code'] !== 'OK' || $result['description'] !== 'OK' || $result['errorCode'] !== 'OK' ) {
+        $result = Mage::helper('payex/api')->getPx()->FinalizeTransaction($params);
+        if ($result['code'] !== 'OK' || $result['description'] !== 'OK' || $result['errorCode'] !== 'OK') {
             $message = Mage::helper('payex/tools')->getVerboseErrorMessage($result);
 
             // Cancel order

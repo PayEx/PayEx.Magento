@@ -67,11 +67,13 @@ class PayEx_Payments_Model_Quote_Total extends Mage_Sales_Model_Quote_Address_To
     {
         $fee = $address->getPayexPaymentFee();
         if ($fee > 0) {
-            $address->addTotal(array(
+            $address->addTotal(
+                array(
                 'code' => $this->getCode(),
                 'title' => Mage::helper('payex')->__('Payment fee'),
                 'value' => $fee,
-            ));
+                )
+            );
         }
 
         return $this;

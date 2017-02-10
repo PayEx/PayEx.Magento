@@ -25,6 +25,7 @@ class PayEx_Payments_Block_Form_Billing_Agreement extends Mage_Payment_Block_For
         if (!$quote || !$quote->getCustomer()) {
             return $data;
         }
+
         $collection = Mage::getModel('sales/billing_agreement')->getAvailableCustomerBillingAgreements(
             $quote->getCustomer()->getId()
         );
@@ -32,6 +33,7 @@ class PayEx_Payments_Block_Form_Billing_Agreement extends Mage_Payment_Block_For
         foreach ($collection as $item) {
             $data[$item->getId()] = $item->getAgreementLabel();
         }
+
         return $data;
     }
 }

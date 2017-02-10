@@ -77,14 +77,17 @@ class PayEx_Payments_Model_Quote_Tax extends Mage_Sales_Model_Quote_Address_Tota
                 $subtotalInclTax = $address->getSubtotal()+$address->getTaxAmount()-$address->getShippingTaxAmount()-$address->getPaymentFeeTax();
             }
 
-            $address->addTotal(array(
+            $address->addTotal(
+                array(
                 'code'      => 'subtotal',
                 'title'     => Mage::helper('sales')->__('Subtotal'),
                 'value'     => $subtotalInclTax,
                 'value_incl_tax' => $subtotalInclTax,
                 'value_excl_tax' => $address->getSubtotal(),
-            ));
+                )
+            );
         }
+
         return $this;
     }
 }
