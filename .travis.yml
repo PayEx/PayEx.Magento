@@ -28,7 +28,6 @@ matrix:
       env: MAGENTO_VERSION="1.7.0.2"
 
 install:
-  - git submodule update --init --recursive
   - composer require firegento/magento ~$MAGENTO_VERSION
   - cp phpunit.xml ./vendor/firegento/magento
   - cd ./vendor/firegento/magento
