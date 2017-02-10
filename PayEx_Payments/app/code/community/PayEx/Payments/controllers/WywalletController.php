@@ -126,8 +126,7 @@ class PayEx_Payments_WywalletController extends Mage_Core_Controller_Front_Actio
         $order->save();
 
         // Redirect to Bank
-        header('Location: ' . $redirectUrl);
-        exit();
+        Mage::app()->getFrontController()->getResponse()->setRedirect($redirectUrl)->sendResponse();
     }
 
     public function successAction()
@@ -135,7 +134,8 @@ class PayEx_Payments_WywalletController extends Mage_Core_Controller_Front_Actio
         Mage::helper('payex/tools')->addToDebug('Controller: success');
 
         // Check OrderRef
-        if (empty($_GET['orderRef'])) {
+        $orderRef = $this->getRequest()->getParam('orderRef');
+        if (empty($orderRef)) {
             $this->_redirect('checkout/cart');
         }
 
@@ -155,7 +155,7 @@ class PayEx_Payments_WywalletController extends Mage_Core_Controller_Front_Actio
         // Call PxOrder.Complete
         $params = array(
             'accountNumber' => '',
-            'orderRef' => $_GET['orderRef']
+            'orderRef' => $orderRef
         );
         $result = Mage::helper('payex/api')->getPx()->Complete($params);
         Mage::helper('payex/tools')->debugApi($result, 'PxOrder.Complete');

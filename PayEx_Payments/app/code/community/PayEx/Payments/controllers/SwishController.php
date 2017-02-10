@@ -140,8 +140,7 @@ class PayEx_Payments_SwishController extends Mage_Core_Controller_Front_Action
         $order->save();
 
         // Redirect to Bank
-        header('Location: ' . $result['redirectUrl']);
-        exit();
+        Mage::app()->getFrontController()->getResponse()->setRedirect($redirectUrl)->sendResponse();
     }
 
     public function successAction()
@@ -149,7 +148,8 @@ class PayEx_Payments_SwishController extends Mage_Core_Controller_Front_Action
         Mage::helper('payex/tools')->addToDebug('Controller: success');
 
         // Check OrderRef
-        if (empty($_GET['orderRef'])) {
+        $orderRef = $this->getRequest()->getParam('orderRef');
+        if (empty($orderRef)) {
             $this->_redirect('checkout/cart');
         }
 
@@ -169,7 +169,7 @@ class PayEx_Payments_SwishController extends Mage_Core_Controller_Front_Action
         // Call PxOrder.Complete
         $params = array(
             'accountNumber' => '',
-            'orderRef' => $_GET['orderRef']
+            'orderRef' => $orderRef
         );
         $result = Mage::helper('payex/api')->getPx()->Complete($params);
         Mage::helper('payex/tools')->debugApi($result, 'PxOrder.Complete');

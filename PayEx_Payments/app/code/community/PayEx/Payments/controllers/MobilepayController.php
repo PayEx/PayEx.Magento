@@ -98,7 +98,6 @@ class PayEx_Payments_MobilepayController extends Mage_Core_Controller_Front_Acti
         $order->save();
 
         // Redirect to PayEx
-        header('Location: ' . $redirectUrl);
-        exit();
+        Mage::app()->getFrontController()->getResponse()->setRedirect($redirectUrl)->sendResponse();
     }
 }

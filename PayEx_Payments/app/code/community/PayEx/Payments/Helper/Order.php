@@ -449,7 +449,7 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
      */
     public function getOrderItems($order)
     {
-        $lines = [];
+        $lines = array();
         $items = $order->getAllVisibleItems();
         foreach ($items as $item) {
             /** @var Mage_Sales_Model_Order_Item $item */

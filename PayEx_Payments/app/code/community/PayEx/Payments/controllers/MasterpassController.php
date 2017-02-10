@@ -96,8 +96,7 @@ class PayEx_Payments_MasterpassController extends Mage_Core_Controller_Front_Act
         $order->save();
 
         // Redirect to PayEx
-        header('Location: ' . $redirectUrl);
-        exit();
+        Mage::app()->getFrontController()->getResponse()->setRedirect($redirectUrl)->sendResponse();
     }
 
     public function successAction()
@@ -105,7 +104,8 @@ class PayEx_Payments_MasterpassController extends Mage_Core_Controller_Front_Act
         Mage::helper('payex/tools')->addToDebug('Controller: success');
 
         // Check OrderRef
-        if (empty($_GET['orderRef'])) {
+        $orderRef = $this->getRequest()->getParam('orderRef');
+        if (empty($orderRef)) {
             $this->_redirect('checkout/cart');
             return;
         }
@@ -128,7 +128,7 @@ class PayEx_Payments_MasterpassController extends Mage_Core_Controller_Front_Act
         // Call PxOrder.FinalizeTransaction
         $params = array(
             'accountNumber'   => '',
-            'orderRef'        => $_GET['orderRef'],
+            'orderRef'        => $orderRef,
             'amount'          => round( $amount * 100 ),
             'vatAmount'       => 0,
             'clientIPAddress' => Mage::helper('core/http')->getRemoteAddr()
@@ -407,18 +407,16 @@ class PayEx_Payments_MasterpassController extends Mage_Core_Controller_Front_Act
         Mage::getSingleton('checkout/session')->clear();
 
         // Redirect to PayEx
-        header('Location: ' . $redirectUrl);
-        exit();
+        Mage::app()->getFrontController()->getResponse()->setRedirect($redirectUrl)->sendResponse();
     }
 
     public function mp_successAction() {
         // Check OrderRef
-        if (empty($_GET['orderRef'])) {
+        $orderRef = $this->getRequest()->getParam('orderRef');
+        if (empty($orderRef)) {
             $this->_redirect('checkout/cart');
             return;
         }
-
-        $orderRef = $_GET['orderRef'];
 
         // Set quote to active
         if ($quoteId = Mage::getSingleton('checkout/session')->getPayexQuoteId()) {

@@ -102,7 +102,6 @@ class PayEx_Payments_GcController extends Mage_Core_Controller_Front_Action
         $order->save();
 
         // Redirect to PayEx
-        header('Location: ' . $redirectUrl);
-        exit();
+        Mage::app()->getFrontController()->getResponse()->setRedirect($redirectUrl)->sendResponse();
     }
 }
