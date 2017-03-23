@@ -23,18 +23,18 @@ class Px
 
     /** @see http://www.payexpim.com/technical-reference/wsdl/wsdl-files/ */
     /** @var array WSDL Files */
-    protected static $_wsdl = [
+    protected static $_wsdl = array(
         'PxOrderWSDL' => '',
         'PxVerificationWSDL' => '',
         'PxAgreementWSDL' => '',
         'PxRecurringWSDL' => '',
         'PxConfinedWSDL' => ''
-    ];
+    );
 
     /** @var array PayEx SOAP API List */
-    protected static $_rules = [
+    protected static $_rules = array(
         /** @see http://www.payexpim.com/category/pxorder/ */
-        'PxOrderWSDL' => [
+        'PxOrderWSDL' => array(
             'AddOrderAddress2', 'AddSingleOrderLine2', 'AuthorizeEVC', 'AuthorizeGC', 'AuthorizeInvoice',
             'AuthorizeInvoiceLedger', 'Cancel2', 'Capture5', 'Check2', 'Complete', 'Credit5', 'CreditOrderLine3',
             'FinalizeTransaction', 'GetAddressByPaymentMethod', 'GetApprovedDeliveryAddress', 'GetLowestMonthlyInvoiceSaleAmount',
@@ -42,24 +42,24 @@ class Px
             'PurchaseFinancingInvoice', 'PurchaseInvoiceCorporate', 'PurchaseInvoicePrivate', 'PurchaseInvoiceSale',
             'PurchasePartPaymentSale', 'PurchaseOTT', 'PurchaseInvoicePartPaymentSale', 'PurchasePX', 'SaleEVC',
             'SaleInvoiceLedger', 'SaleGC', 'PurchaseWyWallet', 'PreparePurchaseWyWallet', 'PurchaseCreditAccount'
-        ],
+        ),
         /** @see http://www.payexpim.com/category/pxverification/ */
-        'PxVerificationWSDL' => [
+        'PxVerificationWSDL' => array(
             'CreditCheckCorporate2', 'CreditCheckPrivate2', 'GetConsumerLegalAddress', 'NameCheckPrivate'
-        ],
+        ),
         /** @see http://www.payexpim.com/category/pxagreement/ */
-        'PxAgreementWSDL' => [
+        'PxAgreementWSDL' => array(
             'ActivatePxAgreement', 'AutoPay3', 'AgreementCheck', 'CreateAgreement3', 'DeleteAgreement'
-        ],
+        ),
         /** @see http://www.payexpim.com/category/pxagreement/ */
-        'PxRecurringWSDL' => [
+        'PxRecurringWSDL' => array(
             'Check', 'Start', 'Stop'
-        ],
+        ),
         /** @see http://www.payexpim.com/category/pxconfined/ */
-        'PxConfinedWSDL' => [
+        'PxConfinedWSDL' => array(
             'PreparePurchaseCC', 'PurchaseCC'
-        ]
-    ];
+        )
+    );
 
     /**
      * Get Version
@@ -111,31 +111,31 @@ class Px
     protected function getOptions()
     {
         // Stream Context Options
-        $stream_context_options = [];
+        $stream_context_options = array();
 
         // User Agent option
         if (!empty($this->_user_agent)) {
-            $stream_context_options = array_merge($stream_context_options, [
-                'http' => [
+            $stream_context_options = array_merge($stream_context_options, array(
+                'http' => array(
                     'header' => 'User-Agent: ' . $this->_user_agent
-                ]
-            ]);
+                )
+            ));
         }
 
         // SSL Verification option
         if (!$this->_is_ssl_verify) {
-            $stream_context_options = array_merge($stream_context_options, [
-                'ssl' => [
+            $stream_context_options = array_merge($stream_context_options, array(
+                'ssl' => array(
                     'verify_peer' => false,
                     'allow_self_signed' => true
-                ]
-            ]);
+                )
+            ));
         }
 
         // Create Stream Context
-        return [
+        return array(
             'stream_context' => stream_context_create($stream_context_options)
-        ];
+        );
     }
 
     /**
@@ -190,8 +190,8 @@ class Px
             return false;
         }
 
-        $result = [];
-        $blacklisted = ['header', 'id', 'status'];
+        $result = array();
+        $blacklisted = array('header', 'id', 'status');
         $items = $doc->getElementsByTagName('payex')->item(0)->getElementsByTagName('*');
         foreach ($items as $item) {
             $key = $item->nodeName;
