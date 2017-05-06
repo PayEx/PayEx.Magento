@@ -138,6 +138,8 @@ class PayEx_Payments_Model_Payment_Swish extends PayEx_Payments_Model_Payment_Ab
     {
         Mage::helper('payex/tools')->addToDebug('Action: Cancel');
 
+        parent::cancel($payment);
+
         $transactionId = $payment->getLastTransId();
 
         // Add Cancel Transaction

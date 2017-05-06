@@ -143,6 +143,8 @@ class PayEx_Payments_Model_Payment_Bankdebit extends PayEx_Payments_Model_Paymen
     {
         Mage::helper('payex/tools')->addToDebug('Action: Cancel');
 
+        parent::cancel($payment);
+
         $transactionId = $payment->getLastTransId();
 
         // Add Cancel Transaction
