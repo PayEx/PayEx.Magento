@@ -199,6 +199,8 @@ class PayEx_Payments_Model_Payment_MasterPass extends PayEx_Payments_Model_Payme
     {
         Mage::helper('payex/tools')->addToDebug('Action: Cancel');
 
+        parent::cancel($payment);
+
         if (!$payment->getLastTransId()) {
             Mage::throwException(Mage::helper('paygate')->__('Invalid transaction ID.'));
         }

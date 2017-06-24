@@ -203,6 +203,8 @@ class PayEx_Payments_Model_Payment_Mobilepay extends PayEx_Payments_Model_Paymen
     {
         Mage::helper('payex/tools')->addToDebug('Action: Cancel');
 
+        parent::cancel($payment);
+
         if (!$payment->getLastTransId()) {
             Mage::throwException(Mage::helper('paygate')->__('Invalid transaction ID.'));
         }

@@ -281,6 +281,8 @@ class PayEx_Payments_Model_Payment_CC extends PayEx_Payments_Model_Payment_Abstr
     {
         Mage::helper('payex/tools')->addToDebug('Action: Cancel');
 
+        parent::cancel($payment);
+
         if (!$payment->getLastTransId()) {
             Mage::throwException(Mage::helper('paygate')->__('Invalid transaction ID.'));
         }

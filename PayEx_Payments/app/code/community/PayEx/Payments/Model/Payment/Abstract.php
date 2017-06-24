@@ -25,6 +25,62 @@ abstract class PayEx_Payments_Model_Payment_Abstract extends Mage_Payment_Model_
     }
 
     /**
+     * Capture payment
+     * @param Varien_Object $payment
+     * @param $amount
+     * @return $this
+     */
+    public function capture(Varien_Object $payment, $amount)
+    {
+        parent::capture($payment, $amount);
+
+        // Set Environment
+        $accountnumber = $this->getConfigData('accountnumber', $payment->getOrder()->getStoreId());
+        $encryptionkey = $this->getConfigData('encryptionkey', $payment->getOrder()->getStoreId());
+        $debug = (bool)$this->getConfigData('debug', $payment->getOrder()->getStoreId());
+        Mage::helper('payex/api')->getPx()->setEnvironment($accountnumber, $encryptionkey, $debug);
+
+        return $this;
+    }
+
+    /**
+     * Cancel payment
+     * @param   Varien_Object $payment
+     * @return  $this
+     */
+    public function cancel(Varien_Object $payment)
+    {
+        parent::cancel($payment);
+
+        // Set Environment
+        $accountnumber = $this->getConfigData('accountnumber', $payment->getOrder()->getStoreId());
+        $encryptionkey = $this->getConfigData('encryptionkey', $payment->getOrder()->getStoreId());
+        $debug = (bool)$this->getConfigData('debug', $payment->getOrder()->getStoreId());
+        Mage::helper('payex/api')->getPx()->setEnvironment($accountnumber, $encryptionkey, $debug);
+
+        return $this;
+    }
+
+    /**
+     * Refund payment
+     * @param Varien_Object $payment
+     * @param $amount
+     * @return $this
+     */
+    public function refund(Varien_Object $payment, $amount)
+    {
+        parent::refund($payment, $amount);
+
+        // Set Environment
+        $accountnumber = $this->getConfigData('accountnumber', $payment->getOrder()->getStoreId());
+        $encryptionkey = $this->getConfigData('encryptionkey', $payment->getOrder()->getStoreId());
+        $debug = (bool)$this->getConfigData('debug', $payment->getOrder()->getStoreId());
+        Mage::helper('payex/api')->getPx()->setEnvironment($accountnumber, $encryptionkey, $debug);
+
+        return $this;
+    }
+
+    /**
      * Fetch transaction info
      *
      * @param Mage_Payment_Model_Info $payment
