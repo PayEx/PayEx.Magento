@@ -41,27 +41,23 @@ class PayEx_Payments_Model_Source_Banks
             // Finland (EUR)
             array(
                 'value' => 'SAMPO',
-                'label' => Mage::helper('payex')->__('Sampo')
+                'label' => Mage::helper('payex')->__('Danske Bank')
             ),
             array(
                 'value' => 'AKTIA',
-                'label' => Mage::helper('payex')->__('Aktia, Säästöpankki')
+                'label' => Mage::helper('payex')->__('Aktia')
             ),
             array(
                 'value' => 'OP',
-                'label' => Mage::helper('payex')->__('Osuuspanki, Pohjola, Oko')
+                'label' => Mage::helper('payex')->__('OP')
             ),
             array(
                 'value' => 'NB:FI',
-                'label' => Mage::helper('payex')->__('Nordea Bank Finland')
+                'label' => Mage::helper('payex')->__('Nordea Finland')
             ),
             array(
                 'value' => 'SHB:FI',
-                'label' => Mage::helper('payex')->__('SHB:FI')
-            ),
-            array(
-                'value' => 'SPANKKI',
-                'label' => Mage::helper('payex')->__('SPANKKI')
+                'label' => Mage::helper('payex')->__('Handelsbanken Finland')
             ),
             array(
                 'value' => 'TAPIOLA',
@@ -70,7 +66,19 @@ class PayEx_Payments_Model_Source_Banks
             array(
                 'value' => 'AALAND',
                 'label' => Mage::helper('payex')->__('Ålandsbanken')
-            )
+            ),
+            array(
+                'value' => 'POP',
+                'label' => Mage::helper('payex')->__('POP Pankki')
+            ),
+            array(
+                'value' => 'SPANKKI',
+                'label' => Mage::helper('payex')->__('S-Pankki')
+            ),
+            array(
+                'value' => 'SP',
+                'label' => Mage::helper('payex')->__('Säästöpankki')
+            ),
         );
     }
 }
