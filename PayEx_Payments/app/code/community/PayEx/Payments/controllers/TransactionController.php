@@ -37,7 +37,7 @@ class PayEx_Payments_TransactionController extends Mage_Core_Controller_Front_Ac
             Mage::helper('payex/tools')->addToDebug('TC: Error: Empty request received.');
 
             $this->getResponse()
-                ->setHeader('HTTP/1.1', 500, true)
+                ->setHeader('HTTP/1.1', 200, true)
                 ->setBody('FAILURE');
             return;
         }
@@ -48,7 +48,7 @@ class PayEx_Payments_TransactionController extends Mage_Core_Controller_Front_Ac
             Mage::helper('payex/tools')->addToDebug('TC: Error: Empty request received.');
 
             $this->getResponse()
-                ->setHeader('HTTP/1.1', 500, true)
+                ->setHeader('HTTP/1.1', 200, true)
                 ->setBody('FAILURE');
             return;
         }
@@ -65,7 +65,7 @@ class PayEx_Payments_TransactionController extends Mage_Core_Controller_Front_Ac
             Mage::helper('payex/tools')->addToDebug('TC: Error: OrderID ' . $order_id . ' not found on store.');
 
             $this->getResponse()
-                ->setHeader('HTTP/1.1', 500, true)
+                ->setHeader('HTTP/1.1', 200, true)
                 ->setBody('FAILURE');
             return;
         }
@@ -75,7 +75,7 @@ class PayEx_Payments_TransactionController extends Mage_Core_Controller_Front_Ac
             Mage::helper('payex/tools')->addToDebug('TC: Unsupported payment method: ' . $order->getPayment()->getMethodInstance()->getCode());
 
             $this->getResponse()
-                ->setHeader('HTTP/1.1', 500, true)
+                ->setHeader('HTTP/1.1', 200, true)
                 ->setBody('FAILURE');
             return;
         }
@@ -90,10 +90,12 @@ class PayEx_Payments_TransactionController extends Mage_Core_Controller_Front_Ac
 
         // Check Requested Account Number
         if ($this->getRequest()->getPost('accountNumber') !== $accountNumber) {
-            Mage::helper('payex/tools')->addToDebug('TC: Error: Can\'t to get account details of : ' . $this->getRequest()->getPost('accountNumber'));
+            Mage::helper('payex/tools')->addToDebug(
+                'TC: Error: Can\'t to get account details of : ' . $this->getRequest()->getPost('accountNumber')
+            );
 
             $this->getResponse()
-                ->setHeader('HTTP/1.1', 500, true)
+                ->setHeader('HTTP/1.1', 200, true)
                 ->setBody('FAILURE');
             return;
         }
@@ -107,11 +109,11 @@ class PayEx_Payments_TransactionController extends Mage_Core_Controller_Front_Ac
         // Lookup Transaction
         $collection = Mage::getModel('sales/order_payment_transaction')->getCollection()
             ->addAttributeToFilter('txn_id', $transactionId);
-        if (count($collection) > 0) {
+        if (!empty($collection)) {
             Mage::helper('payex/tools')->addToDebug(sprintf('TC: Transaction %s already processed.', $transactionId));
 
             $this->getResponse()
-                ->setHeader('HTTP/1.1', 500, true)
+                ->setHeader('HTTP/1.1', 200, true)
                 ->setBody('FAILURE');
             return;
         }
@@ -173,17 +175,19 @@ class PayEx_Payments_TransactionController extends Mage_Core_Controller_Front_Ac
                     Mage::helper('payex/tools')->addToDebug('TC: Failed to complete payment.');
 
                     $this->getResponse()
-                        ->setHeader('HTTP/1.1', 500, true)
+                        ->setHeader('HTTP/1.1', 200, true)
                         ->setBody('FAILURE');
                     return;
                 }
 
                 // Verify transaction status
                 if ((int)$result['transactionStatus'] !== $transaction_status) {
-                    Mage::helper('payex/tools')->addToDebug('TC: Failed to complete payment. Transaction status is different!');
+                    Mage::helper('payex/tools')->addToDebug(
+                        'TC: Failed to complete payment. Transaction status is different!'
+                    );
 
                     $this->getResponse()
-                        ->setHeader('HTTP/1.1', 500, true)
+                        ->setHeader('HTTP/1.1', 200, true)
                         ->setBody('FAILURE');
                     return;
                 }
@@ -284,7 +288,7 @@ class PayEx_Payments_TransactionController extends Mage_Core_Controller_Front_Ac
                 break;
             default:
                 $this->getResponse()
-                    ->setHeader('HTTP/1.1', 500, true)
+                    ->setHeader('HTTP/1.1', 200, true)
                     ->setBody('FAILURE');
 
                 return;

@@ -130,7 +130,9 @@ class PayEx_Payments_Model_Payment_Invoice extends PayEx_Payments_Model_Payment_
                     'amount' => round($amount * 100)
                 );
                 $status = Mage::helper('payex/api')->getPx()->CreditCheckCorporate2($params);
-                Mage::helper('payex/tools')->addToDebug('PxVerification.CreditCheckCorporate:' . $status['description']);
+                Mage::helper('payex/tools')->addToDebug(
+                    'PxVerification.CreditCheckCorporate:' . $status['description']
+                );
                 break;
             default:
                 $status = array();
@@ -150,7 +152,9 @@ class PayEx_Payments_Model_Payment_Invoice extends PayEx_Payments_Model_Payment_
             } else {
                 // Declining payment
                 Mage::helper('payex/tools')->addToDebug('Credit status: not approved. Abort payment.');
-                Mage::throwException('Unfortunately PayEx did not grant you Invoice credit. Please try other means of payment');
+                Mage::throwException(
+                    'Unfortunately PayEx did not grant you Invoice credit. Please try other means of payment'
+                );
             }
         }
 
@@ -171,7 +175,7 @@ class PayEx_Payments_Model_Payment_Invoice extends PayEx_Payments_Model_Payment_
         $method = Mage::app()->getRequest()->getParam('pxinvoice_method');
         $this->getCheckout()->setMethod($method);
 
-        $ssn = ($method === 'private') ? Mage::app()->getRequest()->getParam('socialSecurityNumber') : Mage::app()->getRequest()->getParam('organizationNumber');
+        $ssn = Mage::app()->getRequest()->getParam($method === 'private' ? 'socialSecurityNumber' : 'organizationNumber');
         $this->getCheckout()->setSocialSecurtyNumber($ssn);
 
         return Mage::getUrl('payex/invoice/redirect', array('_secure' => true));

@@ -100,9 +100,9 @@ class PayEx_Payments_PartpaymentController extends Mage_Core_Controller_Front_Ac
             'zipCode' => $order->getBillingAddress()->getPostcode(),
             'city' => $order->getBillingAddress()->getCity(),
             'countryCode' => $order->getBillingAddress()->getCountry(),
-            'paymentMethod' => $order->getBillingAddress()->getCountry() === 'SE' ? 'PXCREDITACCOUNTSE' : 'PXCREDITACCOUNTNO',
+            'paymentMethod' => strtoupper('PXCREDITACCOUNT' . $order->getBillingAddress()->getCountry()),
             'email' => $order->getBillingAddress()->getEmail(),
-            'msisdn' => (mb_substr($order->getBillingAddress()->getTelephone(), 0, 1) === '+') ? $order->getBillingAddress()->getTelephone() : '+' . $order->getBillingAddress()->getTelephone(),
+            'msisdn' => '+' . ltrim($order->getBillingAddress()->getTelephone(), ' +'),
             'ipAddress' => Mage::helper('core/http')->getRemoteAddr()
         );
         $result = Mage::helper('payex/api')->getPx()->PurchaseCreditAccount($params);
@@ -134,7 +134,9 @@ class PayEx_Payments_PartpaymentController extends Mage_Core_Controller_Front_Ac
         // Validate transactionStatus value
         if (empty($result['transactionStatus']) || !is_numeric($result['transactionStatus'])) {
             $message = Mage::helper('payex')->__('Error: No transactionsStatus in response.');
-            Mage::helper('payex/tools')->addToDebug('Error: No transactionsStatus in response.', $order->getIncrementId());
+            Mage::helper('payex/tools')->addToDebug(
+                'Error: No transactionsStatus in response.', $order->getIncrementId()
+            );
 
             // Cancel order
             $order->cancel();
@@ -156,7 +158,9 @@ class PayEx_Payments_PartpaymentController extends Mage_Core_Controller_Front_Ac
         }
 
         // Prevent Order cancellation when used TC
-        if (in_array((int)$result['transactionStatus'], array(0, 3, 6)) && $order->getState() === Mage_Sales_Model_Order::STATE_CANCELED) {
+        if (in_array((int)$result['transactionStatus'], array(0, 3, 6)) &&
+            $order->getState() === Mage_Sales_Model_Order::STATE_CANCELED
+        ) {
             if ($order->getState() === Mage_Sales_Model_Order::STATE_CANCELED) {
                 $order->setState(Mage_Sales_Model_Order::STATE_PROCESSING);
                 $order->setStatus(Mage_Sales_Model_Order::STATE_PROCESSING);

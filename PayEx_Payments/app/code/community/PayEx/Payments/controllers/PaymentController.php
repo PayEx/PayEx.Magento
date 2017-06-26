@@ -164,7 +164,11 @@ class PayEx_Payments_PaymentController extends Mage_Core_Controller_Front_Action
         }
 
         // Set Pending Payment status
-        $order->setState(Mage_Sales_Model_Order::STATE_PENDING_PAYMENT, Mage_Sales_Model_Order::STATE_PENDING_PAYMENT, Mage::helper('payex')->__('The customer was redirected to PayEx.'));
+        $order->setState(
+            Mage_Sales_Model_Order::STATE_PENDING_PAYMENT,
+            Mage_Sales_Model_Order::STATE_PENDING_PAYMENT,
+            Mage::helper('payex')->__('The customer was redirected to PayEx.')
+        );
         $order->save();
 
         // Redirect to PayEx
@@ -230,7 +234,7 @@ class PayEx_Payments_PaymentController extends Mage_Core_Controller_Front_Action
         // Check Transaction is already registered
         $collection = Mage::getModel('sales/order_payment_transaction')->getCollection()
             ->addAttributeToFilter('txn_id', $result['transactionNumber']);
-        if (count($collection) > 0) {
+        if (!empty($collection)) {
             $transaction = $collection->getFirstItem();
             $raw_details_info = $transaction->getAdditionalInformation('raw_details_info');
             if (is_array($raw_details_info) && in_array((int)$result['transactionStatus'], array(0, 3, 6))) {
@@ -243,7 +247,9 @@ class PayEx_Payments_PaymentController extends Mage_Core_Controller_Front_Action
         }
 
         // Prevent Order cancellation when used TC
-        if (in_array((int)$result['transactionStatus'], array(0, 3, 6)) && $order->getState() === Mage_Sales_Model_Order::STATE_CANCELED) {
+        if (in_array((int)$result['transactionStatus'], array(0, 3, 6)) &&
+            $order->getState() === Mage_Sales_Model_Order::STATE_CANCELED
+        ) {
             if ($order->getState() === Mage_Sales_Model_Order::STATE_CANCELED) {
                 $order->setState(Mage_Sales_Model_Order::STATE_PROCESSING);
                 $order->setStatus(Mage_Sales_Model_Order::STATE_PROCESSING);
@@ -266,7 +272,8 @@ class PayEx_Payments_PaymentController extends Mage_Core_Controller_Front_Action
         // Save Agreement Reference
         if (!empty($result['agreementRef'])) {
             /** @var Mage_Sales_Model_Billing_Agreement $billing_agreement */
-            $billing_agreement = Mage::getModel('sales/billing_agreement')->load($result['agreementRef'], 'reference_id');
+            $billing_agreement = Mage::getModel('sales/billing_agreement')
+                ->load($result['agreementRef'], 'reference_id');
             if ($billing_agreement->getId()) {
                 // Verify Agreement Reference
                 // Call PxAgreement.AgreementCheck
@@ -409,7 +416,10 @@ class PayEx_Payments_PaymentController extends Mage_Core_Controller_Front_Action
         if (!$order->isCanceled() && !$order->hasInvoices()) {
             // Set Canceled State
             $order->cancel();
-            $order->addStatusHistoryComment(Mage::helper('payex')->__('Order canceled by user'), Mage_Sales_Model_Order::STATE_CANCELED);
+            $order->addStatusHistoryComment(
+                Mage::helper('payex')->__('Order canceled by user'),
+                Mage_Sales_Model_Order::STATE_CANCELED
+            );
             $order->save();
         }
 

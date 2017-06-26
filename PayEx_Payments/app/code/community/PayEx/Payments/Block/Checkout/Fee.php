@@ -16,7 +16,8 @@ class PayEx_Payments_Block_Checkout_Fee extends Mage_Checkout_Block_Total_Defaul
      */
     public function getPayExFeeIncludeTax()
     {
-        return $this->getTotal()->getAddress()->getPayexPaymentFee() + $this->getTotal()->getAddress()->getPayexPaymentFeeTax();
+        return $this->getTotal()->getAddress()->getPayexPaymentFee() +
+            $this->getTotal()->getAddress()->getPayexPaymentFeeTax();
     }
 
     /**

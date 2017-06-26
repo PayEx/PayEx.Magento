@@ -16,8 +16,16 @@ class PayEx_Payments_Model_Quote_Tax extends Mage_Sales_Model_Quote_Address_Tota
     public function collect(Mage_Sales_Model_Quote_Address $address)
     {
         $paymentMethod = Mage::app()->getFrontController()->getRequest()->getParam('payment');
-        $paymentMethod = Mage::app()->getStore()->isAdmin() && isset($paymentMethod['method']) ? $paymentMethod['method'] : null;
-        if (!in_array($paymentMethod, self::$_allowed_methods) && (!count($address->getQuote()->getPaymentsCollection()) || !$address->getQuote()->getPayment()->hasMethodInstance())) {
+        if (Mage::app()->getStore()->isAdmin()) {
+            $paymentMethod = isset($paymentMethod['method']) ? $paymentMethod['method'] : null;
+        }
+
+        if (!in_array($paymentMethod, self::$_allowed_methods) &&
+            (
+                count($address->getQuote()->getPaymentsCollection()) === 0 ||
+                !$address->getQuote()->getPayment()->hasMethodInstance()
+            )
+        ) {
             return $this;
         }
 
@@ -27,7 +35,7 @@ class PayEx_Payments_Model_Quote_Tax extends Mage_Sales_Model_Quote_Address_Tota
         }
 
         $items = $address->getAllItems();
-        if (!count($items)) {
+        if (count($items) === 0) {
             return $this;
         }
 
@@ -49,19 +57,35 @@ class PayEx_Payments_Model_Quote_Tax extends Mage_Sales_Model_Quote_Address_Tota
             return $this;
         }
 
-        $address->setBasePayexPaymentFeeTax($fee->getPaymentFeeTax());
-        $address->setPayexPaymentFeeTax($quote->getStore()->convertPrice($fee->getPaymentFeeTax(), false));
+        $address->setBasePayexPaymentFeeTax(
+            $fee->getPaymentFeeTax()
+        );
+        $address->setPayexPaymentFeeTax(
+            $quote->getStore()->convertPrice($fee->getPaymentFeeTax(), false)
+        );
 
-        $quote->setBasePayexPaymentFeeTax($fee->getPaymentFeeTax());
-        $quote->setPayexPaymentFeeTax($quote->getStore()->convertPrice($fee->getPaymentFeeTax(), false));
+        $quote->setBasePayexPaymentFeeTax(
+            $fee->getPaymentFeeTax()
+        );
+        $quote->setPayexPaymentFeeTax(
+            $quote->getStore()->convertPrice($fee->getPaymentFeeTax(), false)
+        );
 
         // update taxes
-        $address->setTaxAmount($address->getTaxAmount() + $fee->getPaymentFeeTax());
-        $address->setBaseTaxAmount($address->getBaseTaxAmount() + $quote->getStore()->convertPrice($fee->getPaymentFeeTax(), false));
+        $address->setTaxAmount(
+            $address->getTaxAmount() + $fee->getPaymentFeeTax()
+        );
+        $address->setBaseTaxAmount(
+            $address->getBaseTaxAmount() + $quote->getStore()->convertPrice($fee->getPaymentFeeTax(), false)
+        );
 
         // update totals
-        $address->setBaseGrandTotal($address->getBaseGrandTotal() + $fee->getPaymentFeeTax());
-        $address->setGrandTotal($address->getGrandTotal() + $quote->getStore()->convertPrice($fee->getPaymentFeeTax(), false));
+        $address->setBaseGrandTotal(
+            $address->getBaseGrandTotal() + $fee->getPaymentFeeTax()
+        );
+        $address->setGrandTotal(
+            $address->getGrandTotal() + $quote->getStore()->convertPrice($fee->getPaymentFeeTax(), false)
+        );
 
         return $this;
     }
@@ -70,11 +94,16 @@ class PayEx_Payments_Model_Quote_Tax extends Mage_Sales_Model_Quote_Address_Tota
     {
         $store = $address->getQuote()->getStore();
 
-        if (Mage::getSingleton('tax/config')->displayCartSubtotalBoth($store) || Mage::getSingleton('tax/config')->displayCartSubtotalInclTax($store)) {
+        if (Mage::getSingleton('tax/config')->displayCartSubtotalBoth($store) ||
+            Mage::getSingleton('tax/config')->displayCartSubtotalInclTax($store)
+        ) {
             if ($address->getSubtotalInclTax() > 0) {
                 $subtotalInclTax = $address->getSubtotalInclTax();
             } else {
-                $subtotalInclTax = $address->getSubtotal()+$address->getTaxAmount()-$address->getShippingTaxAmount()-$address->getPaymentFeeTax();
+                $subtotalInclTax = $address->getSubtotal() +
+                    $address->getTaxAmount() -
+                    $address->getShippingTaxAmount() -
+                    $address->getPaymentFeeTax();
             }
 
             $address->addTotal(

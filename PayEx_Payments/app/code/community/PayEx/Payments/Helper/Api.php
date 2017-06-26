@@ -14,7 +14,7 @@ class PayEx_Payments_Helper_Api extends Mage_Core_Helper_Abstract
     public static function getPx()
     {
         // Use Singleton
-        if (is_null(self::$_px)) {
+        if (self::$_px === null) {
             self::$_px = new PayEx\Px();
 
             // Set User Agent

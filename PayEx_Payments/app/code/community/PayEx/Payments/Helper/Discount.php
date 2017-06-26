@@ -167,7 +167,9 @@ class PayEx_Payments_Helper_Discount extends Mage_Core_Helper_Abstract
         }
 
         // Workaround: Apply Customer Tax: Before Discount + Apply Discount On Prices: Including Tax
-        if (!Mage::helper('tax')->applyTaxAfterDiscount($order->getStore()) && Mage::helper('tax')->discountTax($order->getStore())) {
+        if (!Mage::helper('tax')->applyTaxAfterDiscount($order->getStore()) &&
+            Mage::helper('tax')->discountTax($order->getStore())
+        ) {
             // Use Discount + Tax to get correct discount for order total
             if ($discountExcl > 0) {
                 $discountVatPercent = round((($discountIncl / $discountExcl) - 1) * 100);
