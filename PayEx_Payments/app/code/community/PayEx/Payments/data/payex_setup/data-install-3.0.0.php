@@ -93,7 +93,7 @@ foreach ($migrate as $old_name => $new_name) {
     $core_config_data_table = $resource->getTableName('core_config_data');
     $results = $readConnection->fetchAll("SELECT scope, scope_id, path, value FROM `{$core_config_data_table}` WHERE path LIKE '{$old_name}/%';");
     if (count($results) > 0) {
-        foreach($results as $id => $row) {
+        foreach ($results as $id => $row) {
             $scope = $row['scope'];
             $scope_id = $row['scope_id'];
             $value = $row['value'];

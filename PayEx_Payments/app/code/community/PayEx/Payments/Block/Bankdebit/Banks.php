@@ -55,7 +55,7 @@ class PayEx_Payments_Block_Bankdebit_Banks extends Mage_Core_Block_Abstract impl
         $banks = Mage::getModel('payex/source_banks')->toOptionArray();
 
         $result = array();
-        foreach($banks as $current) {
+        foreach ($banks as $current) {
             if (in_array($current['value'], $selected_banks)) {
                 $result[] = $current;
             }

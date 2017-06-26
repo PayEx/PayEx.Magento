@@ -114,7 +114,9 @@ class PayEx_Payments_Model_Payment_CC extends PayEx_Payments_Model_Payment_Abstr
             $customer = Mage::getSingleton('customer/session')->getCustomer();
             if ($customer && $customer->getId()) {
                 /** @var PayEx_Payments_Model_Payment_Agreement $method */
-                $method = Mage::helper('payment')->getMethodInstance(PayEx_Payments_Model_Payment_Agreement::METHOD_BILLING_AGREEMENT);
+                $method = Mage::helper('payment')->getMethodInstance(
+                    PayEx_Payments_Model_Payment_Agreement::METHOD_BILLING_AGREEMENT
+                );
 
                 // Call PxAgreement.CreateAgreement3
                 $params = array(

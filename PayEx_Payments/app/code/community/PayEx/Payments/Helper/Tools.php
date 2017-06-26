@@ -25,17 +25,28 @@ class PayEx_Payments_Helper_Tools extends Mage_Core_Helper_Abstract
         $error_message = '';
         if (is_array($message)) {
             if (isset($message['code']) && isset($message['description'])) {
-                $error_message = Mage::helper('payex')->__($message['code']) . ' (' . Mage::helper('payex')->__($message['description']) . ')';
+                $error_message = sprintf(
+                    '%s (%s)',
+                    $message['code'],
+                    $message['description']
+                );
             } else {
                 $error_message = Mage::helper('payex')->__('Unknown error');
             }
 
             if (!empty($message['thirdPartyError'])) {
-                $error_message .= ' Third Party Error: ' . Mage::helper('payex')->__($message['thirdPartyError']);
+                $error_message .= ' Third Party Error: ' .
+                    Mage::helper('payex')->__($message['thirdPartyError']);
             }
 
-            if (!empty($message['transactionErrorCode']) && !empty($message['transactionErrorDescription'])) {
-                $error_message .= ' Transaction Error: ' . Mage::helper('payex')->__($message['transactionErrorCode']) . ' (' . $message['transactionErrorDescription'] . ')';
+            if (!empty($message['transactionErrorCode']) &&
+                !empty($message['transactionErrorDescription'])
+            ) {
+                $error_message .= ' ' . sprintf(
+                    'Transaction Error: %s(%s)',
+                    $message['transactionErrorCode'],
+                    $message['transactionErrorDescription']
+                );
             }
         } else {
             $error_message = Mage::helper('payex')->__($message);

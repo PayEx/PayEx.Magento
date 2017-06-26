@@ -112,7 +112,9 @@ class PayEx_Payments_Model_Payment_PartPayment extends PayEx_Payments_Model_Paym
 
         // Check supported currency
         if (!in_array($currency_code, self::$_allowCurrencyCode)) {
-            Mage::throwException(Mage::helper('payex')->__('Selected currency code (%s) is not compatible with PayEx', $currency_code));
+            Mage::throwException(
+                Mage::helper('payex')->__('Selected currency code (%s) is not compatible with PayEx', $currency_code)
+            );
         }
 
         // Validate Product names
@@ -128,7 +130,9 @@ class PayEx_Payments_Model_Payment_PartPayment extends PayEx_Payments_Model_Paym
                     preg_match($re, $product_name, $matches);
                     $test = implode('', $matches);
                     if (md5($product_name) !== md5($test)) {
-                        Mage::throwException(Mage::helper('payex')->__('Product name "%s" contains invalid characters.', $product_name));
+                        Mage::throwException(
+                            Mage::helper('payex')->__('Product name "%s" contains invalid characters.', $product_name)
+                        );
                     }
                 }
             }

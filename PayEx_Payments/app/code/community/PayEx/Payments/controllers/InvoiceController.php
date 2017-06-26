@@ -193,7 +193,7 @@ class PayEx_Payments_InvoiceController extends Mage_Core_Controller_Front_Action
                     'creditcheckRef' => '',
                     'mediaDistribution' => $method->getConfigData('distribution'),
                     'invoiceText' => $method->getConfigData('invoicetext'),
-                    'invoiceDate' => date('Y-m-d'),
+                    'invoiceDate' => Mage::getModel('core/date')->date('Y-m-d'),
                     'invoiceDueDays' => $method->getConfigData('invoiceduedays'),
                     'invoiceNumber' => $order_id,
                     'invoiceLayout' => ''
@@ -220,7 +220,7 @@ class PayEx_Payments_InvoiceController extends Mage_Core_Controller_Front_Action
                     'creditcheckRef' => $method->getConfigData('unapproved') ? '' : $credit_data['creditCheckRef'],
                     'mediaDistribution' => $method->getConfigData('distribution'),
                     'invoiceText' => $method->getConfigData('invoicetext'),
-                    'invoiceDate' => date('Y-m-d'),
+                    'invoiceDate' => Mage::getModel('core/date')->date('Y-m-d'),
                     'invoiceDueDays' => $method->getConfigData('invoiceduedays'),
                     'invoiceNumber' => $order_id,
                     'invoiceLayout' => ''

@@ -109,7 +109,9 @@ class PayEx_Payments_Model_Payment_Wywallet extends PayEx_Payments_Model_Payment
 
         // Check supported currency
         if (!in_array($currency_code, self::$_allowCurrencyCode)) {
-            Mage::throwException(Mage::helper('payex')->__('Selected currency code (%s) is not compatible with PayEx', $currency_code));
+            Mage::throwException(
+                Mage::helper('payex')->__('Selected currency code (%s) is not compatible with PayEx', $currency_code)
+            );
         }
     }
 

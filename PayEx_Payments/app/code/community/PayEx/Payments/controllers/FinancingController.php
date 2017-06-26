@@ -104,7 +104,7 @@ class PayEx_Payments_FinancingController extends Mage_Core_Controller_Front_Acti
             'countryCode' => $order->getBillingAddress()->getCountry(),
             'paymentMethod' => $order->getBillingAddress()->getCountry() === 'SE' ? 'PXFINANCINGINVOICESE' : 'PXFINANCINGINVOICENO',
             'email' => $order->getBillingAddress()->getEmail(),
-            'msisdn' => (mb_substr($order->getBillingAddress()->getTelephone(), 0, 1) === '+') ? $order->getBillingAddress()->getTelephone() : '+' . $order->getBillingAddress()->getTelephone(),
+            'msisdn' => '+' . ltrim($order->getBillingAddress()->getTelephone(), '+'),
             'ipAddress' => Mage::helper('core/http')->getRemoteAddr()
         );
         $result = Mage::helper('payex/api')->getPx()->PurchaseFinancingInvoice($params);
@@ -158,7 +158,9 @@ class PayEx_Payments_FinancingController extends Mage_Core_Controller_Front_Acti
         }
 
         // Prevent Order cancellation when used TC
-        if (in_array((int)$result['transactionStatus'], array(0, 3, 6)) && $order->getState() === Mage_Sales_Model_Order::STATE_CANCELED) {
+        if (in_array((int)$result['transactionStatus'], array(0, 3, 6)) &&
+            $order->getState() === Mage_Sales_Model_Order::STATE_CANCELED
+        ) {
             if ($order->getState() === Mage_Sales_Model_Order::STATE_CANCELED) {
                 $order->setState(Mage_Sales_Model_Order::STATE_PROCESSING);
                 $order->setStatus(Mage_Sales_Model_Order::STATE_PROCESSING);

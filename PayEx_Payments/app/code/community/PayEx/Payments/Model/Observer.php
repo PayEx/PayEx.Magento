@@ -31,7 +31,9 @@ class PayEx_Payments_Model_Observer extends Mage_Core_Model_Abstract
                             $order->cancel()->save();
 
                             // Add to Log
-                            Mage::helper('payex/tools')->addToDebug('Pending Clean: OrderID ' . $order->getIncrementId() . ' is canceled.');
+                            Mage::helper('payex/tools')->addToDebug(
+                                'Pending Clean: OrderID ' . $order->getIncrementId() . ' is canceled.'
+                            );
                         }
                     }
                 } catch (Exception $e) {
