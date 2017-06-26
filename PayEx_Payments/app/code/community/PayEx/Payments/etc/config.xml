@@ -3,7 +3,7 @@
     <modules>
         <PayEx_Payments>
             <!-- declare module's version information for database updates -->
-            <version>3.1.5</version>
+            <version>3.1.6</version>
         </PayEx_Payments>
     </modules>
 
