@@ -70,7 +70,7 @@ class PayEx_Payments_Model_Invoice_Pdf_Total extends Mage_Sales_Model_Order_Pdf_
     public function getAmount()
     {
         $fee = $this->getOrder()->getPayexPaymentFee();
-        if (!$fee){
+        if (!$fee) {
             return 0;
         }
 

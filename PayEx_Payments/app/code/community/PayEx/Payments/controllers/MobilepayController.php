@@ -95,7 +95,11 @@ class PayEx_Payments_MobilepayController extends Mage_Core_Controller_Front_Acti
         $redirectUrl = $result['redirectUrl'];
 
         // Set Pending Payment status
-        $order->setState(Mage_Sales_Model_Order::STATE_PENDING_PAYMENT, Mage_Sales_Model_Order::STATE_PENDING_PAYMENT, Mage::helper('payex')->__('The customer was redirected to PayEx.'));
+        $order->setState(
+            Mage_Sales_Model_Order::STATE_PENDING_PAYMENT,
+            Mage_Sales_Model_Order::STATE_PENDING_PAYMENT,
+            Mage::helper('payex')->__('The customer was redirected to PayEx.')
+        );
         $order->save();
 
         // Redirect to PayEx

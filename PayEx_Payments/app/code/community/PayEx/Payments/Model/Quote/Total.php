@@ -16,8 +16,16 @@ class PayEx_Payments_Model_Quote_Total extends Mage_Sales_Model_Quote_Address_To
     public function collect(Mage_Sales_Model_Quote_Address $address)
     {
         $paymentMethod = Mage::app()->getFrontController()->getRequest()->getParam('payment');
-        $paymentMethod = Mage::app()->getStore()->isAdmin() && isset($paymentMethod['method']) ? $paymentMethod['method'] : null;
-        if (!in_array($paymentMethod, self::$_allowed_methods) && (!count($address->getQuote()->getPaymentsCollection()) || !$address->getQuote()->getPayment()->hasMethodInstance())) {
+        if (Mage::app()->getStore()->isAdmin()) {
+            $paymentMethod = isset($paymentMethod['method']) ? $paymentMethod['method'] : null;
+        }
+
+        if (!in_array($paymentMethod, self::$_allowed_methods) &&
+            (
+                count($address->getQuote()->getPaymentsCollection()) === 0 ||
+                !$address->getQuote()->getPayment()->hasMethodInstance()
+            )
+        ) {
             return $this;
         }
 
@@ -27,7 +35,7 @@ class PayEx_Payments_Model_Quote_Total extends Mage_Sales_Model_Quote_Address_To
         }
 
         $items = $address->getAllItems();
-        if (!count($items)) {
+        if (count($items) === 0) {
             return $this;
         }
 
@@ -50,15 +58,28 @@ class PayEx_Payments_Model_Quote_Total extends Mage_Sales_Model_Quote_Address_To
             return $this;
         }
 
-        $address->setBasePayexPaymentFee($fee->getPaymentFeeExclTax());
-        $address->setPayexPaymentFee($address->getQuote()->getStore()->convertPrice($fee->getPaymentFeeExclTax(), false));
+        $address->setBasePayexPaymentFee(
+            $fee->getPaymentFeeExclTax()
+        );
+        $address->setPayexPaymentFee(
+            $address->getQuote()->getStore()->convertPrice($fee->getPaymentFeeExclTax(), false)
+        );
 
-        $quote->setBasePayexPaymentFee($fee->getPaymentFeeExclTax());
-        $quote->setPayexPaymentFee($address->getQuote()->getStore()->convertPrice($fee->getPaymentFeeExclTax(), false));
+        $quote->setBasePayexPaymentFee(
+            $fee->getPaymentFeeExclTax()
+        );
+        $quote->setPayexPaymentFee(
+            $address->getQuote()->getStore()->convertPrice($fee->getPaymentFeeExclTax(), false)
+        );
 
         // Update totals
-        $address->setBaseGrandTotal($address->getBaseGrandTotal() + $fee->getPaymentFeeExclTax());
-        $address->setGrandTotal($address->getGrandTotal() + $address->getQuote()->getStore()->convertPrice($fee->getPaymentFeeExclTax(), false));
+        $address->setBaseGrandTotal(
+            $address->getBaseGrandTotal() + $fee->getPaymentFeeExclTax()
+        );
+        $address->setGrandTotal(
+            $address->getGrandTotal() +
+            $address->getQuote()->getStore()->convertPrice($fee->getPaymentFeeExclTax(), false)
+        );
 
         return $this;
     }

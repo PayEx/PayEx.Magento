@@ -173,7 +173,11 @@ class PayEx_Payments_BankdebitController extends Mage_Core_Controller_Front_Acti
         }
 
         // Set Pending Payment status
-        $order->setState(Mage_Sales_Model_Order::STATE_PENDING_PAYMENT, Mage_Sales_Model_Order::STATE_PENDING_PAYMENT, Mage::helper('payex')->__('The customer was redirected to PayEx.'));
+        $order->setState(
+            Mage_Sales_Model_Order::STATE_PENDING_PAYMENT,
+            Mage_Sales_Model_Order::STATE_PENDING_PAYMENT,
+            Mage::helper('payex')->__('The customer was redirected to PayEx.')
+        );
         $order->save();
 
         // Redirect to Bank
@@ -213,7 +217,9 @@ class PayEx_Payments_BankdebitController extends Mage_Core_Controller_Front_Acti
         if ($result['errorCodeSimple'] !== 'OK') {
             // Cancel order
             $order->cancel();
-            $order->addStatusHistoryComment(Mage::helper('payex')->__('Order automatically canceled. Failed to complete payment.'));
+            $order->addStatusHistoryComment(
+                Mage::helper('payex')->__('Order automatically canceled. Failed to complete payment.')
+            );
             $order->save();
 
             // Set quote to active
@@ -232,7 +238,9 @@ class PayEx_Payments_BankdebitController extends Mage_Core_Controller_Front_Acti
         }
 
         // Prevent Order cancellation when used TC
-        if (in_array((int)$result['transactionStatus'], array(0, 3, 6)) && $order->getState() === Mage_Sales_Model_Order::STATE_CANCELED) {
+        if (in_array((int)$result['transactionStatus'], array(0, 3, 6)) &&
+            $order->getState() === Mage_Sales_Model_Order::STATE_CANCELED
+        ) {
             if ($order->getState() === Mage_Sales_Model_Order::STATE_CANCELED) {
                 $order->setState(Mage_Sales_Model_Order::STATE_PROCESSING);
                 $order->setStatus(Mage_Sales_Model_Order::STATE_PROCESSING);

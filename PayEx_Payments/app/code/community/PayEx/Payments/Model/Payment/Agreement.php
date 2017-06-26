@@ -193,7 +193,9 @@ class PayEx_Payments_Model_Payment_Agreement extends Mage_Sales_Model_Payment_Me
         // Validate transactionStatus value
         if (!isset($result['transactionStatus']) || !is_numeric($result['transactionStatus'])) {
             // AutoPay: No transactionsStatus in response
-            Mage::helper('payex/tools')->addToDebug('Error: No transactionsStatus in response.', $order->getIncrementId());
+            Mage::helper('payex/tools')->addToDebug(
+                'Error: No transactionsStatus in response.', $order->getIncrementId()
+            );
             $message = Mage::helper('payex')->__('Payment failed. Invalid transaction status');
             Mage::throwException($message);
             return $this;
@@ -271,7 +273,10 @@ class PayEx_Payments_Model_Payment_Agreement extends Mage_Sales_Model_Payment_Me
             case 4:
             case 5:
                 if ($transaction_status === 2) {
-                    $message = Mage::helper('payex')->__('Detected an abnormal payment process (Transaction Status: %s).', $transaction_status);
+                    $message = Mage::helper('payex')->__(
+                        'Detected an abnormal payment process (Transaction Status: %s).',
+                        $transaction_status
+                    );
                 } elseif ($transaction_status === 4) {
                     $message = Mage::helper('payex')->__('Order automatically canceled.');
                 } else {

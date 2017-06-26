@@ -111,7 +111,9 @@ class PayEx_Payments_Model_Payment_Financing extends PayEx_Payments_Model_Paymen
 
         // Check supported currency
         if (!in_array($currency_code, self::$_allowCurrencyCode)) {
-            Mage::throwException(Mage::helper('payex')->__('Selected currency code (%s) is not compatible with PayEx', $currency_code));
+            Mage::throwException(
+                Mage::helper('payex')->__('Selected currency code (%s) is not compatible with PayEx', $currency_code)
+            );
         }
 
         // Validate Product names
@@ -127,7 +129,9 @@ class PayEx_Payments_Model_Payment_Financing extends PayEx_Payments_Model_Paymen
                     preg_match($re, $product_name, $matches);
                     $test = implode('', $matches);
                     if (md5($product_name) !== md5($test)) {
-                        Mage::throwException(Mage::helper('payex')->__('Product name "%s" contains invalid characters.', $product_name));
+                        Mage::throwException(
+                            Mage::helper('payex')->__('Product name "%s" contains invalid characters.', $product_name)
+                        );
                     }
                 }
             }
@@ -157,7 +161,7 @@ class PayEx_Payments_Model_Payment_Financing extends PayEx_Payments_Model_Paymen
 
         $params = array(
             'accountNumber' => '',
-            'paymentMethod' => $country_code === 'SE' ? 'PXFINANCINGINVOICESE' : 'PXFINANCINGINVOICENO',
+            'paymentMethod' => strtoupper('PXFINANCINGINVOICE' . $country_code),
             'ssn' => $ssn,
             'zipcode' => $postcode,
             'countryCode' => $country_code,

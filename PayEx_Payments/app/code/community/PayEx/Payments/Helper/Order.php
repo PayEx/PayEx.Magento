@@ -17,7 +17,9 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
         $collection = Mage::getModel('sales/order_payment_transaction')->getCollection()
             ->addAttributeToFilter('txn_id', $fields['transactionNumber']);
         if (count($collection) > 0) {
-            Mage::helper('payex/tools')->addToDebug(sprintf('Transaction %s already processed.', $fields['transactionNumber']), $order->getIncrementId());
+            Mage::helper('payex/tools')->addToDebug(
+                sprintf('Transaction %s already processed.', $fields['transactionNumber']), $order->getIncrementId()
+            );
             return $collection->getFirstItem();
         }
 
@@ -120,7 +122,9 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
         /** @var Mage_Sales_Model_Order_Invoice $invoice */
         $invoice = Mage::getModel('sales/service_order', $order)->prepareInvoice();
         $invoice->addComment(Mage::helper('payex')->__('Auto-generated from PayEx module'), false, false);
-        $invoice->setRequestedCaptureCase($online ? Mage_Sales_Model_Order_Invoice::CAPTURE_ONLINE : Mage_Sales_Model_Order_Invoice::CAPTURE_OFFLINE);
+        $invoice->setRequestedCaptureCase(
+            $online ? Mage_Sales_Model_Order_Invoice::CAPTURE_ONLINE : Mage_Sales_Model_Order_Invoice::CAPTURE_OFFLINE
+        );
         $invoice->register();
 
         $invoice->getOrder()->setIsInProcess(true);
@@ -329,7 +333,11 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
                 function ($value) use ($replacement_char) {
                 if (isset($value['name'])) {
                     mb_regex_encoding('utf-8');
-                    $value['name'] = mb_ereg_replace('[^a-zA-Z0-9_:!#=?\[\]@{}´ %-\/À-ÖØ-öø-ú]', $replacement_char, $value['name']);
+                    $value['name'] = mb_ereg_replace(
+                        '[^a-zA-Z0-9_:!#=?\[\]@{}´ %-\/À-ÖØ-öø-ú]',
+                        $replacement_char,
+                        $value['name']
+                    );
                 }
 
                 return $value;
@@ -340,8 +348,16 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
         $dom = new DOMDocument('1.0', 'utf-8');
         $OnlineInvoice = $dom->createElement('OnlineInvoice');
         $dom->appendChild($OnlineInvoice);
-        $OnlineInvoice->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');
-        $OnlineInvoice->setAttributeNS('http://www.w3.org/2001/XMLSchema-instance', 'xsd', 'http://www.w3.org/2001/XMLSchema');
+        $OnlineInvoice->setAttributeNS(
+            'http://www.w3.org/2000/xmlns/',
+            'xmlns:xsi',
+            'http://www.w3.org/2001/XMLSchema-instance'
+        );
+        $OnlineInvoice->setAttributeNS(
+            'http://www.w3.org/2001/XMLSchema-instance',
+            'xsd',
+            'http://www.w3.org/2001/XMLSchema'
+        );
 
         $OrderLines = $dom->createElement('OrderLines');
         $OnlineInvoice->appendChild($OrderLines);
@@ -421,7 +437,7 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
          */
         $card_type = strtolower(preg_replace('/[^A-Z]+/', '', $card_type));
         $card_type = str_replace('mc', 'mastercard', $card_type);
-        if (empty($card_type)){
+        if (empty($card_type)) {
             $card_type = 'visa';
         }
 
@@ -451,7 +467,7 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
                 $details->getType()
             ),
             $details->getMaskedNumber(),
-            date('Y/m', strtotime($details->getExpireDate()))
+            Mage::getSingleton('core/date')->date('Y/m', strtotime($details->getExpireDate()))
         );
     }
 
@@ -469,7 +485,7 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
             $itemQty = (int)$item->getQtyOrdered();
             $priceWithTax = $item->getRowTotalInclTax();
             $priceWithoutTax = $item->getRowTotal();
-            $taxPercent = $priceWithoutTax > 0 ? (($priceWithTax / $priceWithoutTax) - 1) * 100 : 0; // works for all types
+            $taxPercent = $priceWithoutTax > 0 ? (($priceWithTax / $priceWithoutTax) - 1) * 100 : 0;
             $taxPrice = $priceWithTax - $priceWithoutTax;
             $lines[] = array(
                 'type' => 'product',

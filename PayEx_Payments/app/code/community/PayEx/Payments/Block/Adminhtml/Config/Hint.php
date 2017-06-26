@@ -1,6 +1,7 @@
 <?php
 
-class PayEx_Payments_Block_Adminhtml_Config_Hint extends Mage_Adminhtml_Block_Abstract implements Varien_Data_Form_Element_Renderer_Interface
+class PayEx_Payments_Block_Adminhtml_Config_Hint extends Mage_Adminhtml_Block_Abstract
+    implements Varien_Data_Form_Element_Renderer_Interface
 {
 
     protected $_template = 'payex/adminhtml/hint.phtml';

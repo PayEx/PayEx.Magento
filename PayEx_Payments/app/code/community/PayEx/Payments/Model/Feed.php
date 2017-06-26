@@ -43,9 +43,9 @@ class PayEx_Payments_Model_Feed extends Mage_AdminNotification_Model_Feed
                     $code = (string) $item->code;
                     $version = (string) $item->version;
 
-                    if (empty($availableVersions[$code])
-                        || version_compare($version, $availableVersions[$code]['version'], '>'))
-                    {
+                    if (empty($availableVersions[$code]) ||
+                        version_compare($version, $availableVersions[$code]['version'], '>')
+                    ) {
                         $availableVersions[$code] = array(
                             'code' => $code,
                             'version' => $version,
@@ -68,7 +68,7 @@ class PayEx_Payments_Model_Feed extends Mage_AdminNotification_Model_Feed
                 );
             }
 
-            if (count($feedData) > 0) {
+            if (!empty($feedData)) {
                 $inbox = Mage::getModel('adminnotification/inbox');
 
                 if ($inbox) {
@@ -76,7 +76,7 @@ class PayEx_Payments_Model_Feed extends Mage_AdminNotification_Model_Feed
                 }
             }
 
-            if (count($availableVersions) > 0) {
+            if (!empty($availableVersions)) {
                 Mage::app()->saveCache(serialize($availableVersions), 'payex_available_versions');
             }
         }
@@ -110,7 +110,7 @@ class PayEx_Payments_Model_Feed extends Mage_AdminNotification_Model_Feed
      */
     public function setLastUpdate()
     {
-        Mage::app()->saveCache(time(), 'payex_notifications_last_check');
+        Mage::app()->saveCache(Mage::getSingleton('core/date')->timestamp(), 'payex_notifications_last_check');
         return $this;
     }
 

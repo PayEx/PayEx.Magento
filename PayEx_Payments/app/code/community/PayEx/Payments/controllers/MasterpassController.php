@@ -93,7 +93,11 @@ class PayEx_Payments_MasterpassController extends Mage_Core_Controller_Front_Act
         $redirectUrl = $result['redirectUrl'];
 
         // Set Pending Payment status
-        $order->setState(Mage_Sales_Model_Order::STATE_PENDING_PAYMENT, Mage_Sales_Model_Order::STATE_PENDING_PAYMENT, Mage::helper('payex')->__('The customer was redirected to PayEx.'));
+        $order->setState(
+            Mage_Sales_Model_Order::STATE_PENDING_PAYMENT,
+            Mage_Sales_Model_Order::STATE_PENDING_PAYMENT,
+            Mage::helper('payex')->__('The customer was redirected to PayEx.')
+        );
         $order->save();
 
         // Redirect to PayEx
@@ -166,7 +170,7 @@ class PayEx_Payments_MasterpassController extends Mage_Core_Controller_Front_Act
         $collection = Mage::getModel('sales/order_payment_transaction')->getCollection()
             ->addAttributeToFilter('txn_id', $result['transactionNumber']);
 
-        if (count($collection) > 0) {
+        if (!empty($collection)) {
             $transaction = $collection->getFirstItem();
             $raw_details_info = $transaction->getAdditionalInformation('raw_details_info');
             if (is_array($raw_details_info) && in_array((int)$result['transactionStatus'], array(0, 3, 6))) {
@@ -179,7 +183,9 @@ class PayEx_Payments_MasterpassController extends Mage_Core_Controller_Front_Act
         }
 
         // Prevent Order cancellation when used TC
-        if (in_array((int)$result['transactionStatus'], array(0, 3, 6)) && $order->getState() === Mage_Sales_Model_Order::STATE_CANCELED) {
+        if (in_array((int)$result['transactionStatus'], array(0, 3, 6))
+            && $order->getState() === Mage_Sales_Model_Order::STATE_CANCELED
+        ) {
             if ($order->getState() === Mage_Sales_Model_Order::STATE_CANCELED) {
                 $order->setState(Mage_Sales_Model_Order::STATE_PROCESSING);
                 $order->setStatus(Mage_Sales_Model_Order::STATE_PROCESSING);
@@ -568,13 +574,18 @@ class PayEx_Payments_MasterpassController extends Mage_Core_Controller_Front_Act
         $collection = Mage::getModel('sales/order_payment_transaction')->getCollection()
             ->addAttributeToFilter('txn_id', $result['transactionNumber']);
 
-        if (count($collection) > 0) {
+        if (!empty($collection)) {
             $transaction = $collection->getFirstItem();
             $raw_details_info = $transaction->getAdditionalInformation('raw_details_info');
             if (is_array($raw_details_info) && in_array((int)$result['transactionStatus'], array(0, 3, 6))) {
                 // Redirect to Success Page
-                Mage::helper('payex/tools')->addToDebug('Redirected to success page because transaction is already paid.', $order_id);
-                Mage::getSingleton('checkout/session')->setLastSuccessQuoteId(Mage::getSingleton('checkout/session')->getPayexQuoteId());
+                Mage::helper('payex/tools')->addToDebug(
+                    'Redirected to success page because transaction is already paid.',
+                    $order_id
+                );
+                Mage::getSingleton('checkout/session')->setLastSuccessQuoteId(
+                    Mage::getSingleton('checkout/session')->getPayexQuoteId()
+                );
                 $this->_redirect('checkout/onepage/success', array('_secure' => true));
                 return;
             }

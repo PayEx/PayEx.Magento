@@ -69,7 +69,11 @@ class PayEx_Payments_GetaddrController extends Mage_Core_Controller_Front_Action
 
         // Init PayEx
         $px = Mage::helper('payex/api')->getPx();
-        $px->setEnvironment(Mage::getStoreConfig(self::XML_PATH_MODULE_ACCOUNTNUMBER), Mage::getStoreConfig(self::XML_PATH_MODULE_ENCRYPTIONKEY), (bool)Mage::getStoreConfig(self::XML_PATH_MODULE_DEBUG));
+        $px->setEnvironment(
+            Mage::getStoreConfig(self::XML_PATH_MODULE_ACCOUNTNUMBER),
+            Mage::getStoreConfig(self::XML_PATH_MODULE_ENCRYPTIONKEY),
+            (bool)Mage::getStoreConfig(self::XML_PATH_MODULE_DEBUG)
+        );
 
         // Call PxOrder.GetAddressByPaymentMethod
         $params = array(
