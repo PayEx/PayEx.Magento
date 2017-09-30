@@ -146,6 +146,29 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
 
         $invoice->setIsPaid(true);
 
+        $invoice->setIsPaid(true);
+
+        $order->setTotalPaid($order->getTotalDue());
+        $order->setBaseTotalPaid($order->getBaseTotalDue());
+        $order->setTotalDue($order->getTotalDue() - $order->getTotalPaid());
+        $order->getBaseTotalDue($order->getBaseTotalDue() - $order->getBaseTotalPaid());
+        $order->setTotalInvoiced($order->getTotalInvoiced() + $invoice->getGrandTotal());
+        $order->setBaseTotalInvoiced($order->getBaseTotalInvoiced() + $invoice->getBaseGrandTotal());
+        $order->setSubtotalInvoiced($order->getSubtotalInvoiced() + $invoice->getSubtotal());
+        $order->setBaseSubtotalInvoiced($order->getBaseSubtotalInvoiced() + $invoice->getBaseSubtotal());
+        $order->setTaxInvoiced($order->getTaxInvoiced() + $invoice->getTaxAmount());
+        $order->setBaseTaxInvoiced($order->getBaseTaxInvoiced() + $invoice->getBaseTaxAmount());
+        $order->setHiddenTaxInvoiced($order->getHiddenTaxInvoiced() + $invoice->getHiddenTaxAmount());
+        $order->setBaseHiddenTaxInvoiced($order->getBaseHiddenTaxInvoiced() + $invoice->getBaseHiddenTaxAmount());
+        $order->setShippingTaxInvoiced($order->getShippingTaxInvoiced() + $invoice->getShippingTaxAmount());
+        $order->setBaseShippingTaxInvoiced($order->getBaseShippingTaxInvoiced() + $invoice->getBaseShippingTaxAmount());
+        $order->setShippingInvoiced($order->getShippingInvoiced() + $invoice->getShippingAmount());
+        $order->setBaseShippingInvoiced($order->getBaseShippingInvoiced() + $invoice->getBaseShippingAmount());
+        $order->setDiscountInvoiced($order->getDiscountInvoiced() + $invoice->getDiscountAmount());
+        $order->setBaseDiscountInvoiced($order->getBaseDiscountInvoiced() + $invoice->getBaseDiscountAmount());
+        $order->setBaseTotalInvoicedCost($order->getBaseTotalInvoicedCost() + $invoice->getBaseCost());
+        $order->save();
+
         // Assign Last Transaction Id with Invoice
         $transactionId = $invoice->getOrder()->getPayment()->getLastTransId();
         if ($transactionId) {
