@@ -23,15 +23,15 @@ Nordics!
 
 ## Installation
 
-### Magento Connect
+### Magento Marketplace
 
-The recommended way of installing is through Magento Connect, where you can find
-[The Official PayEx Payment Gateway Extension](https://www.magentocommerce.com/magento-connect/catalog/product/view/id/31962/).
+The recommended way of installing is through Magento Marketplace, where you can
+find [The Official PayEx Payment Gateway Extension](https://marketplace.magento.com/payex-payex-payments.html).
 
 ### Manually
 
 For a description on how to install manually, please read the
-[installation guide](docs/installation-guide.md). 
+[installation guide](docs/installation-guide.md).
 
 ## Metadata
 
