@@ -1,3 +1,7 @@
+Version 3.1.7
+* Moved ssn field settings to "Financing Invoice" section
+* Fixed bug with status after order shipping (Swish, Bankdebit etc)
+
 Version 3.1.6
 * Fixed warnings of marketplace-eqp
 * Small bugfixes
