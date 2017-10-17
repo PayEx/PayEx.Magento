@@ -3,7 +3,7 @@
     <modules>
         <PayEx_Payments>
             <!-- declare module's version information for database updates -->
-            <version>3.1.6</version>
+            <version>3.1.7</version>
         </PayEx_Payments>
     </modules>
 
@@ -281,6 +281,7 @@
                 <replacement_char>-</replacement_char>
                 <ssn_check>1</ssn_check>
                 <discount_calc>advanced</discount_calc>
+                <checkout_field>0</checkout_field>
             </payex_financing>
 
             <!-- 'newmodule' configuration group (fieldset) -->
@@ -443,26 +444,6 @@
                 </observers>
             </controller_action_predispatch>
         </events>
-
-        <acl>
-            <resources>
-                <admin>
-                    <children>
-                        <system>
-                            <children>
-                                <config>
-                                    <children>
-                                        <payex_ssn>
-                                            <title>Social Security Number</title>
-                                        </payex_ssn>
-                                    </children>
-                                </config>
-                            </children>
-                        </system>
-                    </children>
-                </admin>
-            </resources>
-        </acl>
     </adminhtml>
 
     <frontend>
