@@ -1,15 +1,15 @@
 <layout version="0.1.0">
     <checkout_onepage_index>
         <reference name='checkout.onepage.billing'>
-            <action method='setTemplate' ifconfig="payex_ssn/payex_ssn/active">
+            <action method='setTemplate' ifconfig="payment/payex_financing/checkout_field">
                 <template>payex/checkout/onepage/billing_with_ssn.phtml</template>
             </action>
         </reference>
         <reference name="head">
-            <action method="addJs" ifconfig="payex_ssn/payex_ssn/active">
+            <action method="addJs" ifconfig="payment/payex_financing/checkout_field">
                 <script>payex/social_security_number.js</script>
             </action>
-            <action method="addItem" ifconfig="payex_ssn/payex_ssn/active">
+            <action method="addItem" ifconfig="payment/payex_financing/checkout_field">
                 <type>skin_css</type>
                 <name>css/payex/social_security_number.css</name>
             </action>
@@ -18,13 +18,13 @@
 
     <opc_index_index>
         <reference name="head">
-            <action method="addJs" ifconfig="payex_ssn/payex_ssn/active">
+            <action method="addJs" ifconfig="payment/payex_financing/checkout_field">
                 <script>payex/iwd_opc/social_security_number.js</script>
             </action>
         </reference>
 
         <reference name='checkout.onepage.billing'>
-            <action method="setTemplate" ifconfig="payex_ssn/payex_ssn/active">
+            <action method="setTemplate" ifconfig="payment/payex_financing/checkout_field">
                 <template>payex/iwd_opc/billing_with_ssn.phtml</template>
             </action>
         </reference>
