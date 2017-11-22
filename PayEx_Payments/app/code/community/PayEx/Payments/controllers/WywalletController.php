@@ -34,8 +34,11 @@ class PayEx_Payments_WywalletController extends Mage_Core_Controller_Front_Actio
         $currency_code = $order->getOrderCurrency()->getCurrencyCode();
 
         // Get Amount
-        //$amount = $order->getGrandTotal();
-        $amount = Mage::helper('payex/order')->getCalculatedOrderAmount($order)->getAmount();
+        if ($method->getConfigData('checkoutinfo')) {
+            $amount = Mage::helper('payex/order')->getCalculatedOrderAmount($order)->getAmount();
+        } else {
+            $amount = $order->getGrandTotal();
+        }
 
         // Call PxOrder.Initialize8
         $params = array(

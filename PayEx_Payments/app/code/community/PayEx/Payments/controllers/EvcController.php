@@ -39,8 +39,11 @@ class PayEx_Payments_EvcController extends Mage_Core_Controller_Front_Action
         $operation = ($method->getConfigData('transactiontype') == 0) ? 'AUTHORIZATION' : 'SALE';
 
         // Get Amount
-        //$amount = $order->getGrandTotal();
-        $amount = Mage::helper('payex/order')->getCalculatedOrderAmount($order)->getAmount();
+        if ($method->getConfigData('checkoutinfo')) {
+            $amount = Mage::helper('payex/order')->getCalculatedOrderAmount($order)->getAmount();
+        } else {
+            $amount = $order->getGrandTotal();
+        }
 
         // Call PxOrder.Initialize8
         $params = array(
