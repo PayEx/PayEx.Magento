@@ -226,7 +226,7 @@ class PayEx_Payments_Model_Payment_PartPayment extends PayEx_Payments_Model_Paym
 
         $transactionNumber = $details['transactionNumber'];
         $order_id = $payment->getOrder()->getIncrementId();
-        $available = $details['amount'];
+        $available = $details['amount'] / 100;
 
         // Prevent Rounding Issue
         $value = abs(sprintf("%.2f", $amount) - sprintf("%.2f", $available));

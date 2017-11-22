@@ -171,7 +171,7 @@ class PayEx_Payments_Model_Payment_Wywallet extends PayEx_Payments_Model_Payment
 
         $transactionNumber = $details['transactionNumber'];
         $order_id = $details['orderId'];
-        $available = $details['amount'];
+        $available = $details['amount'] / 100;
         if (!$order_id) {
             $order_id = $payment->getOrder()->getIncrementId();
         }
