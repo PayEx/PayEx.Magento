@@ -2,7 +2,7 @@
 
 class PayEx_Payments_GetaddrController extends Mage_Core_Controller_Front_Action
 {
-    const XML_PATH_MODULE_DEBUG = 'payment/payex_financing/checkout_field';
+    const XML_PATH_MODULE_DEBUG = 'payment/payex_financing/debug';
     const XML_PATH_MODULE_ACCOUNTNUMBER = 'payment/payex_financing/accountnumber';
     const XML_PATH_MODULE_ENCRYPTIONKEY = 'payment/payex_financing/encryptionkey';
 
