@@ -1,3 +1,8 @@
+Version 3.1.8
+* Fixed bug with GetAddress feature
+* Fixed bug with Rounding Issue Prevent code
+* Use magento grant total if order lines disabled
+
 Version 3.1.7
 * Moved ssn field settings to "Financing Invoice" section
 * Fixed bug with status after order shipping (Swish, Bankdebit etc)
