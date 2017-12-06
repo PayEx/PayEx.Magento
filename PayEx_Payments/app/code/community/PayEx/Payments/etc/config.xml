@@ -279,7 +279,6 @@
                 <cleantime>20</cleantime>
                 <replace_illegal>1</replace_illegal>
                 <replacement_char>-</replacement_char>
-                <ssn_check>1</ssn_check>
                 <discount_calc>advanced</discount_calc>
                 <checkout_field>0</checkout_field>
             </payex_financing>
@@ -304,7 +303,6 @@
                 <cleantime>20</cleantime>
                 <replace_illegal>1</replace_illegal>
                 <replacement_char>-</replacement_char>
-                <ssn_check>1</ssn_check>
                 <discount_calc>advanced</discount_calc>
             </payex_partpayment>
 
