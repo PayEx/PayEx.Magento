@@ -1,3 +1,7 @@
+Version 3.1.9
+* Fixed problem with SUPEE-9767 and latest versions of Magento
+* Financing Invoice: Removed SSN check option
+
 Version 3.1.8
 * Fixed bug with GetAddress feature
 * Fixed bug with Rounding Issue Prevent code

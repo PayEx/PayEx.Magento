@@ -17,7 +17,7 @@ Gateway is responsive and works just as well on desktop as on mobile browsers.
 With [PayEx](http://payex.com/), your customers can pay by Bank Debit, Credit
 and Debit Cards (Visa, MasterCard, Visa Electron, Maestro), One-Click Credit
 Card, Financing Credit Account, Financing Invoice, Invoice Ledger Service,
-[MasterPass](https://masterpass.com/) and [WyWallet](http://wywallet.se/).
+[MasterPass](https://masterpass.com/), [WyWallet](http://wywallet.se/) and [MobilePay Online](https://mobilepay.dk/da-dk/Erhverv/Pages/mobilepay-online.aspx).
 Settle your orders with the largest and most complete payment provider in the
 Nordics!
 
