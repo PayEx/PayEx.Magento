@@ -938,16 +938,6 @@
                             <show_in_store>1</show_in_store>
                         </replacement_char>
 
-                        <ssn_check>
-                            <label>Perform validation of SSN before checkout</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>16</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </ssn_check>
-
                         <discount_calc translate="label">
                             <label>Discount Calculation</label>
                             <frontend_type>select</frontend_type>
@@ -1131,16 +1121,6 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </replacement_char>
-
-                        <ssn_check>
-                            <label>Perform validation of SSN before checkout</label>
-                            <frontend_type>select</frontend_type>
-                            <source_model>adminhtml/system_config_source_yesno</source_model>
-                            <sort_order>18</sort_order>
-                            <show_in_default>1</show_in_default>
-                            <show_in_website>1</show_in_website>
-                            <show_in_store>1</show_in_store>
-                        </ssn_check>
 
                         <discount_calc translate="label">
                             <label>Discount Calculation</label>

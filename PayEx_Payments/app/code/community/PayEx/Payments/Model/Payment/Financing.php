@@ -152,28 +152,6 @@ class PayEx_Payments_Model_Payment_Financing extends PayEx_Payments_Model_Paymen
             Mage::throwException(Mage::helper('payex')->__('Please enter Social Security Number.'));
         }
 
-        // Don't perform SSN validation
-        if (!$this->getConfigData('ssn_check')) {
-            // Save Social Security Number
-            $this->getCheckout()->setSocialSecurityNumber($ssn);
-            return;
-        }
-
-        $params = array(
-            'accountNumber' => '',
-            'paymentMethod' => strtoupper('PXFINANCINGINVOICE' . $country_code),
-            'ssn' => $ssn,
-            'zipcode' => $postcode,
-            'countryCode' => $country_code,
-            'ipAddress' => Mage::helper('core/http')->getRemoteAddr()
-        );
-        $result = Mage::helper('payex/api')->getPx()->GetAddressByPaymentMethod($params);
-        Mage::helper('payex/tools')->addToDebug('PxOrder.GetAddressByPaymentMethod:' . $result['description']);
-        if ($result['code'] !== 'OK' || $result['description'] !== 'OK' || $result['errorCode'] !== 'OK') {
-            // Show Error Message
-            Mage::helper('payex/tools')->throwPayExException($result, 'PxOrder.GetAddressByPaymentMethod');
-        }
-
         // Save Social Security Number
         $this->getCheckout()->setSocialSecurityNumber($ssn);
     }
