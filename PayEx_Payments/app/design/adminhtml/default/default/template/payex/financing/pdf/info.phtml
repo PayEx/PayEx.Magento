@@ -1,0 +1,24 @@
+<?php
+/** @var $this PayEx_Payments_Block_Info_Financing */
+?>
+
+<p><?php echo $this->htmlEscape($this->getMethod()->getTitle()) ?></p>
+<?php $trans_id = $this->getInfo()->getLastTransId(); ?>
+<?php if (!empty($trans_id)): ?>
+    <?php $specific = $this->getSpecificInformation(); ?>
+    <?php if (count($specific) > 0): ?>
+        <?php foreach ($specific as $key => $value): ?>
+            <?php if ($key === 'Invoice'): ?>
+                <a href="<?php echo $this->htmlEscape($value); ?>" target="_blank">
+                    <?php echo Mage::helper('payex')->__('View Invoice'); ?>
+                </a>
+                {{pdf_row_separator}}
+            <?php else: ?>
+                <?php echo Mage::helper('payex')->__($key) . ': ' . $this->htmlEscape($value); ?><br/>
+            <?php endif; ?>
+            {{pdf_row_separator}}
+        <?php endforeach; ?>
+    <?php endif; ?>
+<?php else: ?>
+    <?php echo Mage::helper('paygate')->__('Payment has not been processed yet.'); ?>
+<?php endif; ?>
