@@ -147,16 +147,18 @@ class PayEx_Payments_Model_Payment_MasterPass extends PayEx_Payments_Model_Payme
 
         $transactionNumber = $details['transactionNumber'];
         $order_id = $details['orderId'];
-        $available = $details['amount'] / 100;
         if (!$order_id) {
             $order_id = $payment->getOrder()->getIncrementId();
         }
 
         // Prevent Rounding Issue
-        $value = abs(sprintf("%.2f", $amount) - sprintf("%.2f", $available));
-        if ($value > 0 && $value < 0.2) {
-            $amount = $available;
-            $payment->setAmount($amount);
+        if (isset($details['amount'])) {
+            $available = $details['amount'] / 100;
+            $value = abs(sprintf("%.2f", $amount) - sprintf("%.2f", $available));
+            if ($value > 0 && $value < 0.2) {
+                $amount = $available;
+                $payment->setAmount($amount);
+            }
         }
 
         // Call PxOrder.Capture5

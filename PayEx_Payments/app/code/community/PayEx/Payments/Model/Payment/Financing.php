@@ -212,13 +212,15 @@ class PayEx_Payments_Model_Payment_Financing extends PayEx_Payments_Model_Paymen
 
         $transactionNumber = $details['transactionNumber'];
         $order_id = $payment->getOrder()->getIncrementId();
-        $available = $details['amount'] / 100;
 
         // Prevent Rounding Issue
-        $value = abs(sprintf("%.2f", $amount) - sprintf("%.2f", $available));
-        if ($value > 0 && $value < 0.2) {
-            $amount = $available;
-            $payment->setAmount($amount);
+        if (isset($details['amount'])) {
+            $available = $details['amount'] / 100;
+            $value = abs(sprintf("%.2f", $amount) - sprintf("%.2f", $available));
+            if ($value > 0 && $value < 0.2) {
+                $amount = $available;
+                $payment->setAmount($amount);
+            }
         }
 
         $xml = Mage::helper('payex/order')->getInvoiceExtraPrintBlocksXML($payment->getOrder());
