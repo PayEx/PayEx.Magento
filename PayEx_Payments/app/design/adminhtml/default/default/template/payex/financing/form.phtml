@@ -23,14 +23,14 @@ $fee = $this->getPayexPaymentFee();
                             for="social-security-number-<?php echo $_code ?>"><?php echo Mage::helper('payex')->__('Social Security Number'); ?>
                             <span class="required">*</span></label><br/>
                         <input name="social-security-number" id="social-security-number-<?php echo $_code ?>"
-                               title="<?php echo Mage::helper('payex')->__('Social Security Number'); ?>" value="<?php echo Mage::helper('payex')->__('Social Security Number'); ?>"
+                               title="<?php echo Mage::helper('payex')->__('Social Security Number'); ?>" placeholder="<?php echo Mage::helper('payex')->__('Social Security Number'); ?>"
                                class="required-entry input-text" type="text"/><br/>
                     <?php else: ?>
                         <label
                             for="social-security-number-<?php echo $_code ?>"><?php echo Mage::helper('payex')->__('Social Security Number'); ?>
                             <span class="required">*</span></label><br/>
                         <input name="social-security-number" id="social-security-number-<?php echo $_code ?>"
-                               title="<?php echo Mage::helper('payex')->__('Social Security Number'); ?>" value="<?php echo $socal_security_number; ?>"
+                               title="<?php echo Mage::helper('payex')->__('Social Security Number'); ?>" placeholder="<?php echo $socal_security_number; ?>"
                                class="required-entry input-text" type="text" readonly/><br/>
                     <?php endif; ?>
                 </form>
