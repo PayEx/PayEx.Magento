@@ -20,16 +20,16 @@ $fee = $this->getPayexPaymentFee();
                 <form action="<?php echo $this->getFormAction(); ?>" method="post">
                     <?php if (empty($socal_security_number)): ?>
                         <label
-                            for="social-security-number"><?php echo Mage::helper('payex')->__('Social Security Number'); ?>
+                            for="social-security-number-<?php echo $_code ?>"><?php echo Mage::helper('payex')->__('Social Security Number'); ?>
                             <span class="required">*</span></label><br/>
-                        <input name="social-security-number" id="social-security-number"
+                        <input name="social-security-number" id="social-security-number-<?php echo $_code ?>"
                                title="<?php echo Mage::helper('payex')->__('Social Security Number'); ?>" value="<?php echo Mage::helper('payex')->__('Social Security Number'); ?>"
                                class="required-entry input-text" type="text"/><br/>
                     <?php else: ?>
                         <label
-                            for="social-security-number"><?php echo Mage::helper('payex')->__('Social Security Number'); ?>
+                            for="social-security-number-<?php echo $_code ?>"><?php echo Mage::helper('payex')->__('Social Security Number'); ?>
                             <span class="required">*</span></label><br/>
-                        <input name="social-security-number" id="social-security-number"
+                        <input name="social-security-number" id="social-security-number-<?php echo $_code ?>"
                                title="<?php echo Mage::helper('payex')->__('Social Security Number'); ?>" value="<?php echo $socal_security_number; ?>"
                                class="required-entry input-text" type="text" readonly/><br/>
                     <?php endif; ?>
