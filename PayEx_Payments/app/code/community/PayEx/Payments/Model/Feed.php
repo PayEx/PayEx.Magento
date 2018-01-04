@@ -117,20 +117,9 @@ class PayEx_Payments_Model_Feed extends Mage_AdminNotification_Model_Feed
     /**
      * Get Feed URL
      * @return string
-     * @throws Zend_Uri_Exception
      */
     public function getFeedUrl()
     {
-        $version = Mage::getConfig()->getModuleConfig('PayEx_Payments')->version->asArray();
-        $params = array(
-            'site_url' => Mage::getStoreConfig('web/unsecure/base_url'),
-            'installed_version' => $version,
-            'mage_ver' => Mage::getVersion(),
-            'edition' => Mage::getEdition()
-        );
-
-        $uri = Zend_Uri::factory(self::URL_NEWS);
-        $uri->addReplaceQueryParameters($params);
-        return $uri->getUri();
+        return Mage::getUrl('payex/feed', array('_secure' => true));
     }
 }
