@@ -397,7 +397,7 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
             $OrderLines->appendChild($OrderLine);
         }
 
-        return str_replace("\n", '', $dom->saveXML());
+        return str_replace("\n", '', html_entity_decode(str_replace('xsi:xsd', 'xmlns:xsd', $dom->saveXML()), ENT_COMPAT|ENT_XHTML, 'UTF-8'));
     }
 
     /**
