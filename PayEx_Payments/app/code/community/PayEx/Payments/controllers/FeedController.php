@@ -38,7 +38,7 @@ class PayEx_Payments_FeedController extends Mage_Core_Controller_Front_Action
         <item>
             <title>PayEx Payments</title>
             <link>{$data['html_url']}</link>
-            <description><![CDATA[PayEx Payments]></description>
+            <description><![CDATA[PayEx Payments]]></description>
             <version>{$version}</version>
             <code>PayEx_Payments</code>
         </item>
