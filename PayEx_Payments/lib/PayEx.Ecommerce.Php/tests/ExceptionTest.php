@@ -11,7 +11,7 @@ class ExceptionTest extends TestCase
 
         $e = null;
         try {
-            $result = $this->px->Test([]);
+            $result = $this->px->Test(array());
         } catch (\Exception $e) {
             //
         }
@@ -24,7 +24,7 @@ class ExceptionTest extends TestCase
     {
         $e = null;
         try {
-            $result = $this->px->Test([]);
+            $result = $this->px->Test(array());
         } catch (\Exception $e) {
             //
         }

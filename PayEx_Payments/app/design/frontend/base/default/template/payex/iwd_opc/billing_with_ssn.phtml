@@ -9,7 +9,8 @@
             </div>
         </li>
     <?php endif; ?>
-    <li id="billing-new-address-form"<?php if ($this->customerHasAddresses()): ?> style="display:none;"<?php endif; ?>>
+    <li id="billing-new-address-form"<?php if ($this->customerHasAddresses()): ?> style="display:none;"<?php 
+   endif; ?>>
         <fieldset>
             <input type="hidden" name="billing[address_id]" value="<?php echo $this->getAddress()->getId() ?>" id="billing:address_id" />
             <ul>
@@ -127,7 +128,6 @@
                     </div>
                 </li>
                 <?php if(!$this->isCustomerLoggedIn()): ?>
-
                     <?php $_dob = $this->getLayout()->createBlock('customer/widget_dob') ?>
                     <?php $_gender = $this->getLayout()->createBlock('customer/widget_gender') ?>
                         <?php if ($_dob->isEnabled() || $_gender->isEnabled()): ?>
@@ -156,9 +156,10 @@
 
                 <?php endif; ?>
                 <?php if ($this->isCustomerLoggedIn() && $this->customerHasAddresses()):?>
-                	<div class="clear"></div>
+                    <div class="clear"></div>
                     <li class="control">
-                        <input type="checkbox" name="billing[save_in_address_book]" value="1" title="<?php echo $this->__('Save in address book') ?>" id="billing:save_in_address_book" onchange="if(window.shipping) shipping.setSameAsBilling(false);"<?php if ($this->getAddress()->getSaveInAddressBook()):?> checked="checked"<?php endif;?> class="checkbox" /><label for="billing:save_in_address_book"><?php echo $this->__('Save in address book') ?></label>
+                        <input type="checkbox" name="billing[save_in_address_book]" value="1" title="<?php echo $this->__('Save in address book') ?>" id="billing:save_in_address_book" onchange="if(window.shipping) shipping.setSameAsBilling(false);"<?php if ($this->getAddress()->getSaveInAddressBook()):?> checked="checked"<?php 
+                       endif;?> class="checkbox" /><label for="billing:save_in_address_book"><?php echo $this->__('Save in address book') ?></label>
                     </li>
                 <?php else:?>
                     <li class="no-display"><input type="hidden" name="billing[save_in_address_book]" value="1" /></li>
@@ -171,45 +172,49 @@
     <?php echo $this->getChildHtml('checkout.onepage.billing.extra')?>
 
     <!-- fix browser autocomplete -->
-	<div style="display:none !important">
-		<input type="text" autocomplete="off" value="" />
-		<input type="password" autocomplete="off" value=""/>
-	</div>
-	<!-- end fix browser autocomplete -->
+    <div style="display:none !important">
+        <input type="text" autocomplete="off" value="" />
+        <input type="password" autocomplete="off" value=""/>
+    </div>
+    <!-- end fix browser autocomplete -->
 
     <?php if(!$this->isCustomerLoggedIn()): ?>
+        <?php
+        $guest_allowed = $this->getQuote()->isAllowedGuestCheckout();
+        if($guest_allowed): ?>
+        <li class="control">
+                <input type="checkbox" name="billing[create_account]" id="billing:create_account" value="1" title="<?php echo  $this->__('Create an account for later use') ?>"  class="checkbox" /><label for="billing:create_account"><?php echo  $this->__('Create an account for later use') ?></label>
+        </li>
+        <?php else:?>
+            <input type="hidden" name="billing[create_account]" id="billing:create_account" value="1" />
+        <?php endif;?>
 
-    	<?php
-    	$guest_allowed = $this->getQuote()->isAllowedGuestCheckout();
-    	if($guest_allowed): ?>
-	    <li class="control">
-	            <input type="checkbox" name="billing[create_account]" id="billing:create_account" value="1" title="<?php echo  $this->__('Create an account for later use') ?>"  class="checkbox" /><label for="billing:create_account"><?php echo  $this->__('Create an account for later use') ?></label>
-	    </li>
-	    <?php else:?>
-	    	<input type="hidden" name="billing[create_account]" id="billing:create_account" value="1" />
-	    <?php endif;?>
-
-		<li class="fields <?php if($guest_allowed):?>hidden<?php endif;?>" id="register-customer-password">
-			<div class="field">
-				<label for="billing:customer_password" class="required"><em>*</em><?php echo $this->__('Password') ?></label>
-				<div class="input-box">
-					<input type="password" name="billing[customer_password]" title="<?php echo $this->__('Password') ?>" id="billing:customer_password" class="input-text validate-password <?php if(!$guest_allowed):?>required-entry<?php endif;?>" autocomplete="off" value=""/>
-				</div>
-			</div>
-			<div class="field">
-				<label for="billing:confirm_password" class="required"><em>*</em><?php echo $this->__('Confirm Password') ?></label>
-				<div class="input-box">
-					<input type="password" name="billing[confirm_password]" title="<?php echo $this->__('Confirm Password') ?>" id="billing:confirm_password" class="input-text validate-cpassword <?php if(!$guest_allowed):?>required-entry<?php endif;?>" autocomplete="off" value=""/>
-				</div>
-			</div>
-		</li>
-		<div class="clear"></div>
+        <li class="fields <?php if($guest_allowed):?>hidden<?php 
+       endif;?>" id="register-customer-password">
+            <div class="field">
+                <label for="billing:customer_password" class="required"><em>*</em><?php echo $this->__('Password') ?></label>
+                <div class="input-box">
+                    <input type="password" name="billing[customer_password]" title="<?php echo $this->__('Password') ?>" id="billing:customer_password" class="input-text validate-password <?php if(!$guest_allowed):?>required-entry<?php 
+                   endif;?>" autocomplete="off" value=""/>
+                </div>
+            </div>
+            <div class="field">
+                <label for="billing:confirm_password" class="required"><em>*</em><?php echo $this->__('Confirm Password') ?></label>
+                <div class="input-box">
+                    <input type="password" name="billing[confirm_password]" title="<?php echo $this->__('Confirm Password') ?>" id="billing:confirm_password" class="input-text validate-cpassword <?php if(!$guest_allowed):?>required-entry<?php 
+                   endif;?>" autocomplete="off" value=""/>
+                </div>
+            </div>
+        </li>
+        <div class="clear"></div>
 
     <?php endif;?>
 
     <?php if ($this->canShip()): ?>
-        <li class="control <?php if (!Mage::helper('opc')->isShowShippingForm()):?>hidden<?php endif;?>">
-            <input type="checkbox" name="billing[use_for_shipping]" id="billing:use_for_shipping_yes" value="1"<?php if ($this->isUseBillingAddressForShipping()) {?> checked="checked"<?php }?> title="<?php echo  $this->__('Ship to this address') ?>" class="checkbox   " /><label for="billing:use_for_shipping_yes"><?php echo  $this->__('Ship to this address') ?></label>
+        <li class="control <?php if (!Mage::helper('opc')->isShowShippingForm()):?>hidden<?php 
+       endif;?>">
+            <input type="checkbox" name="billing[use_for_shipping]" id="billing:use_for_shipping_yes" value="1"<?php if ($this->isUseBillingAddressForShipping()) {?> checked="checked"<?php 
+           }?> title="<?php echo  $this->__('Ship to this address') ?>" class="checkbox   " /><label for="billing:use_for_shipping_yes"><?php echo  $this->__('Ship to this address') ?></label>
         </li>
     <?php endif; ?>
     </ul>

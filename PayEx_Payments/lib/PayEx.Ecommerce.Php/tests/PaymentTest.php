@@ -7,7 +7,7 @@ class PaymentTest extends TestCase
     public function testInitialize()
     {
         // Call PxOrder.Initialize8
-        $params = [
+        $params = array(
             'accountNumber' => '',
             'purchaseOperation' => 'AUTHORIZATION',
             'price' => round(1 * 100),
@@ -26,7 +26,7 @@ class PaymentTest extends TestCase
             'agreementRef' => '',
             'cancelUrl' => 'http://localhost.no/cancel',
             'clientLanguage' => 'en-US'
-        ];
+        );
         $result = $this->px->Initialize8($params);
 
         // Array Check

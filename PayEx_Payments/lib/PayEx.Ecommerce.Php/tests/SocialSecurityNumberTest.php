@@ -6,14 +6,14 @@ class SocialSecurityNumberTest extends TestCase
 {
     public function testSE()
     {
-        $params = [
+        $params = array(
             'accountNumber' => '',
             'paymentMethod' => 'PXFINANCINGINVOICESE',
             'ssn' => '590719-5662',
             'zipcode' => '29620',
             'countryCode' => 'SE',
             'ipAddress' => '127.0.0.1'
-        ];
+        );
         $result = $this->px->GetAddressByPaymentMethod($params);
 
         // Array Check
@@ -33,14 +33,14 @@ class SocialSecurityNumberTest extends TestCase
 
     public function testNO()
     {
-        $params = [
+        $params = array(
             'accountNumber' => '',
             'paymentMethod' => 'PXFINANCINGINVOICENO',
             'ssn' => '12067543937',
             'zipcode' => '3179',
             'countryCode' => 'NO',
             'ipAddress' => '127.0.0.1'
-        ];
+        );
         $result = $this->px->GetAddressByPaymentMethod($params);
 
         // Array Check
