@@ -52,6 +52,10 @@ class PayEx_Payments_Model_Source_Banks
                 'label' => Mage::helper('payex')->__('OP')
             ),
             array(
+                'value' => 'OMASP',
+                'label' => Mage::helper('payex')->__('Oma Säästöpankki')
+            ),
+            array(
                 'value' => 'NB:FI',
                 'label' => Mage::helper('payex')->__('Nordea Finland')
             ),
