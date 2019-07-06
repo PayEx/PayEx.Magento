@@ -118,6 +118,10 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
      */
     public function makeInvoice(&$order, $online = false)
     {
+        if ($order->getGrandTotal() < 0) {
+            Mage::throwException('Invalid order amount');
+        }
+
         // Prepare Invoice
         /** @var Mage_Sales_Model_Order_Invoice $invoice */
         $invoice = Mage::getModel('sales/service_order', $order)->prepareInvoice();
@@ -143,8 +147,6 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
             );
             Mage::throwException($e->getMessage());
         }
-
-        $invoice->setIsPaid(true);
 
         $invoice->setIsPaid(true);
 
