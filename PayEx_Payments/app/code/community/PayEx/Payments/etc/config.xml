@@ -339,7 +339,7 @@
                 <!-- model to handle logic for this payment method -->
                 <model>payex/payment_swish</model>
                 <!-- default title for payment checkout page and order view page -->
-                <title>Swish Payments (via PayEx)</title>
+                <title>Invoice via Swedbank</title>
                 <allowspecific>0</allowspecific>
                 <accountnumber>payex account number</accountnumber>
                 <encryptionkey>payex encryption key</encryptionkey>
