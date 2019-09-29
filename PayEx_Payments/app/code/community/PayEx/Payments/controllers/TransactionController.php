@@ -118,6 +118,26 @@ class PayEx_Payments_TransactionController extends Mage_Core_Controller_Front_Ac
             return;
         }
 
+        // Get current transaction info
+        $lastTransactionId = $order->getPayment()->getLastTransId();
+        $lastTransactionStatus = null;
+
+        if ($lastTransactionId) {
+            $collection = Mage::getModel('sales/order_payment_transaction')->getCollection()
+                ->addAttributeToFilter('txn_id', $lastTransactionId);
+            if ($collection->getSize() > 0 && $lastTransaction = $collection->getFirstItem()) {
+                // Get Transaction Details
+                $lastTransactionDetails = $lastTransaction->getAdditionalInformation(Mage_Sales_Model_Order_Payment_Transaction::RAW_DETAILS);
+                if (!is_array($lastTransactionDetails) || count($lastTransactionDetails) === 0) {
+                    $lastTransactionDetails = $payment_method->fetchTransactionInfo($order->getPayment(), $lastTransactionId);
+                    $lastTransaction->setAdditionalInformation(Transaction::RAW_DETAILS, $lastTransactionDetails);
+                    $lastTransaction->save();
+                }
+
+                $lastTransactionStatus = (int) $lastTransactionDetails['transactionStatus'];
+            }
+        }
+
         // Call PxOrder.GetTransactionDetails2
         $params = array(
             'accountNumber' => '',
@@ -275,6 +295,13 @@ class PayEx_Payments_TransactionController extends Mage_Core_Controller_Front_Ac
             case 5:
                 // Change Order Status to Canceled
                 Mage::helper('payex/tools')->addToDebug('TC: Action: Cancel order');
+
+                // Check current status
+                if (in_array($lastTransactionStatus, ['0', '3', '6'])) {
+                    Mage::helper('payex/tools')->addToDebug('Order won\'t be cancelled because already paid', $order_id);
+                    break;
+                }
+
                 if (!$order->isCanceled() && !$order->hasInvoices()) {
                     $message = Mage::helper('payex')->__('Order canceled by Transaction Callback');
 
