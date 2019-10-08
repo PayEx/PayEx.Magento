@@ -109,7 +109,7 @@ class PayEx_Payments_TransactionController extends Mage_Core_Controller_Front_Ac
         // Lookup Transaction
         $collection = Mage::getModel('sales/order_payment_transaction')->getCollection()
             ->addAttributeToFilter('txn_id', $transactionId);
-        if (!empty($collection)) {
+        if ($collection->getSize() > 0) {
             Mage::helper('payex/tools')->addToDebug(sprintf('TC: Transaction %s already processed.', $transactionId));
 
             $this->getResponse()

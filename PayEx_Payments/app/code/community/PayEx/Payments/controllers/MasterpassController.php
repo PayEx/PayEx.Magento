@@ -169,8 +169,7 @@ class PayEx_Payments_MasterpassController extends Mage_Core_Controller_Front_Act
         // Check Transaction is already registered
         $collection = Mage::getModel('sales/order_payment_transaction')->getCollection()
             ->addAttributeToFilter('txn_id', $result['transactionNumber']);
-
-        if (!empty($collection)) {
+        if ($collection->getSize() > 0) {
             $transaction = $collection->getFirstItem();
             $raw_details_info = $transaction->getAdditionalInformation('raw_details_info');
             if (is_array($raw_details_info) && in_array((int)$result['transactionStatus'], array(0, 3, 6))) {
@@ -573,8 +572,7 @@ class PayEx_Payments_MasterpassController extends Mage_Core_Controller_Front_Act
         // Check Transaction is already registered
         $collection = Mage::getModel('sales/order_payment_transaction')->getCollection()
             ->addAttributeToFilter('txn_id', $result['transactionNumber']);
-
-        if (!empty($collection)) {
+        if ($collection->getSize() > 0) {
             $transaction = $collection->getFirstItem();
             $raw_details_info = $transaction->getAdditionalInformation('raw_details_info');
             if (is_array($raw_details_info) && in_array((int)$result['transactionStatus'], array(0, 3, 6))) {
