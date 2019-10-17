@@ -16,7 +16,7 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
         // Lookup Transaction
         $collection = Mage::getModel('sales/order_payment_transaction')->getCollection()
             ->addAttributeToFilter('txn_id', $fields['transactionNumber']);
-        if (count($collection) > 0) {
+        if ($collection->getSize() > 0) {
             Mage::helper('payex/tools')->addToDebug(
                 sprintf('Transaction %s already processed.', $fields['transactionNumber']), $order->getIncrementId()
             );
@@ -198,7 +198,12 @@ class PayEx_Payments_Helper_Order extends Mage_Core_Helper_Abstract
             ->setOrder('transaction_id', 'ASC')
             ->setPageSize(1)
             ->setCurPage(1);
-        return $collection->getFirstItem()->getTxnId();
+
+        if ($collection->getSize() > 0) {
+            $collection->getFirstItem()->getTxnId();
+        }
+
+        return false;
     }
 
     /**
