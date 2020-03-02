@@ -1349,7 +1349,7 @@
                 <!-- newmodule fieldset -->
                 <payex_swish translate="label" module="payex">
                     <!-- will have title 'New Module' -->
-                    <label>PayEx Swish</label>
+                    <label>Invoice via Swedbank</label>
                     <!-- position between other payment methods -->
                     <sort_order>618</sort_order>
                     <!-- do not show this configuration options in store scope -->
